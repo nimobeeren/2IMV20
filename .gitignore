@@ -1,0 +1,6 @@
+# IDE user stuff
+.vscode/
+.idea/
+
+# Data
+/*data/
