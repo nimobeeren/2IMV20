@@ -180,7 +180,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double dx = coord[0], dy = coord[1], dz = coord[2];
 
         // Verify they are inside the volume
-        // NOTE: 
         if (dx < 0 || dx >= volume.getDimX() - 1 || dy < 0 || dy >= volume.getDimY() - 1 || dz < 0
                 || dz >= volume.getDimZ() - 1) {
 
@@ -194,21 +193,20 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         int y = (int) Math.floor(dy);
         int z = (int) Math.floor(dz);
 
-        // Define the position of the voxel relative to its encapsulating cube
+        // Define the coordinate relative to its encapsulating cube
         double alpha = dx - x;
         double beta = dy - y;
         double gamma = dz - z;
 
         // Interpolate the values at the vertices sx0..sx7 of the encapsulating cube
-        double sx = 0;
-        sx += (1 - alpha) * (1 - beta) * (1 - gamma) * volume.getVoxel(x, y, z); // sx0
-        sx += alpha * (1 - beta) * (1 - gamma) * volume.getVoxel(x + 1, y, z); // sx1
-        sx += (1 - alpha) * beta * (1 - gamma) * volume.getVoxel(x, y + 1, z); // sx2
-        sx += alpha * beta * (1 - gamma) * volume.getVoxel(x + 1, y + 1, z); // sx3
-        sx += (1 - alpha) * (1 - beta) * gamma * volume.getVoxel(x, y, z + 1); // sx4
-        sx += alpha * (1 - beta) * gamma * volume.getVoxel(x + 1, y, z + 1); // sx5
-        sx += (1 - alpha) * beta * gamma * volume.getVoxel(x, y + 1, z + 1); // sx6
-        sx += alpha * beta * gamma * volume.getVoxel(x + 1, y + 1, z + 1); // sx7
+        double sx = (1 - alpha) * (1 - beta) * (1 - gamma) * volume.getVoxel(x, y, z) // sx0
+                + alpha * (1 - beta) * (1 - gamma) * volume.getVoxel(x + 1, y, z) // sx1
+                + (1 - alpha) * beta * (1 - gamma) * volume.getVoxel(x, y + 1, z) // sx2
+                + alpha * beta * (1 - gamma) * volume.getVoxel(x + 1, y + 1, z) // sx3
+                + (1 - alpha) * (1 - beta) * gamma * volume.getVoxel(x, y, z + 1) // sx4
+                + alpha * (1 - beta) * gamma * volume.getVoxel(x + 1, y, z + 1) // sx5
+                + (1 - alpha) * beta * gamma * volume.getVoxel(x, y + 1, z + 1) // sx6
+                + alpha * beta * gamma * volume.getVoxel(x + 1, y + 1, z + 1); // sx7
 
         return (short) Math.round(sx);
     }
