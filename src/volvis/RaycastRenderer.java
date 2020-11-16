@@ -200,30 +200,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double gamma = dz - z;
 
         // Interpolate the values at the vertices sx0..sx7 of the encapsulating cube
-        // For each vertex, if one of the factors is 0, we skip the computation
         double sx = 0;
         sx += (1 - alpha) * (1 - beta) * (1 - gamma) * volume.getVoxel(x, y, z); // sx0
-        if (alpha > 0) {
-            sx += alpha * (1 - beta) * (1 - gamma) * volume.getVoxel(x + 1, y, z); // sx1
-        }
-        if (beta > 0) {
-            sx += (1 - alpha) * beta * (1 - gamma) * volume.getVoxel(x, y + 1, z); // sx2
-        }
-        if (alpha > 0 && beta > 0) {
-            sx += alpha * beta * (1 - gamma) * volume.getVoxel(x + 1, y + 1, z); // sx3
-        }
-        if (gamma > 0) {
-            sx += (1 - alpha) * (1 - beta) * gamma * volume.getVoxel(x, y, z + 1); // sx4
-        }
-        if (alpha > 0 && gamma > 0) {
-            sx += alpha * (1 - beta) * gamma * volume.getVoxel(x + 1, y, z + 1); // sx5
-        }
-        if (beta > 0 && gamma > 0) {
-            sx += (1 - alpha) * beta * gamma * volume.getVoxel(x, y + 1, z + 1); // sx6
-        }
-        if (alpha > 0 && beta > 0 && gamma > 0) {
-            sx += alpha * beta * gamma * volume.getVoxel(x + 1, y + 1, z + 1); // sx7
-        }
+        sx += alpha * (1 - beta) * (1 - gamma) * volume.getVoxel(x + 1, y, z); // sx1
+        sx += (1 - alpha) * beta * (1 - gamma) * volume.getVoxel(x, y + 1, z); // sx2
+        sx += alpha * beta * (1 - gamma) * volume.getVoxel(x + 1, y + 1, z); // sx3
+        sx += (1 - alpha) * (1 - beta) * gamma * volume.getVoxel(x, y, z + 1); // sx4
+        sx += alpha * (1 - beta) * gamma * volume.getVoxel(x + 1, y, z + 1); // sx5
+        sx += (1 - alpha) * beta * gamma * volume.getVoxel(x, y + 1, z + 1); // sx6
+        sx += alpha * beta * gamma * volume.getVoxel(x + 1, y + 1, z + 1); // sx7
 
         return (short) Math.round(sx);
     }
