@@ -180,6 +180,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double dx = coord[0], dy = coord[1], dz = coord[2];
 
         // Verify they are inside the volume
+        // NOTE: 
         if (dx < 0 || dx >= volume.getDimX() - 1 || dy < 0 || dy >= volume.getDimY() - 1 || dz < 0
                 || dz >= volume.getDimZ() - 1) {
 
@@ -224,7 +225,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             sx += alpha * beta * gamma * volume.getVoxel(x + 1, y + 1, z + 1); // sx7
         }
 
-        return (short) Math.floor(sx);
+        return (short) Math.round(sx);
     }
 
     /**
