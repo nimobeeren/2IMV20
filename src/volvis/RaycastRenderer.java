@@ -176,9 +176,39 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @return The voxel value.
      */
     private short getVoxelTrilinear(double[] coord) {
-        // TODO 1: Implement Tri-Linear interpolation and use it in your code
-        // instead of getVoxel().
-        return 0;
+        // Get coordinates
+        double dx = coord[0], dy = coord[1], dz = coord[2];
+
+        // Verify they are inside the volume
+        if (dx < 0 || dx >= volume.getDimX() - 1 || dy < 0 || dy >= volume.getDimY() - 1 || dz < 0
+                || dz >= volume.getDimZ() - 1) {
+
+            // If not, just return 0
+            return 0;
+        }
+
+        // Get the closest x, y, z to dx, dy, dz that are integers
+        // This is important as our data is discrete (not continuous)
+        int x = (int) Math.floor(dx);
+        int y = (int) Math.floor(dy);
+        int z = (int) Math.floor(dz);
+
+        // Define the coordinate relative to its encapsulating cube
+        double alpha = dx - x;
+        double beta = dy - y;
+        double gamma = dz - z;
+
+        // Interpolate the values at the vertices sx0..sx7 of the encapsulating cube
+        double sx = (1 - alpha) * (1 - beta) * (1 - gamma) * volume.getVoxel(x, y, z) // sx0
+                + alpha * (1 - beta) * (1 - gamma) * volume.getVoxel(x + 1, y, z) // sx1
+                + (1 - alpha) * beta * (1 - gamma) * volume.getVoxel(x, y + 1, z) // sx2
+                + alpha * beta * (1 - gamma) * volume.getVoxel(x + 1, y + 1, z) // sx3
+                + (1 - alpha) * (1 - beta) * gamma * volume.getVoxel(x, y, z + 1) // sx4
+                + alpha * (1 - beta) * gamma * volume.getVoxel(x + 1, y, z + 1) // sx5
+                + (1 - alpha) * beta * gamma * volume.getVoxel(x, y + 1, z + 1) // sx6
+                + alpha * beta * gamma * volume.getVoxel(x + 1, y + 1, z + 1); // sx7
+
+        return (short) Math.round(sx);
     }
 
     /**
@@ -270,9 +300,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 // computes the pixelCoord which contains the 3D coordinates of the pixels (i,j)
                 computePixelCoordinatesFloat(pixelCoord, volumeCenter, uVec, vVec, i, j);
 
-                int val = getVoxel(pixelCoord);
-                //NOTE: you have to implement this function to get the tri-linear interpolation
-                //int val = getVoxelTrilinear(pixelCoord);
+                // Get the intensity value for the voxel at given coordinates
+                int val = getVoxelTrilinear(pixelCoord);
 
                 // Map the intensity to a grey value by linear scaling
                 pixelColor.r = val / max;
