@@ -428,10 +428,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         VectorMath.setVector(lightVector, rayVector[0], rayVector[1], rayVector[2]);
 
         //Initialization of the colors as floating point values
-        double r, g, b;
-        r = g = b = 0.0;
-        double alpha = 0.0;
-        double opacity = 0;
+        double r, g, b, a;
+        r = g = b = a = 0.0;
 
         //compute the increment and the number of samples
         double[] increments = new double[3];
@@ -459,34 +457,35 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     r = colorAux.r;
                     g = colorAux.g;
                     b = colorAux.b;
-                    alpha = colorAux.a;
+                    a = colorAux.a;
                     break;
                 case TRANSFER2D:
                     // 2D transfer function 
                     r = tFunc2DFront.color.r;
                     g = tFunc2DFront.color.g;
                     b = tFunc2DFront.color.b;
-                    alpha = voxel_color.a;
-                    // TODO: implement levoy opacity
-                    // alpha *= computeLevoyOpacity(tFunc2D.baseIntensity, tFunc2D.radius, intensity, gradient.mag)
+                    a = tFunc2DFront.color.a;
+                    a *= computeOpacity2DTF(tFunc2DFront.baseIntensity, tFunc2DFront.radius, value, gradient.mag);
                     break;
             }
             
             if (shadingMode) {
-                // NOTE: are we supposed to do this now?
-                // Shading mode on
-                r = 1;
-                g = 0;
-                b = 1;
-                opacity = 1;
+                // Shading mode on: only calculate shadings if the voxel is visible.
+                if (a > 0) {
+                    colorAux = new TFColor(r, g, b, a);
+                    colorAux = computePhongShading(colorAux, gradient, lightVector, rayVector);
+                    r = colorAux.r;
+                    g = colorAux.g;
+                    b = colorAux.b;
+                    a = colorAux.a;
+                }
             }
 
             // Front to Back composing
-            voxel_color.r += (1.0 - voxel_color.a) * alpha * r;
-            voxel_color.g += (1.0 - voxel_color.a) * alpha * g;
-            voxel_color.b += (1.0 - voxel_color.a) * alpha * b;
-            voxel_color.a += (1.0 - voxel_color.a) * alpha;
-            opacity = voxel_color.a;
+            voxel_color.r += (1.0 - voxel_color.a) * a * r;
+            voxel_color.g += (1.0 - voxel_color.a) * a * g;
+            voxel_color.b += (1.0 - voxel_color.a) * a * b;
+            voxel_color.a += (1.0 - voxel_color.a) * a;
     
             for (int i = 0; i < 3; i++) {
                 currentPos[i] += increments[i];
@@ -497,10 +496,10 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         r = voxel_color.r;
         g = voxel_color.g;
         b = voxel_color.b;
-        alpha = opacity;
+        a = voxel_color.a;
 
         //computes the color
-        int color = computePackedPixelColor(r, g, b, alpha);
+        int color = computePackedPixelColor(r, g, b, a);
         return color;
     }
 
@@ -518,7 +517,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             double[] rayVector) {
 
         // TODO 7: Implement Phong Shading.
-        TFColor color = new TFColor(0, 0, 0, 1);
+        TFColor color = new TFColor(255, 0, 0, 1);
 
         return color;
     }
