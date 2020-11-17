@@ -433,37 +433,66 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double alpha = 0.0;
         double opacity = 0;
 
-        TFColor voxel_color = new TFColor();
+        //compute the increment and the number of samples
+        double[] increments = new double[3];
+        VectorMath.setVector(increments, rayVector[0] * sampleStep, rayVector[1] * sampleStep, rayVector[2] * sampleStep);
+
+        // Compute the number of times we need to sample
+        double distance = VectorMath.distance(entryPoint, exitPoint);
+        int nrSamples = 1 + (int) Math.floor(distance / sampleStep);
+
+        //the current position is initialized as the entry point
+        double[] currentPos = new double[3];
+        VectorMath.setVector(currentPos, entryPoint[0], entryPoint[1], entryPoint[2]);
+
+        TFColor voxel_color = new TFColor(0, 0, 0, 0);
         TFColor colorAux = new TFColor();
 
-        // TODO 2: To be Implemented this function. Now, it just gives back a constant color depending on the mode
-        switch (modeFront) {
-            case COMPOSITING:
-                // 1D transfer function 
-                voxel_color.r = 1;
-                voxel_color.g = 0;
-                voxel_color.b = 0;
-                voxel_color.a = 1;
-                opacity = 1;
-                break;
-            case TRANSFER2D:
-                // 2D transfer function 
-                voxel_color.r = 0;
-                voxel_color.g = 1;
-                voxel_color.b = 0;
-                voxel_color.a = 1;
-                opacity = 1;
-                break;
-        }
+        do {
+            double value = getVoxelTrilinear(currentPos);
+            VoxelGradient gradient = getGradient(currentPos); // NOTE: replace by getGradientTrilinear later?
 
-        if (shadingMode) {
-            // Shading mode on
-            voxel_color.r = 1;
-            voxel_color.g = 0;
-            voxel_color.b = 1;
-            voxel_color.a = 1;
-            opacity = 1;
-        }
+            switch (modeFront) {
+                case COMPOSITING:
+                    // 1D transfer function 
+                    colorAux = tFuncFront.getColor((int)value);
+                    r = colorAux.r;
+                    g = colorAux.g;
+                    b = colorAux.b;
+                    alpha = colorAux.a;
+                    break;
+                case TRANSFER2D:
+                    // 2D transfer function 
+                    r = tFunc2DFront.color.r;
+                    g = tFunc2DFront.color.g;
+                    b = tFunc2DFront.color.b;
+                    alpha = voxel_color.a;
+                    // TODO: implement levoy opacity
+                    // alpha *= computeLevoyOpacity(tFunc2D.baseIntensity, tFunc2D.radius, intensity, gradient.mag)
+                    break;
+            }
+            
+            if (shadingMode) {
+                // NOTE: are we supposed to do this now?
+                // Shading mode on
+                r = 1;
+                g = 0;
+                b = 1;
+                opacity = 1;
+            }
+
+            // Front to Back composing
+            voxel_color.r += (1.0 - voxel_color.a) * alpha * r;
+            voxel_color.g += (1.0 - voxel_color.a) * alpha * g;
+            voxel_color.b += (1.0 - voxel_color.a) * alpha * b;
+            voxel_color.a += (1.0 - voxel_color.a) * alpha;
+            opacity = voxel_color.a;
+    
+            for (int i = 0; i < 3; i++) {
+                currentPos[i] += increments[i];
+            }
+            nrSamples--;
+        } while (nrSamples > 0);
 
         r = voxel_color.r;
         g = voxel_color.g;
