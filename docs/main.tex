@@ -28,6 +28,7 @@
 %% it is recomended to use ``\autoref{sec:bla}'' instead of ``Fig.~\ref{sec:bla}''
 \graphicspath{{figures/}{pictures/}{images/}{./}} % where to search for the images
 
+\usepackage{hyperref} % to enable \autoref
 \usepackage{microtype}                 % use micro-typography (slightly more compact, better to read)
 \PassOptionsToPackage{warn}{textcomp}  % to address font issues with \textrightarrow
 \usepackage{textcomp}                  % use better special symbols
@@ -51,7 +52,7 @@
 
 \subsection{Trilinear Interpolation}
 
-In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply the method of trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as desired. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class.
+In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply the method of trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as desired. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. The results can be observed in \autoref{fig:trilinear}.
 
 \section{Conclusion}
 ``I always thought something was fundamentally wrong with the universe'' \citep{adams1995hitchhiker}
@@ -64,9 +65,9 @@ In order to achieve a smooth transition of intensity between voxels, we apply so
 
 \begin{figure}[h!]
 \centering
-\includegraphics[scale=1.7]{universe}
-\caption{The Universe}
-\label{fig:universe}
+\includegraphics[width=200px]{trilinear-on}
+\caption{An orange, visualized using the composite method and with trilinear interpolation applied.}
+\label{fig:trilinear}
 \end{figure}
 
 \end{document}
