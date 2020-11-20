@@ -25,22 +25,23 @@
   \DeclareGraphicsExtensions{.eps}     % for pure latex we expect eps files
 \fi%
 
-%% it is recomended to use ``\autoref{sec:bla}'' instead of ``Fig.~\ref{sec:bla}''
 \graphicspath{{figures/}{pictures/}{images/}{./}} % where to search for the images
 
-\usepackage{hyperref} % to enable \autoref
 \usepackage{microtype}                 % use micro-typography (slightly more compact, better to read)
 \PassOptionsToPackage{warn}{textcomp}  % to address font issues with \textrightarrow
 \usepackage{textcomp}                  % use better special symbols
 \usepackage{mathptmx}                  % use matching math font
 \usepackage{times}                     % we use Times as the main font
 \renewcommand*\ttdefault{txtt}         % a nicer typewriter font
+\usepackage{hyperref}                  % to enable \autoref
+\usepackage{caption}
+\usepackage{subcaption}
 
 % Title
 \title{Volume Rendering Assignment\\2IMV20\\Technische Universiteit Eindhoven}
 
 % Authors and group. Replace with your names and group number
-\author{N. Beeren \quad H. Dias \quad G. Slavova\\Group 13}
+\author{N. Beeren \quad H.A.C. Dias \quad G. Slavova\\Group 13}
 \date{December 2020}
 
 % Begin document
@@ -63,11 +64,21 @@ In order to achieve a smooth transition of intensity between voxels, we apply so
 \appendix
 \section{Figures}
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=200px]{trilinear-on}
-\caption{An orange, visualized using the composite method and with trilinear interpolation applied.}
-\label{fig:trilinear}
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{trilinear-off}
+    \caption{Trilinear interpolation disabled.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{trilinear-on}
+    \caption{Trilinear interpolation enabled.}
+  \end{subfigure}
+  \caption{Result of compositing visualization with and without trilinear interpolation on the \textit{orange} dataset.}
+  \label{fig:trilinear}
 \end{figure}
 
 \end{document}
