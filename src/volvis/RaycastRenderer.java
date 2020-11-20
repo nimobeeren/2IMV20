@@ -447,6 +447,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         TFColor colorAux = new TFColor();
 
         do {
+            // Using getVoxelTrilinear instead of getVoxel allows for a better visualization
+            // with increased image quality.
             double value = getVoxelTrilinear(currentPos);
             VoxelGradient gradient = getGradient(currentPos); // NOTE: replace by getGradientTrilinear later?
 
