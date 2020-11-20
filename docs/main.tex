@@ -39,7 +39,7 @@
 \title{Volume Rendering Assignment\\2IMV20\\Technische Universiteit Eindhoven}
 
 % Authors and group. Replace with your names and group number
-\author{Author1 Surname1 and Author2 Surname2\\Group X}
+\author{N. Beeren \quad H. Dias \quad G. Slavova\\Group 13}
 \date{December 2020}
 
 % Begin document
@@ -49,7 +49,9 @@
 
 \section{Introduction}
 
-Fill this document with your solution. Refer to code variables, function names, classes, etc. with {\tt FunctionName}.
+\subsection{Trilinear Interpolation}
+
+In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply the method of trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as desired. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class.
 
 \section{Conclusion}
 ``I always thought something was fundamentally wrong with the universe'' \citep{adams1995hitchhiker}
