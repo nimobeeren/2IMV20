@@ -539,11 +539,14 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double[] entryPoint = new double[3];
         double[] exitPoint = new double[3];
 
-        // TODO 5: Limited modification is needed
         // increment in the pixel domain in pixel units
         int increment = 1;
         // sample step in voxel units
         int sampleStep = 1;
+        if(interactiveMode){
+            increment = 2;
+            sampleStep = 5;
+        }
 
         // reset the image to black
         resetImage();
