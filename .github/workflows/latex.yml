@@ -1,7 +1,7 @@
 name: Preview LaTeX document
 on: [push]
 jobs:
-  build_latex:
+  preview_latex:
     runs-on: ubuntu-latest
     steps:
       - name: Check out latest changes
@@ -11,3 +11,8 @@ jobs:
         with:
           working_directory: docs
           root_file: main.tex
+      - name: Upload document
+        uses: actions/upload-artifact@v2
+        with:
+          name: Report preview
+          path: docs/main.pdf          
