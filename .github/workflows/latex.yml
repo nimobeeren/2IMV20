@@ -1,5 +1,5 @@
-name: Preview LaTeX document
-on: [push]
+name: Build LaTeX document
+on: pull_request
 jobs:
   preview_latex:
     runs-on: ubuntu-latest
@@ -14,5 +14,5 @@ jobs:
       - name: Upload document
         uses: actions/upload-artifact@v2
         with:
-          name: Report preview
-          path: docs/main.pdf          
+          name: Report PDF
+          path: docs/main.pdf
