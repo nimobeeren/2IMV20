@@ -1,7 +1,10 @@
 name: Build LaTeX document
-on: pull_request
+on: 
+  pull_request:
+    paths:
+      - 'docs/**'
 jobs:
-  preview_latex:
+  build_latex:
     runs-on: ubuntu-latest
     steps:
       - name: Check out latest changes
