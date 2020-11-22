@@ -1,0 +1,12 @@
+name: Preview LaTeX document
+on: [push]
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out latest changes
+        uses: actions/checkout@v2
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: docs/main.tex
