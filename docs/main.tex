@@ -54,6 +54,11 @@
 
 In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply the method of trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as desired. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. The results can be observed in \autoref{fig:trilinear}.
 
+\subsection{Ray Composite}
+
+To implement the ray composite function, we started by calculating the increment and the number of samples, similarly to what was already done in the MIPS ray tracing function. Then, for each sample, given the trilinear interpolation, the gradient trilinear and the mode, we calculate the voxel value accordingly. For the 2D transfer function we use {\tt computeOpacity2DTF} and for the Phong shading we use {\tt computePhongShading}. In the end of each iteration, we implement a front to back composing using a similar formula from the slides: $I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha)$, where $\alpha$ is the opacity and $c_i$ is the color.
+
+
 \section{Conclusion}
 ``I always thought something was fundamentally wrong with the universe'' \citep{adams1995hitchhiker}
 
