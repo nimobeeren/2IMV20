@@ -8,7 +8,7 @@ import gui.RaycastRendererPanel;
 import gui.TransferFunction2DEditor;
 import gui.TransferFunctionEditor;
 import java.awt.image.BufferedImage;
-
+import java.util.Date;
 import util.TFChangeListener;
 import util.VectorMath;
 import volume.GradientVolume;
@@ -667,8 +667,21 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         System.out.println("Assigning volume");
         volume = vol;
 
+        // TODO: remove timing
+        long start = System.currentTimeMillis();
         System.out.println("Computing gradients");
         gradients = new GradientVolume(vol);
+        long end = System.currentTimeMillis();
+        System.out.println("Computing gradients took: " + (end - start) + "ms");
+
+        // TODO: remove this block
+        // Gradient testing code
+        int x = vol.getDimX() / 2;
+        int y = vol.getDimY() / 2;
+        int z = vol.getDimZ() / 2;
+        VoxelGradient grad = gradients.getGradient(x, y, z);
+        System.out.println(String.format("Gradient at (%d, %d, %d) = (%.3f, %.3f, %.3f)", x, y, z, grad.x,
+                grad.y, grad.z));
 
         // set up image for storing the resulting rendering
         // the image width and height are equal to the length of the volume diagonal
