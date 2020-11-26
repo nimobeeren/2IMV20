@@ -56,7 +56,7 @@ In order to achieve a smooth transition of intensity between voxels, we apply so
 
 \subsection{Ray Composite}
 
-To implement the ray composite function, we started by calculating the increment and the number of samples, similarly to what was already done in the MIPS ray tracing function. Then, for each sample, given the trilinear interpolation, the gradient trilinear and the mode, we calculate the voxel value accordingly. For the 2D transfer function we use {\tt computeOpacity2DTF} and for the Phong shading we use {\tt computePhongShading}. In the end of each iteration, we implement a front to back composing using a similar formula from the slides: $I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha)$, where $\alpha$ is the opacity and $c_i$ is the color.
+To implement the ray composite function, we started by calculating the increment and the number of samples, similarly to what was already done in the MIPS ray tracing function. Then, for each sample, given the trilinear interpolation, the gradient trilinear and the mode, we calculate the voxel value accordingly. For the 2D transfer function we use {\tt computeOpacity2DTF} and for the Phong shading we use {\tt computePhongShading}. In the end of each iteration, we implement a front to back composing using a similar formula from the slides: $I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha)$, where $\alpha$ is the opacity and $c_i$ is the color The implementation can be found in the method {\tt traceRayComposite} of the {\tt RaycastRenderer} class.
 
 
 \section{Conclusion}
