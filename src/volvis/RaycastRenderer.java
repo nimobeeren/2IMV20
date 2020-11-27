@@ -388,21 +388,34 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         // another light vector would be possible
         VectorMath.setVector(lightVector, rayVector[0], rayVector[1], rayVector[2]);
 
-        // TODO 3: Implement isosurface rendering.
-        //Initialization of the colors as floating point values
-        double r, g, b;
-        r = g = b = 0.0;
-        double alpha = 0.0;
-        double opacity = 0;
+        double distance = VectorMath.distance(entryPoint, exitPoint);
+        int nrSamples = 1 + (int) Math.floor(distance / sampleStep);
 
-        // isoColorFront contains the isosurface color from the GUI
-        r = isoColorFront.r;
-        g = isoColorFront.g;
-        b = isoColorFront.b;
-        alpha = 1.0;
-        //computes the color
-        int color = computePackedPixelColor(r, g, b, alpha);
-        return color;
+        // TODO 3: Implement isosurface rendering.
+        double[] increments = new double[3];
+        double[] currentPos = new double[3];
+        VectorMath.setVector(increments, rayVector[0] * sampleStep, rayVector[1] * sampleStep, rayVector[2] * sampleStep);
+        VectorMath.setVector(currentPos, entryPoint[0], entryPoint[1], entryPoint[2]);
+        do {
+            double value = getVoxelTrilinear(currentPos);
+            //This needs to be changes with the new gradient
+            VoxelGradient gradient = getGradient(currentPos);
+            
+            if(value > isoValueFront){
+                //TODO Uncomment this after implementing shading and remove the other return
+                //TFColor color = computePhongShading(isoColorFront, gradient, lightVector, rayVector);
+                //return computePackedPixelColor(color.r, color.g, color.b, color.a);
+                return computePackedPixelColor(isoColorFront.r, isoColorFront.g, isoColorFront.b, isoColorFront.a);
+            }
+
+            // Increment current position
+            for (int i = 0; i < 3; i++) {
+                 currentPos[i] += increments[i];
+            }
+            nrSamples--;     
+        } while (nrSamples > 0);
+        // No hits were found return black
+        return computePackedPixelColor(0, 0, 0, 0);
     }
 
     /**
