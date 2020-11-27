@@ -197,7 +197,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double beta = dy - y;
         double gamma = dz - z;
 
-        // Interpolate the values at the vertices sx0..sx7 of the encapsulating cube
+        // Interpolate the intensity values sx0..sx7 at the vertices of the encapsulating cube
         double sx = (1 - alpha) * (1 - beta) * (1 - gamma) * volume.getVoxel(x, y, z) // sx0
                 + alpha * (1 - beta) * (1 - gamma) * volume.getVoxel(x + 1, y, z) // sx1
                 + (1 - alpha) * beta * (1 - gamma) * volume.getVoxel(x, y + 1, z) // sx2
@@ -267,7 +267,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         float beta = (float) dy - y;
         float gamma = (float) dz - z;
 
-        // Linearly interpolate the gradients at each of the vertices gx0..gx7 of the encapsulating cube
+        // Interpolate the gradients gx0..gx7 at the vertices of the encapsulating cube
         return gradients.getGradient(x, y, z).scale((1 - alpha) * (1 - beta) * (1 - gamma)) // gx0
                 .add(gradients.getGradient(x + 1, y, z).scale(alpha * (1 - beta) * (1 - gamma))) // gx1
                 .add(gradients.getGradient(x, y + 1, z).scale((1 - alpha) * beta * (1 - gamma))) // gx2
