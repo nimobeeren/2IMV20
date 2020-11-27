@@ -37,10 +37,10 @@
 \usepackage{subcaption}                % to support captions for subfigures
 
 % Title
-\title{Volume Rendering Assignment\\2IMV20\\Technische Universiteit Eindhoven}
+\title{Volume Rendering Assignment\\2IMV20\\Eindhoven University of Technology}
 
 % Authors and group. Replace with your names and group number
-\author{N. Beeren \quad H.A.C. Dias \quad G. Slavova\\Group 13}
+\author{N. Beeren \quad H.A.C. Dias \quad G.S. Slavova\\Group 13}
 \date{December 2020}
 
 % Begin document
@@ -53,7 +53,7 @@
 \subsection{Trilinear Interpolation}
 \label{subsec:trilinear}
 
-In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply the method of trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as desired. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. The results can be observed in \autoref{fig:trilinear}.
+In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. The results can be observed in \autoref{fig:trilinear}.
 
 \subsection{Gradients}
 
