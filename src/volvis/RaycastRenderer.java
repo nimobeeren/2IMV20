@@ -8,7 +8,6 @@ import gui.RaycastRendererPanel;
 import gui.TransferFunction2DEditor;
 import gui.TransferFunctionEditor;
 import java.awt.image.BufferedImage;
-
 import util.TFChangeListener;
 import util.VectorMath;
 import volume.GradientVolume;
@@ -176,7 +175,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @return The voxel value.
      */
     private short getVoxelTrilinear(double[] coord) {
-        // Get coordinates
+        // Get the pixel coordinates
         double dx = coord[0], dy = coord[1], dz = coord[2];
 
         // Verify all points of the encapsulating cube are inside the volume
@@ -187,18 +186,18 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             return 0;
         }
 
-        // Get the closest x, y, z to dx, dy, dz that are integers
-        // This is important as our data is discrete (not continuous)
+        // Floor the values of dx, dy, dz to find the coordinates of one of the vertices of the
+        // encapsulating cube
         int x = (int) Math.floor(dx);
         int y = (int) Math.floor(dy);
         int z = (int) Math.floor(dz);
 
-        // Define the coordinate relative to its encapsulating cube
+        // Define the coordinates relative to its encapsulating cube
         double alpha = dx - x;
         double beta = dy - y;
         double gamma = dz - z;
 
-        // Interpolate the values at the vertices sx0..sx7 of the encapsulating cube
+        // Interpolate the intensity values sx0..sx7 at the vertices of the encapsulating cube
         double sx = (1 - alpha) * (1 - beta) * (1 - gamma) * volume.getVoxel(x, y, z) // sx0
                 + alpha * (1 - beta) * (1 - gamma) * volume.getVoxel(x + 1, y, z) // sx1
                 + (1 - alpha) * beta * (1 - gamma) * volume.getVoxel(x, y + 1, z) // sx2
@@ -246,8 +245,37 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @return The voxel gradient.
      */
     private VoxelGradient getGradientTrilinear(double[] coord) {
-        // TODO 6: Implement Tri-linear interpolation for gradients
-        return ZERO_GRADIENT;
+        // Get the pixel coordinates
+        double dx = coord[0], dy = coord[1], dz = coord[2];
+
+        // Verify they are inside the volume gradient
+        if (dx < 0 || dx > (gradients.getDimX() - 2) || dy < 0 || dy > (gradients.getDimY() - 2)
+                || dz < 0 || dz > (gradients.getDimZ() - 2)) {
+
+            // If not, just return a zero gradient
+            return ZERO_GRADIENT;
+        }
+
+        // Floor the values of dx, dy, dz to find the coordinates of one of the vertices of the
+        // encapsulating cube
+        int x = (int) Math.floor(dx);
+        int y = (int) Math.floor(dy);
+        int z = (int) Math.floor(dz);
+
+        // Define the pixel coordinates relative to its encapsulating cube
+        float alpha = (float) dx - x;
+        float beta = (float) dy - y;
+        float gamma = (float) dz - z;
+
+        // Interpolate the gradients gx0..gx7 at the vertices of the encapsulating cube
+        return gradients.getGradient(x, y, z).scale((1 - alpha) * (1 - beta) * (1 - gamma)) // gx0
+                .add(gradients.getGradient(x + 1, y, z).scale(alpha * (1 - beta) * (1 - gamma))) // gx1
+                .add(gradients.getGradient(x, y + 1, z).scale((1 - alpha) * beta * (1 - gamma))) // gx2
+                .add(gradients.getGradient(x + 1, y + 1, z).scale(alpha * beta * (1 - gamma))) // gx3
+                .add(gradients.getGradient(x, y, z + 1).scale((1 - alpha) * (1 - beta) * gamma)) // gx4
+                .add(gradients.getGradient(x + 1, y, z + 1).scale(alpha * (1 - beta) * gamma)) // gx5
+                .add(gradients.getGradient(x, y + 1, z + 1).scale((1 - alpha) * beta * gamma)) // gx6
+                .add(gradients.getGradient(x + 1, y + 1, z + 1).scale(alpha * beta * gamma)); // gx7
     }
 
     /**
@@ -388,21 +416,34 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         // another light vector would be possible
         VectorMath.setVector(lightVector, rayVector[0], rayVector[1], rayVector[2]);
 
-        // TODO 3: Implement isosurface rendering.
-        //Initialization of the colors as floating point values
-        double r, g, b;
-        r = g = b = 0.0;
-        double alpha = 0.0;
-        double opacity = 0;
+        double distance = VectorMath.distance(entryPoint, exitPoint);
+        int nrSamples = 1 + (int) Math.floor(distance / sampleStep);
 
-        // isoColorFront contains the isosurface color from the GUI
-        r = isoColorFront.r;
-        g = isoColorFront.g;
-        b = isoColorFront.b;
-        alpha = 1.0;
-        //computes the color
-        int color = computePackedPixelColor(r, g, b, alpha);
-        return color;
+        // TODO 3: Implement isosurface rendering.
+        double[] increments = new double[3];
+        double[] currentPos = new double[3];
+        VectorMath.setVector(increments, rayVector[0] * sampleStep, rayVector[1] * sampleStep, rayVector[2] * sampleStep);
+        VectorMath.setVector(currentPos, entryPoint[0], entryPoint[1], entryPoint[2]);
+        do {
+            double value = getVoxelTrilinear(currentPos);
+            //This needs to be changes with the new gradient
+            VoxelGradient gradient = getGradient(currentPos);
+            
+            if(value > isoValueFront){
+                //TODO Uncomment this after implementing shading and remove the other return
+                //TFColor color = computePhongShading(isoColorFront, gradient, lightVector, rayVector);
+                //return computePackedPixelColor(color.r, color.g, color.b, color.a);
+                return computePackedPixelColor(isoColorFront.r, isoColorFront.g, isoColorFront.b, isoColorFront.a);
+            }
+
+            // Increment current position
+            for (int i = 0; i < 3; i++) {
+                 currentPos[i] += increments[i];
+            }
+            nrSamples--;     
+        } while (nrSamples > 0);
+        // No hits were found return black
+        return computePackedPixelColor(0, 0, 0, 0);
     }
 
     /**
@@ -450,7 +491,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             // Using getVoxelTrilinear instead of getVoxel allows for a better visualization
             // with increased image quality.
             double value = getVoxelTrilinear(currentPos);
-            VoxelGradient gradient = getGradient(currentPos); // NOTE: replace by getGradientTrilinear later?
+            VoxelGradient gradient = getGradientTrilinear(currentPos);
 
             switch (modeFront) {
                 case COMPOSITING:
@@ -629,7 +670,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             double voxelValue, double gradMagnitude) {
 
         double opacity = 0.0;
-
+        double radius = material_r / gradients.getMaxGradientMagnitude();
         // TODO 8: Implement weight based opacity.
         return opacity;
     }
@@ -667,8 +708,20 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         System.out.println("Assigning volume");
         volume = vol;
 
+        // TODO: remove timing
+        long start = System.currentTimeMillis();
         System.out.println("Computing gradients");
         gradients = new GradientVolume(vol);
+        long end = System.currentTimeMillis();
+        System.out.println("Computing gradients took: " + (end - start) + "ms");
+
+        // TODO: remove this block
+        // Gradient testing code
+        int x = vol.getDimX() / 2;
+        int y = vol.getDimY() / 2;
+        int z = vol.getDimZ() / 2;
+        VoxelGradient grad = gradients.getGradient(x, y, z);
+        System.out.println(String.format("Gradient at (%d, %d, %d) = %s", x, y, z, grad.toString()));
 
         // set up image for storing the resulting rendering
         // the image width and height are equal to the length of the volume diagonal

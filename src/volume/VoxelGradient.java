@@ -24,4 +24,36 @@ public class VoxelGradient {
         mag = (float) Math.sqrt(x*x + y*y + z*z);
     }
     
+    /**
+     * Multiply the gradient vector with a scalar.
+     * @param s scalar
+     * @author Group 13
+     */
+    public VoxelGradient scale(float s) {
+        x *= s;
+        y *= s;
+        z *= s;
+        mag = (float) Math.sqrt(x*x + y*y + z*z);
+        return this;
+    }
+
+    /**
+     * Add two gradient vectors together.
+     * @param g another gradient
+     * @author Group 13
+     */
+    public VoxelGradient add(VoxelGradient g) {
+        x += g.x;
+        y += g.y;
+        z += g.z;
+        mag = (float) Math.sqrt(x*x + y*y + z*z);
+        return this;
+    }
+
+    /**
+     * @author Group 13
+     */
+    public String toString() {
+        return String.format("(%.3f, %.3f, %.3f)", x, y, z);
+    }
 }

@@ -53,12 +53,30 @@ public class GradientVolume {
      * paper.
      */
     private void compute() {
-        // TODO 4: Implement gradient computation.
-        // this just initializes all gradients to the vector (0,0,0)
-        for (int i = 0; i < data.length; i++) {
-            data[i] = zero;
-        }
+        // Compute the gradient for every voxel in the volume
+        for (int x = 0; x < dimX; x++) {
+            for (int y = 0; y < dimY; y++) {
+                for (int z = 0; z < dimZ; z++) {
+                    // The gradient on the edge of a volume is not defined, so if we're on the edge
+                    // we just set the gradient to zero
+                    if (x == 0 || y == 0 || z == 0 || x == dimX - 1 || y == dimY - 1
+                            || z == dimZ - 1) {
+                        // We are on the edge of the volume
+                        setGradient(x, y, z, zero);
+                    } else {
+                        // We are not on the edge of the volume
+                        double gx =
+                                0.5 * (volume.getVoxel(x + 1, y, z) - volume.getVoxel(x - 1, y, z));
+                        double gy =
+                                0.5 * (volume.getVoxel(x, y + 1, z) - volume.getVoxel(x, y - 1, z));
+                        double gz =
+                                0.5 * (volume.getVoxel(x, y, z + 1) - volume.getVoxel(x, y, z - 1));
 
+                        setGradient(x, y, z, new VoxelGradient((float) gx, (float) gy, (float) gz));
+                    }
+                }
+            }
+        }
     }
 
     public double getMaxGradientMagnitude() {
