@@ -6,6 +6,7 @@
 \usepackage{natbib}
 \usepackage{graphicx}
 
+
 %% These few lines make a distinction between latex and pdflatex calls and they
 %% bring in essential packages for graphics and font handling.
 %% Note that due to the \DeclareGraphicsExtensions{} call it is no longer necessary
@@ -50,12 +51,35 @@
 
 \section{Introduction}
 
-\subsection{Trilinear Interpolation}
-\label{subsec:trilinear}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum posuere massa, a faucibus dui tristique eu. Proin sit amet diam sed ipsum viverra fermentum. Suspendisse at sem eget diam egestas volutpat. Sed faucibus erat quis nibh rhoncus, ac mattis libero semper. Nam accumsan orci sagittis massa consectetur posuere. Phasellus molestie porta est, eu cursus velit. Nunc vel diam eget lectus sodales aliquet. Mauris maximus velit nec nunc molestie volutpat. Ut fermentum, purus id auctor mollis, turpis odio venenatis nunc, venenatis malesuada orci ligula vel mi. Nulla ut enim ex. Nunc faucibus dictum nisi, quis blandit felis tincidunt vel. Vivamus erat purus, fermentum a enim vitae, maximus lacinia lacus. Phasellus efficitur ut sapien dapibus vulputate. Quisque nec sem ac ante luctus finibus. Sed ac magna mi.
+
+\section{Implementations}
+
+\subsection{Raycasting}
+
+\paragraph{Trilinear Interpolation}
+\label{trilinear_interpolation}
 
 In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. The results can be observed in \autoref{fig:trilinear}.
 
-\subsection{Gradients}
+\paragraph{Ray Composite}
+\label{ray_composite}
+
+To implement the ray composite function, we went for a front-to-back composing strategy. This strategy uses a similar formula to the one studied in class (back-to-front composing):
+
+$$I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha)$$
+
+Where $\alpha$ is the opacity and $c_i$ the color. Since this calculation is based on a sum, we calculate it iteratively. Using the given {\tt rayVector} and {\tt sampleStep} values, we can calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we calculate the value using trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} and the trilinear gradient\textsuperscript{\autoref{trilinear_gradient}} according to the formula and add it to the final voxel color.
+
+The implementation can be found in the method {\tt traceRayComposite} of the {\tt RaycastRenderer} class.
+
+\subparagraph{MIP vs Composite}
+
+TODO: compare both techniques and find some dataset where there's major differences in details. \autoref{fig:mipscomp}
+
+\paragraph{Gradients}
+\label{subsec:gradients}
 
 The work related to gradients consists of two main parts:
 
@@ -66,11 +90,22 @@ The work related to gradients consists of two main parts:
 
 \noindent When the volume is first loaded, an approximate gradient is computed for all voxels, using the method described by Levoy \citep{levoy_1988}. The resulting vectors are stored in a lookup table (LUT).
 
-To achieve a smooth transition of the gradient between voxels, we apply trilinear interpolation, similar to \autoref{subsec:trilinear}. The key difference is that we interpolate gradient vectors instead of scalar intensity values. To aid with scalar multiplication and vector addition, a few utility methods {\tt scale} and {\tt add} were implemented in the {\tt VoxelGradient} class.
+To achieve a smooth transition of the gradient between voxels, we apply trilinear interpolation, similar to \autoref{trilinear_interpolation}. The key difference is that we interpolate gradient vectors instead of scalar intensity values. To aid with scalar multiplication and vector addition, a few utility methods {\tt scale} and {\tt add} were implemented in the {\tt VoxelGradient} class.
+
+\subsection{Isosurface Raycasting and Shading}
+
+\subsection{2-D transfer functions}
+
+\subsection{Cutting plane}
+
+\section{Conclusions}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum posuere massa, a faucibus dui tristique eu. Proin sit amet diam sed ipsum viverra fermentum. Suspendisse at sem eget diam egestas volutpat. Sed faucibus erat quis nibh rhoncus, ac mattis libero semper. Nam accumsan orci sagittis massa consectetur posuere. Phasellus molestie porta est, eu cursus velit. Nunc vel diam eget lectus sodales aliquet. Mauris maximus velit nec nunc molestie volutpat. Ut fermentum, purus id auctor mollis, turpis odio venenatis nunc, venenatis malesuada orci ligula vel mi. Nulla ut enim ex. Nunc faucibus dictum nisi, quis blandit felis tincidunt vel. Vivamus erat purus, fermentum a enim vitae, maximus lacinia lacus. Phasellus efficitur ut sapien dapibus vulputate. Quisque nec sem ac ante luctus finibus. Sed ac magna mi.
 
 \bibliographystyle{plain}
 \bibliography{references}
 
+\pagebreak
 \appendix
 \section{Figures}
 
@@ -89,6 +124,23 @@ To achieve a smooth transition of the gradient between voxels, we apply trilinea
   \end{subfigure}
   \caption{Result of compositing visualization with and without trilinear interpolation on the \textit{orange} dataset.}
   \label{fig:trilinear}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{orange-composite}
+    \caption{Composite with default values.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{orange-mips}
+    \caption{MIPS with default values.}
+  \end{subfigure}
+  \caption{Comparison of different raycasting techniques on \textit{orange} dataset.}
+  \label{fig:mipscomp}
 \end{figure}
 
 \end{document}
