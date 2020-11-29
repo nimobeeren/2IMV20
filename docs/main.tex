@@ -74,6 +74,12 @@ Where $\alpha$ is the opacity and $c_i$ the color. Since this calculation is bas
 
 The implementation can be found in the method {\tt traceRayComposite} of the {\tt RaycastRenderer} class.
 
+\paragraph{Speed up interaction with ray composite}
+\label{speed_up}
+
+A software raycaster is quite slow. To make the application more responsive we lower the resolution during rendering. The class Renderer already has a variable {\tt interactiveMode} that is set to true when there is interaction with the mouse, and is set to false when
+interaction stops. We use this variable in function {\tt raycast()} in{\tt RaycastRenderer} class to check when interaction is present. This way we can lower the resolution by changing the values of the variables {\tt increment} and {\tt sampleStep} to bigget ones leading to lowering the number of steps along the view ray and the number of pixels sampled.  The new values for interactive mode were chosen using the trial-and-error method with respect to the best performance of the application. In \autoref{fig:speedup} can be observed both the time of the rendering in Interactive mode before and after the changes, and the resolution of the model.
+
 \subparagraph{MIP vs Composite}
 
 TODO: compare both techniques and find some dataset where there's major differences in details. \autoref{fig:mipscomp}
@@ -93,6 +99,13 @@ The work related to gradients consists of two main parts:
 To achieve a smooth transition of the gradient between voxels, we apply trilinear interpolation, similar to \autoref{trilinear_interpolation}. The key difference is that we interpolate gradient vectors instead of scalar intensity values. To aid with scalar multiplication and vector addition, a few utility methods {\tt scale} and {\tt add} were implemented in the {\tt VoxelGradient} class.
 
 \subsection{Isosurface Raycasting and Shading}
+
+\paragraph{Isosurface Raycasting}
+\label{isosurface}
+
+Isosurfaces are defined by
+ $$f(x; y; z) = C$$ 
+Where C corresponds to the isovalue that defines the surface. Similarly to Ray Composite\textsuperscript{\autoref{ray_composite}}, we use the given {\tt rayVector} and {\tt sampleStep} values, we can calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the currenly value is greater we check if shading is enabled and apply it using {\tt computePhongShading} is needed, and return the the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computer color after the shafing is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found black is returned. The result without shading enabled can be seen on \autoref{fig:isosurface}.
 
 \subsection{2-D transfer functions}
 
@@ -130,6 +143,23 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum posuere
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
+    \includegraphics[width=\textwidth]{before-speedup}
+    \caption{Interactive mode before speed up changes.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{after-speedup}
+    \caption{Interactive mode after speed up changes.}
+  \end{subfigure}
+  \caption{Result of speeding up interactive mode on the \textit{orange} dataset.}
+  \label{fig:speedup}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{orange-composite}
     \caption{Composite with default values.}
   \end{subfigure}
@@ -142,5 +172,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum posuere
   \caption{Comparison of different raycasting techniques on \textit{orange} dataset.}
   \label{fig:mipscomp}
 \end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{iso-surface}
+  \caption{Isosurface raycasting without shading enabled on \textit{carp} dataset.}
+  \label{fig:isosurface}
+\end{figure}
+
 
 \end{document}
