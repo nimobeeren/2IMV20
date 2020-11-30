@@ -560,19 +560,17 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double diffusion = 0.7;
         double ambient = 0.1;
         double specular = 0.2;
-        double n = 10; // TODO: the project description uses 100, but I'm guessing this is related to the scae
+        double n = 100;
 
         double[] normal = new double[3];
         normal[0] = gradient.x / gradient.mag;
         normal[1] = gradient.y / gradient.mag;
         normal[2] = gradient.y / gradient.mag;
 
-        // TODO: this is rendering in a gray scale. We should put the voxel_color here but it looks bad.
         TFColor color = new TFColor(0, 0, 0, voxel_color.a);
-
-        color.r += ambient;
-        color.g += ambient;
-        color.b += ambient;
+        color.r += voxel_color.r * ambient;
+        color.g += voxel_color.g * ambient;
+        color.b += voxel_color.b * ambient;
 
         double diffusionHelper = VectorMath.dotproduct(normal, lightVector);
         color.r += voxel_color.r * diffusion * diffusionHelper;
