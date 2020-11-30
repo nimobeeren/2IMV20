@@ -565,7 +565,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double[] normal = new double[3];
         normal[0] = gradient.x / gradient.mag;
         normal[1] = gradient.y / gradient.mag;
-        normal[2] = gradient.y / gradient.mag;
+        normal[2] = gradient.z / gradient.mag;
 
         TFColor color = new TFColor(0, 0, 0, voxel_color.a);
         color.r += voxel_color.r * ambient;
