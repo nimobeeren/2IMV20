@@ -30,11 +30,7 @@ public class VoxelGradient {
      * @author Group 13
      */
     public VoxelGradient scale(float s) {
-        x *= s;
-        y *= s;
-        z *= s;
-        mag = (float) Math.sqrt(x*x + y*y + z*z);
-        return this;
+        return new VoxelGradient(x * s, y * s, z * s);
     }
 
     /**
@@ -43,11 +39,7 @@ public class VoxelGradient {
      * @author Group 13
      */
     public VoxelGradient add(VoxelGradient g) {
-        x += g.x;
-        y += g.y;
-        z += g.z;
-        mag = (float) Math.sqrt(x*x + y*y + z*z);
-        return this;
+        return new VoxelGradient(x + g.x, y + g.y, z + g.z);
     }
 
     /**

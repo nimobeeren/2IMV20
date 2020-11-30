@@ -426,7 +426,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         do {
             double value = getVoxelTrilinear(currentPos);
             // TODO: this should be gradient trilinear but it makes the phong shading look worse.
-            VoxelGradient gradient = getGradient(currentPos);
+            VoxelGradient gradient = getGradientTrilinear(currentPos);
 
             if (value > isoValueFront) {
                 TFColor color = isoColorFront;
