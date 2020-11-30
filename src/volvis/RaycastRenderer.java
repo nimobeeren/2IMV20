@@ -302,13 +302,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         VectorMath.setVector(uVec, viewMatrix[0], viewMatrix[4], viewMatrix[8]);
         VectorMath.setVector(vVec, viewMatrix[1], viewMatrix[5], viewMatrix[9]);
 
-        // We get the size of the image/texture we will be puting the result of the 
+        // We get the size of the image/texture we will be puting the result of the
         // volume rendering operation.
         int imageW = image.getWidth();
         int imageH = image.getHeight();
 
         int[] imageCenter = new int[2];
-        // Center of the image/texture 
+        // Center of the image/texture
         imageCenter[0] = imageW / 2;
         imageCenter[1] = imageH / 2;
 
@@ -440,7 +440,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             for (int i = 0; i < 3; i++) {
                 currentPos[i] += increments[i];
             }
-            nrSamples--;     
+            nrSamples--;
         } while (nrSamples > 0);
         // No hits were found return black
         return computePackedPixelColor(0, 0, 0, 0);
@@ -465,7 +465,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double[] lightVector = new double[3];
 
         //the light vector is directed toward the view point (which is the source of the light)
-        // another light vector would be possible 
+        // another light vector would be possible
         VectorMath.setVector(lightVector, rayVector[0], rayVector[1], rayVector[2]);
 
         //Initialization of the colors as floating point values
@@ -495,7 +495,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
             switch (modeFront) {
                 case COMPOSITING:
-                    // 1D transfer function 
+                    // 1D transfer function
                     colorAux = tFuncFront.getColor((int)value);
                     r = colorAux.r;
                     g = colorAux.g;
@@ -503,7 +503,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     a = colorAux.a;
                     break;
                 case TRANSFER2D:
-                    // 2D transfer function 
+                    // 2D transfer function
                     r = tFunc2DFront.color.r;
                     g = tFunc2DFront.color.g;
                     b = tFunc2DFront.color.b;
@@ -511,7 +511,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     a *= computeOpacity2DTF(tFunc2DFront.baseIntensity, tFunc2DFront.radius, value, gradient.mag);
                     break;
             }
-            
+
             if (shadingMode) {
                 // Shading mode on: only calculate shadings if the voxel is visible.
                 if (a > 0) {
@@ -529,7 +529,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             voxel_color.g += (1.0 - voxel_color.a) * a * g;
             voxel_color.b += (1.0 - voxel_color.a) * a * b;
             voxel_color.a += (1.0 - voxel_color.a) * a;
-    
+
             for (int i = 0; i < 3; i++) {
                 currentPos[i] += increments[i];
             }
@@ -577,8 +577,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         color.g += voxel_color.g * diffusion * diffusionHelper;
         color.b += voxel_color.b * diffusion * diffusionHelper;
 
-        double specularHelper = VectorMath.dotproduct(normal, rayVector);
-        color.r += specular * Math.pow(specularHelper, n);
+        double[] reflectionVector = new double[3];
+        VectorMath.multiply(normal, 2, reflectionVector);
+        VectorMath.multiply(normal, VectorMath.dotproduct(reflectionVector, lightVector), reflectionVector);
+        VectorMath.difference(reflectionVector, normal, reflectionVector);
+
+        double[] viewVector = {-rayVector[0], -rayVector[1], -rayVector[2]};
+        double specularHelper = VectorMath.dotproduct(viewVector, rayVector);
         color.g += specular * Math.pow(specularHelper, n);
         color.b += specular * Math.pow(specularHelper, n);
 
@@ -620,13 +625,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         VectorMath.setVector(uVec, viewMatrix[0], viewMatrix[4], viewMatrix[8]);
         VectorMath.setVector(vVec, viewMatrix[1], viewMatrix[5], viewMatrix[9]);
 
-        // We get the size of the image/texture we will be puting the result of the 
+        // We get the size of the image/texture we will be puting the result of the
         // volume rendering operation.
         int imageW = image.getWidth();
         int imageH = image.getHeight();
 
         int[] imageCenter = new int[2];
-        // Center of the image/texture 
+        // Center of the image/texture
         imageCenter[0] = imageW / 2;
         imageCenter[1] = imageH / 2;
 
