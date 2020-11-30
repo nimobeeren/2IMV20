@@ -419,26 +419,26 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double distance = VectorMath.distance(entryPoint, exitPoint);
         int nrSamples = 1 + (int) Math.floor(distance / sampleStep);
 
-        // TODO 3: Implement isosurface rendering.
         double[] increments = new double[3];
         double[] currentPos = new double[3];
         VectorMath.setVector(increments, rayVector[0] * sampleStep, rayVector[1] * sampleStep, rayVector[2] * sampleStep);
         VectorMath.setVector(currentPos, entryPoint[0], entryPoint[1], entryPoint[2]);
         do {
             double value = getVoxelTrilinear(currentPos);
-            //This needs to be changes with the new gradient
+            // TODO: this should be gradient trilinear but it makes the phong shading look worse.
             VoxelGradient gradient = getGradient(currentPos);
-            
-            if(value > isoValueFront){
-                //TODO Uncomment this after implementing shading and remove the other return
-                //TFColor color = computePhongShading(isoColorFront, gradient, lightVector, rayVector);
-                //return computePackedPixelColor(color.r, color.g, color.b, color.a);
-                return computePackedPixelColor(isoColorFront.r, isoColorFront.g, isoColorFront.b, isoColorFront.a);
+
+            if (value > isoValueFront) {
+                TFColor color = isoColorFront;
+                if (shadingMode) {
+                    color = computePhongShading(color, gradient, lightVector, rayVector);
+                }
+                return computePackedPixelColor(color.r, color.g, color.b, color.a);
             }
 
             // Increment current position
             for (int i = 0; i < 3; i++) {
-                 currentPos[i] += increments[i];
+                currentPos[i] += increments[i];
             }
             nrSamples--;     
         } while (nrSamples > 0);
@@ -556,11 +556,33 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param rayVector View vector.
      * @return Computed color for Phong Shading.
      */
-    private TFColor computePhongShading(TFColor voxel_color, VoxelGradient gradient, double[] lightVector,
-            double[] rayVector) {
+    private TFColor computePhongShading(TFColor voxel_color, VoxelGradient gradient, double[] lightVector, double[] rayVector) {
+        double diffusion = 0.7;
+        double ambient = 0.1;
+        double specular = 0.2;
+        double n = 10; // TODO: the project description uses 100, but I'm guessing this is related to the scae
 
-        // TODO 7: Implement Phong Shading.
-        TFColor color = new TFColor(255, 0, 0, 1);
+        double[] normal = new double[3];
+        normal[0] = gradient.x / gradient.mag;
+        normal[1] = gradient.y / gradient.mag;
+        normal[2] = gradient.y / gradient.mag;
+
+        // TODO: this is rendering in a gray scale. We should put the voxel_color here but it looks bad.
+        TFColor color = new TFColor(0, 0, 0, voxel_color.a);
+
+        color.r += ambient;
+        color.g += ambient;
+        color.b += ambient;
+
+        double diffusionHelper = VectorMath.dotproduct(normal, lightVector);
+        color.r += color.r * diffusion * diffusionHelper;
+        color.g += color.g * diffusion * diffusionHelper;
+        color.b += color.b * diffusion * diffusionHelper;
+
+        double specularHelper = VectorMath.dotproduct(normal, rayVector);
+        color.r += specular * Math.pow(specularHelper, n);
+        color.g += specular * Math.pow(specularHelper, n);
+        color.b += specular * Math.pow(specularHelper, n);
 
         return color;
     }
