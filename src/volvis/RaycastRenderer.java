@@ -302,13 +302,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         VectorMath.setVector(uVec, viewMatrix[0], viewMatrix[4], viewMatrix[8]);
         VectorMath.setVector(vVec, viewMatrix[1], viewMatrix[5], viewMatrix[9]);
 
-        // We get the size of the image/texture we will be puting the result of the 
+        // We get the size of the image/texture we will be puting the result of the
         // volume rendering operation.
         int imageW = image.getWidth();
         int imageH = image.getHeight();
 
         int[] imageCenter = new int[2];
-        // Center of the image/texture 
+        // Center of the image/texture
         imageCenter[0] = imageW / 2;
         imageCenter[1] = imageH / 2;
 
@@ -419,28 +419,27 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double distance = VectorMath.distance(entryPoint, exitPoint);
         int nrSamples = 1 + (int) Math.floor(distance / sampleStep);
 
-        // TODO 3: Implement isosurface rendering.
         double[] increments = new double[3];
         double[] currentPos = new double[3];
         VectorMath.setVector(increments, rayVector[0] * sampleStep, rayVector[1] * sampleStep, rayVector[2] * sampleStep);
         VectorMath.setVector(currentPos, entryPoint[0], entryPoint[1], entryPoint[2]);
         do {
             double value = getVoxelTrilinear(currentPos);
-            //This needs to be changes with the new gradient
-            VoxelGradient gradient = getGradient(currentPos);
-            
-            if(value > isoValueFront){
-                //TODO Uncomment this after implementing shading and remove the other return
-                //TFColor color = computePhongShading(isoColorFront, gradient, lightVector, rayVector);
-                //return computePackedPixelColor(color.r, color.g, color.b, color.a);
-                return computePackedPixelColor(isoColorFront.r, isoColorFront.g, isoColorFront.b, isoColorFront.a);
+            VoxelGradient gradient = getGradientTrilinear(currentPos);
+
+            if (value > isoValueFront) {
+                TFColor color = isoColorFront;
+                if (shadingMode) {
+                    color = computePhongShading(color, gradient, lightVector, rayVector);
+                }
+                return computePackedPixelColor(color.r, color.g, color.b, color.a);
             }
 
             // Increment current position
             for (int i = 0; i < 3; i++) {
-                 currentPos[i] += increments[i];
+                currentPos[i] += increments[i];
             }
-            nrSamples--;     
+            nrSamples--;
         } while (nrSamples > 0);
         // No hits were found return black
         return computePackedPixelColor(0, 0, 0, 0);
@@ -465,7 +464,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double[] lightVector = new double[3];
 
         //the light vector is directed toward the view point (which is the source of the light)
-        // another light vector would be possible 
+        // another light vector would be possible
         VectorMath.setVector(lightVector, rayVector[0], rayVector[1], rayVector[2]);
 
         //Initialization of the colors as floating point values
@@ -495,7 +494,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
             switch (modeFront) {
                 case COMPOSITING:
-                    // 1D transfer function 
+                    // 1D transfer function
                     colorAux = tFuncFront.getColor((int)value);
                     r = colorAux.r;
                     g = colorAux.g;
@@ -503,7 +502,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     a = colorAux.a;
                     break;
                 case TRANSFER2D:
-                    // 2D transfer function 
+                    // 2D transfer function
                     r = tFunc2DFront.color.r;
                     g = tFunc2DFront.color.g;
                     b = tFunc2DFront.color.b;
@@ -511,7 +510,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     a *= computeOpacity2DTF(tFunc2DFront.baseIntensity, tFunc2DFront.radius, value, gradient.mag);
                     break;
             }
-            
+
             if (shadingMode) {
                 // Shading mode on: only calculate shadings if the voxel is visible.
                 if (a > 0) {
@@ -529,7 +528,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             voxel_color.g += (1.0 - voxel_color.a) * a * g;
             voxel_color.b += (1.0 - voxel_color.a) * a * b;
             voxel_color.a += (1.0 - voxel_color.a) * a;
-    
+
             for (int i = 0; i < 3; i++) {
                 currentPos[i] += increments[i];
             }
@@ -556,11 +555,37 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param rayVector View vector.
      * @return Computed color for Phong Shading.
      */
-    private TFColor computePhongShading(TFColor voxel_color, VoxelGradient gradient, double[] lightVector,
-            double[] rayVector) {
+    private TFColor computePhongShading(TFColor voxel_color, VoxelGradient gradient, double[] lightVector, double[] rayVector) {
+        double diffusion = 0.7;
+        double ambient = 0.1;
+        double specular = 0.2;
+        double n = 100;
 
-        // TODO 7: Implement Phong Shading.
-        TFColor color = new TFColor(255, 0, 0, 1);
+        double[] normal = new double[3];
+        normal[0] = gradient.x / gradient.mag;
+        normal[1] = gradient.y / gradient.mag;
+        normal[2] = gradient.z / gradient.mag;
+
+        TFColor color = new TFColor(0, 0, 0, voxel_color.a);
+        color.r += voxel_color.r * ambient;
+        color.g += voxel_color.g * ambient;
+        color.b += voxel_color.b * ambient;
+
+        double diffusionHelper = VectorMath.dotproduct(normal, lightVector);
+        color.r += voxel_color.r * diffusion * diffusionHelper;
+        color.g += voxel_color.g * diffusion * diffusionHelper;
+        color.b += voxel_color.b * diffusion * diffusionHelper;
+
+        double[] reflectionVector = new double[3];
+        VectorMath.multiply(normal, 2, reflectionVector);
+        VectorMath.multiply(normal, VectorMath.dotproduct(reflectionVector, lightVector), reflectionVector);
+        VectorMath.difference(reflectionVector, normal, reflectionVector);
+
+        double[] viewVector = {-rayVector[0], -rayVector[1], -rayVector[2]};
+        double specularHelper = VectorMath.dotproduct(viewVector, reflectionVector);
+        color.r += specular * Math.pow(specularHelper, n);
+        color.g += specular * Math.pow(specularHelper, n);
+        color.b += specular * Math.pow(specularHelper, n);
 
         return color;
     }
@@ -600,13 +625,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         VectorMath.setVector(uVec, viewMatrix[0], viewMatrix[4], viewMatrix[8]);
         VectorMath.setVector(vVec, viewMatrix[1], viewMatrix[5], viewMatrix[9]);
 
-        // We get the size of the image/texture we will be puting the result of the 
+        // We get the size of the image/texture we will be puting the result of the
         // volume rendering operation.
         int imageW = image.getWidth();
         int imageH = image.getHeight();
 
         int[] imageCenter = new int[2];
-        // Center of the image/texture 
+        // Center of the image/texture
         imageCenter[0] = imageW / 2;
         imageCenter[1] = imageH / 2;
 
