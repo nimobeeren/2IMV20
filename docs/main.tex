@@ -36,12 +36,13 @@
 \renewcommand*\ttdefault{txtt}         % a nicer typewriter font
 \usepackage{hyperref}                  % to enable \autoref
 \usepackage{subcaption}                % to support captions for subfigures
+\usepackage{enumitem}
 
 % Title
 \title{Volume Rendering Assignment\\2IMV20\\Eindhoven University of Technology}
 
 % Authors and group. Replace with your names and group number
-\author{N. Beeren \quad H.A.C. Dias \quad G.S. Slavova\\Group 13}
+\author{N. Beeren \quad H. A. C. Dias \quad G. S. Slavova\\Group 13}
 \date{December 2020}
 
 % Begin document
@@ -79,16 +80,12 @@ The implementation can be found in the method {\tt traceRayComposite} of the {\t
 
 A software raycaster is quite slow. To make the application more responsive while manipulating the camera, we lower the resolution during rendering. We can do that by changing the values of the variables {\tt increment} and {\tt sampleStep} to bigger ones leading to lowering the number of steps along the view ray and the number of pixels sampled.  The new values for interactive mode were chosen using the trial-and-error method to find a workable trade-off between rendering quality and performance. In \autoref{fig:speedup} can be observed both the time of the rendering in Interactive mode before and after the changes, and the the quality of the image.
 
-\subparagraph{MIP vs Composite}
-
-TODO: compare both techniques and find some dataset where there's major differences in details. \autoref{fig:mipscomp}
-
 \paragraph{Gradients}
 \label{subsec:gradients}
 
 The work related to gradients consists of two main parts:
 
-\begin{enumerate}
+\begin{enumerate}[noitemsep]
   \item Computing the gradients, implemented in method {\tt compute} of class {\tt GradientVolume}.
   \item Trilinear interpolation of gradients, implemented in method {\tt getGradientTrilinear} of class\\ {\tt RaycastRenderer}.
 \end{enumerate}
@@ -106,6 +103,32 @@ Isosurfaces are defined by
  $$f(x; y; z) = C$$ 
 Where $C$ is a constant known as the isovalue. Similarly to Ray Composite\textsuperscript{\autoref{ray_composite}}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned. The result without shading enabled can be seen in \autoref{fig:isosurface}.
 
+\paragraph{Phong's Shading Model}
+
+The implementation of Phong's shading model was quite straightforward. It can be found in the method {\tt computePhongShading} and follows the standard formula given during the classes:
+
+$$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
+
+Where:
+\setlist{nolistsep}
+\begin{itemize}[noitemsep]
+  \item $a$ refers to ambient, $d$ to diffusion and $s$ to specular.
+  \item $L$ is the light vector. Already given by the parameter {\tt lightVector}.
+  \item $N$ is the normal which can be calculated with the given {\tt gradient} $G$ by applying $N= {G}/{|G|}$.
+  \item $V$ is the view vector, calculated by simply negating each component of {\tt rayVector}.
+  \item $R$ is the reflection vector, given by $R = (2N \cdot L)N-L$.
+\end{itemize}
+
+For simplicity and due to the lack of possibility of choosing a color for each parameter from the GUI, we considered that $I_a=I_l=$ {\tt voxelColor}. For each paramater $k_a$, $k_d$, $k_s$ and $\alpha$ we used the values suggested in the assignment to get the best results with the {\tt carp8} dataset: 0.1, 0.7, 0.2 and 100 respectively.
+
+By modifying this values, we can reach some satisfying conclusions, which can be seen on \autoref{fig:phong}:
+\setlist{nolistsep}
+\begin{itemize}[noitemsep]
+  \item The ambient parameter, $k_a$, changes the ambient light uniformely. If the value is lower, there's less ambient light. If it's higher, there's more ambient light distributed across the picture. This can be seen by comparing \autoref{fig:phong} (a) and (b).
+  \item The diffusion parameter, $k_d$, changes how the light diffuses from the surface. The higher the diffusion parameter, the more the surface diffuses light. The lower the diffusion parameter, the less the surface diffuses light, making it look darker. This can be seen by comparing \autoref{fig:phong} (a) and (c).
+  \item The specular component, $k_s$, changes how the specular reflection works. The higher the value, the more glaring is the reflection. The lower the value, the less reflection can be seen. This can be seen by comparing \autoref{fig:phong} (a) and (d).
+\end{itemize}
+
 \subsection{2-D transfer functions}
 
 \subsection{Cutting plane}
@@ -113,6 +136,10 @@ Where $C$ is a constant known as the isovalue. Similarly to Ray Composite\textsu
 \section{Conclusions}
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum posuere massa, a faucibus dui tristique eu. Proin sit amet diam sed ipsum viverra fermentum. Suspendisse at sem eget diam egestas volutpat. Sed faucibus erat quis nibh rhoncus, ac mattis libero semper. Nam accumsan orci sagittis massa consectetur posuere. Phasellus molestie porta est, eu cursus velit. Nunc vel diam eget lectus sodales aliquet. Mauris maximus velit nec nunc molestie volutpat. Ut fermentum, purus id auctor mollis, turpis odio venenatis nunc, venenatis malesuada orci ligula vel mi. Nulla ut enim ex. Nunc faucibus dictum nisi, quis blandit felis tincidunt vel. Vivamus erat purus, fermentum a enim vitae, maximus lacinia lacus. Phasellus efficitur ut sapien dapibus vulputate. Quisque nec sem ac ante luctus finibus. Sed ac magna mi.
+
+\paragraph{MIP vs Composite}
+
+TODO: compare both techniques and find some dataset where there's major differences in details. \autoref{fig:mipscomp}
 
 \bibliographystyle{plain}
 \bibliography{references}
@@ -177,6 +204,35 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum posuere
   \includegraphics[width=\textwidth]{iso-surface}
   \caption{Isosurface raycasting without shading enabled on \textit{carp8} dataset.}
   \label{fig:isosurface}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pig8-phong-default}
+    \caption{Default values.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pig8-phong-ambient05}
+    \caption{Ambient $k_a=0.5$, higher than the default.}
+  \end{subfigure}
+  \\~\\
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pig8-phong-diffusion02}
+    \caption{Diffusion $k_d=0.2$, lower than the default.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pig8-phong-specular07}
+    \caption{Specular $k_s=0.7$, higher than the default.}
+  \end{subfigure}
+  \caption{Comparison of the effect of changing different parameters of Phong's shading on \textit{pig8} dataset.}
+  \label{fig:phong}
 \end{figure}
 
 
