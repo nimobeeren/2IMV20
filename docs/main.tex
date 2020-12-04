@@ -103,7 +103,7 @@ Isosurfaces are defined by
  $$f(x; y; z) = C$$ 
 Where $C$ is a constant known as the isovalue. Similarly to Ray Composite\textsuperscript{\autoref{ray_composite}}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned. The result without shading enabled can be seen in \autoref{fig:isosurface}.
 
-\paragraph{Phong's Shading Model}
+\paragraph{Phong Shading}
 
 The implementation of Phong's shading model can be found in the method {\tt computePhongShading} of class {\tt RaycastRenderer} and follows the standard formula given during the classes:
 
