@@ -549,13 +549,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * Compute Phong Shading given the voxel color (material color), gradient,
      * light vector and view vector.
      *
-     * @param voxel_color Voxel color (material color).
+     * @param voxelColor Voxel color (material color).
      * @param gradient Gradient voxel.
      * @param lightVector Light vector.
      * @param rayVector View vector.
      * @return Computed color for Phong Shading.
      */
-    private TFColor computePhongShading(TFColor voxel_color, VoxelGradient gradient, double[] lightVector, double[] rayVector) {
+    private TFColor computePhongShading(TFColor voxelColor, VoxelGradient gradient, double[] lightVector, double[] rayVector) {
         double diffusion = 0.7;
         double ambient = 0.1;
         double specular = 0.2;
@@ -566,15 +566,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         normal[1] = gradient.y / gradient.mag;
         normal[2] = gradient.z / gradient.mag;
 
-        TFColor color = new TFColor(0, 0, 0, voxel_color.a);
-        color.r += voxel_color.r * ambient;
-        color.g += voxel_color.g * ambient;
-        color.b += voxel_color.b * ambient;
+        TFColor color = new TFColor(0, 0, 0, voxelColor.a);
+        color.r += voxelColor.r * ambient;
+        color.g += voxelColor.g * ambient;
+        color.b += voxelColor.b * ambient;
 
         double diffusionHelper = VectorMath.dotproduct(normal, lightVector);
-        color.r += voxel_color.r * diffusion * diffusionHelper;
-        color.g += voxel_color.g * diffusion * diffusionHelper;
-        color.b += voxel_color.b * diffusion * diffusionHelper;
+        color.r += voxelColor.r * diffusion * diffusionHelper;
+        color.g += voxelColor.g * diffusion * diffusionHelper;
+        color.b += voxelColor.b * diffusion * diffusionHelper;
 
         double[] reflectionVector = new double[3];
         VectorMath.multiply(normal, 2, reflectionVector);
