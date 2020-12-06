@@ -112,14 +112,15 @@ $$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
 Where:
 \setlist{nolistsep}
 \begin{itemize}[noitemsep]
-  \item $a$ refers to ambient, $d$ to diffusion and $s$ to specular.
-  \item $L$ is the light vector. Already given by the parameter {\tt lightVector}.
-  \item $N$ is the normal which can be calculated with the given {\tt gradient} $G$ by applying $N= {G}/{|G|}$.
-  \item $V$ is the view vector, calculated by simply negating each component of {\tt rayVector}.
+  \item $I_a$ and $I_l$ refer to the ambient light and to the object light, respectively.
+  \item $k_a$, $k_d$ and $k_s$ refer to the ambient, diffuse and specular parameters, respectively.
+  \item $L$ is the light vector.
+  \item $N$ is the normal which can be calculated with the given gradient $G$ by applying $N= {G}/{|G|}$.
+  \item $V$ is the view vector, calculated by simply negating each component of the given ray vector.
   \item $R$ is the reflection vector, given by $R = (2N \cdot L)N-L$.
 \end{itemize}
 
-For simplicity and due to the lack of possibility of choosing a color for each parameter from the GUI, we considered that $I_a=I_l=$ {\tt voxelColor}. For each parameter $k_a$, $k_d$, $k_s$ and $\alpha$ we used the values suggested in the assignment to get the best results with the \textit{carp8} dataset: 0.1, 0.7, 0.2 and 100 respectively.
+For simplicity and due to the lack of possibility of choosing a color for each parameter from the GUI, we considered that $I_a=I_l$. For each parameter $k_a$, $k_d$, $k_s$ and $\alpha$ we used the values suggested in the assignment to get the best results with the \textit{carp8} dataset: 0.1, 0.7, 0.2 and 100 respectively.
 
 By modifying this values, we can reach some satisfying conclusions, which can be seen on \autoref{fig:phong}:
 \setlist{nolistsep}
