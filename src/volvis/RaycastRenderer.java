@@ -376,8 +376,28 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double maximum = 0;
         do {
             double value = getVoxel(currentPos) / 255.;
+            double dotproduct = computeDotProductCuttingPlane(currentPos);
+            if(cuttingPlaneMode){
+                if(modeFront == RaycastMode.MIP && modeBack != RaycastMode.MIP){
+                    if(dotproduct > 0 && value > maximum){
+                        maximum = value;
+                    }
+                }
+                else if(modeFront != RaycastMode.MIP && modeBack == RaycastMode.MIP){
+                    if(dotproduct < 0 && value > maximum){
+                        maximum = value;
+                    }
+                }
+                else{
+                    if(value > maximum){
+                        maximum = value;
+                    }
+                }
+            }
+            else{
             if (value > maximum) {
                 maximum = value;
+            }
             }
             for (int i = 0; i < 3; i++) {
                 currentPos[i] += increments[i];
@@ -426,15 +446,53 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         do {
             double value = getVoxelTrilinear(currentPos);
             VoxelGradient gradient = getGradientTrilinear(currentPos);
-
-            if (value > isoValueFront) {
-                TFColor color = isoColorFront;
-                if (shadingMode) {
-                    color = computePhongShading(color, gradient, lightVector, rayVector);
+            double dotproduct = computeDotProductCuttingPlane(currentPos);
+            
+            if(cuttingPlaneMode){
+                if(modeFront == RaycastMode.ISO_SURFACE && modeBack != RaycastMode.ISO_SURFACE){
+                    if(dotproduct > 0 && value > isoValueFront) {
+                    TFColor color = isoColorFront;
+                    if (shadingMode) {
+                        color = computePhongShading(color, gradient, lightVector, rayVector);
+                    }
+                    return computePackedPixelColor(color.r, color.g, color.b, color.a);
+                    }
                 }
-                return computePackedPixelColor(color.r, color.g, color.b, color.a);
+                else if(modeFront != RaycastMode.ISO_SURFACE && modeBack == RaycastMode.ISO_SURFACE){
+                    if(dotproduct < 0 && value > isoValueBack) {
+                    TFColor color = isoColorBack;
+                    if (shadingMode) {
+                        color = computePhongShading(color, gradient, lightVector, rayVector);
+                    }
+                    return computePackedPixelColor(color.r, color.g, color.b, color.a);
+                    }
+                }
+                else{
+                    if(dotproduct > 0 && value > isoValueFront) {
+                    TFColor color = isoColorFront;
+                    if (shadingMode) {
+                        color = computePhongShading(color, gradient, lightVector, rayVector);
+                    }
+                    return computePackedPixelColor(color.r, color.g, color.b, color.a);
+                    }
+                    if(dotproduct < 0 && value > isoValueBack) {
+                    TFColor color = isoColorBack;
+                    if (shadingMode) {
+                        color = computePhongShading(color, gradient, lightVector, rayVector);
+                    }
+                    return computePackedPixelColor(color.r, color.g, color.b, color.a);
+                    }
+                }
             }
-
+            else{
+                if (value > isoValueFront) {
+                    TFColor color = isoColorFront;
+                    if (shadingMode) {
+                        color = computePhongShading(color, gradient, lightVector, rayVector);
+                    }
+                    return computePackedPixelColor(color.r, color.g, color.b, color.a);
+                }
+            }
             // Increment current position
             for (int i = 0; i < 3; i++) {
                 currentPos[i] += increments[i];
@@ -656,17 +714,14 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 // TODO 9: Implement logic for cutting plane.
                 if ((entryPoint[0] > -1.0) && (exitPoint[0] > -1.0)) {
                     int val = 0;
-                    switch (modeFront) {
-                        case COMPOSITING:
-                        case TRANSFER2D:
-                            val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
-                        case MIP:
-                            val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
-                        case ISO_SURFACE:
-                            val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
+                    if(modeFront == RaycastMode.COMPOSITING || modeFront == RaycastMode.TRANSFER2D || modeBack == RaycastMode.COMPOSITING || modeBack == RaycastMode.TRANSFER2D){
+                        val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep);
+                    }
+                    if(modeFront == RaycastMode.MIP || modeBack == RaycastMode.MIP){
+                        val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
+                    }
+                    if(modeFront == RaycastMode.ISO_SURFACE || modeBack == RaycastMode.ISO_SURFACE){
+                        val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep);
                     }
                     for (int ii = i; ii < i + increment; ii++) {
                         for (int jj = j; jj < j + increment; jj++) {
@@ -1387,5 +1442,9 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + viewVec[0] * diagonal + volume.getDimX() / 2.0;
         pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + viewVec[1] * diagonal + volume.getDimY() / 2.0;
         pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + viewVec[2] * diagonal + volume.getDimZ() / 2.0;
+    }
+
+    private double computeDotProductCuttingPlane(double[] currentPos){
+        return planeNorm[0]*(currentPos[0] - planePoint[0]) + planeNorm[1]*(currentPos[1] - planePoint[1]) + planeNorm[2]*(currentPos[2] - planePoint[2]);
     }
 }
