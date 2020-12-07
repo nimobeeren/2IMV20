@@ -409,7 +409,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param sampleStep Sample step of the ray.
      * @return Color assigned to a ray/pixel.
      */
-    private int traceRayIso(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep) {
+    private int traceRayIso(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep, boolean isBack) {
 
         double[] lightVector = new double[3];
         //We define the light vector as directed toward the view point (which is the source of the light)
@@ -423,12 +423,16 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double[] currentPos = new double[3];
         VectorMath.setVector(increments, rayVector[0] * sampleStep, rayVector[1] * sampleStep, rayVector[2] * sampleStep);
         VectorMath.setVector(currentPos, entryPoint[0], entryPoint[1], entryPoint[2]);
+
+        TFColor baseColor = isBack ? isoColorBack : isoColorFront;
+        float isoValue = isBack ? isoValueBack : isoValueFront;
+
         do {
             double value = getVoxelTrilinear(currentPos);
             VoxelGradient gradient = getGradientTrilinear(currentPos);
 
-            if (value > isoValueFront) {
-                TFColor color = isoColorFront;
+            if (value > isoValue) {
+                TFColor color = baseColor;
                 if (shadingMode) {
                     color = computePhongShading(color, gradient, lightVector, rayVector);
                 }
@@ -460,7 +464,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param sampleStep Sample step of the ray.
      * @return Color assigned to a ray/pixel.
      */
-    private int traceRayComposite(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep) {
+    private int traceRayComposite(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep, boolean isBack, RaycastMode mode) {
         double[] lightVector = new double[3];
 
         //the light vector is directed toward the view point (which is the source of the light)
@@ -492,10 +496,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             double value = getVoxelTrilinear(currentPos);
             VoxelGradient gradient = getGradientTrilinear(currentPos);
 
-            switch (modeFront) {
+            switch (mode) {
                 case COMPOSITING:
                     // 1D transfer function
-                    colorAux = tFuncFront.getColor((int)value);
+                    colorAux = isBack
+                        ? tFuncBack.getColor((int)value)
+                        : tFuncFront.getColor((int)value);
                     r = colorAux.r;
                     g = colorAux.g;
                     b = colorAux.b;
@@ -503,11 +509,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     break;
                 case TRANSFER2D:
                     // 2D transfer function
-                    r = tFunc2DFront.color.r;
-                    g = tFunc2DFront.color.g;
-                    b = tFunc2DFront.color.b;
-                    a = tFunc2DFront.color.a;
-                    a *= computeOpacity2DTF(tFunc2DFront.baseIntensity, tFunc2DFront.radius, value, gradient.mag);
+                    TransferFunction2D func = isBack ? tFunc2DBack : tFunc2DFront;
+                    r = func.color.r;
+                    g = func.color.g;
+                    b = func.color.b;
+                    a = func.color.a;
+                    a *= computeOpacity2DTF(func.baseIntensity, func.radius, value, gradient.mag);
                     break;
             }
 
@@ -653,21 +660,121 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 // compute the entry and exit point of the ray
                 computeEntryAndExit(pixelCoord, rayVector, entryPoint, exitPoint);
 
-                // TODO 9: Implement logic for cutting plane.
                 if ((entryPoint[0] > -1.0) && (exitPoint[0] > -1.0)) {
                     int val = 0;
-                    switch (modeFront) {
-                        case COMPOSITING:
-                        case TRANSFER2D:
-                            val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
-                        case MIP:
-                            val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
-                        case ISO_SURFACE:
-                            val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
+
+                    if (cuttingPlaneMode) {
+                        boolean isEntryOnBack = isOnBackSide(entryPoint);
+                        boolean isExitOnBack = isOnBackSide(exitPoint);
+
+                        double[] intersection = new double[3];
+                        intersectFace(planePoint, planeNorm, entryPoint, rayVector, intersection, new double[3], new double[3]);
+
+                        if (isEntryOnBack && isExitOnBack) {
+                            switch (modeBack) {
+                                case COMPOSITING:
+                                case TRANSFER2D:
+                                    val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep, true, modeBack);
+                                    break;
+                                case MIP:
+                                    val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
+                                    break;
+                                case ISO_SURFACE:
+                                    val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep, true);
+                                    break;
+                            }
+                        } else if (!isEntryOnBack && !isExitOnBack) {
+                            switch (modeFront) {
+                                case COMPOSITING:
+                                case TRANSFER2D:
+                                    val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep, false, modeFront);
+                                    break;
+                                case MIP:
+                                    val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
+                                    break;
+                                case ISO_SURFACE:
+                                    val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep, false);
+                                    break;
+                            }
+
+                        } else if (isEntryOnBack && !isExitOnBack) {
+                            switch (modeBack) {
+                                case COMPOSITING:
+                                case TRANSFER2D:
+                                    val = traceRayComposite(entryPoint, intersection, rayVector, sampleStep, true, modeBack);
+                                    break;
+                                case MIP:
+                                    val = traceRayMIP(entryPoint, intersection, rayVector, sampleStep);
+                                    break;
+                                case ISO_SURFACE:
+                                    val = traceRayIso(entryPoint, intersection, rayVector, sampleStep, true);
+                                    break;
+                            }
+
+           
+
+                            if (val == 0) {
+                                switch (modeFront) {
+                                    case COMPOSITING:
+                                    case TRANSFER2D:
+                                        val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, false, modeFront);
+                                        break;
+                                    case MIP:
+                                        val = traceRayMIP(intersection, exitPoint, rayVector, sampleStep);
+                                        break;
+                                    case ISO_SURFACE:
+                                        val = traceRayIso(intersection, exitPoint, rayVector, sampleStep, false);
+                                        break;
+                                }
+                            }
+    
+                        } else if (!isEntryOnBack && isExitOnBack) {
+                            switch (modeFront) {
+                                case COMPOSITING:
+                                case TRANSFER2D:
+                                    val = traceRayComposite(entryPoint, intersection, rayVector, sampleStep, false, modeFront);
+                                    break;
+                                case MIP:
+                                    val = traceRayMIP(entryPoint, intersection, rayVector, sampleStep);
+                                    break;
+                                case ISO_SURFACE:
+                                    val = traceRayIso(entryPoint, intersection, rayVector, sampleStep, false);
+                                    break;
+                            }
+
+                            if (val == 0) {
+                                switch (modeBack) {
+                                    case COMPOSITING:
+                                    case TRANSFER2D:
+                                        val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, true, modeBack);
+                                        break;
+                                    case MIP:
+                                        val = traceRayMIP(intersection, exitPoint, rayVector, sampleStep);
+                                        break;
+                                    case ISO_SURFACE:
+                                        val = traceRayIso(intersection, exitPoint, rayVector, sampleStep, true);
+                                        break;
+                                }
+                            }
+    
+    
+                        }
+
+                    } else {
+                        switch (modeFront) {
+                            case COMPOSITING:
+                            case TRANSFER2D:
+                                val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep, false, modeFront);
+                                break;
+                            case MIP:
+                                val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
+                                break;
+                            case ISO_SURFACE:
+                                val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep, false);
+                                break;
+                        }
                     }
+                  
                     for (int ii = i; ii < i + increment; ii++) {
                         for (int jj = j; jj < j + increment; jj++) {
                             image.setRGB(ii, jj, val);
@@ -677,6 +784,11 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
             }
         }
+    }
+
+    private boolean isOnBackSide (double[] point) {
+        double dot = planeNorm[0]*(point[0] - planePoint[0]) + planeNorm[1]*(point[1] - planePoint[1]) + planeNorm[2]*(point[2] - planePoint[2]);  
+        return dot > 0;
     }
 
     /**
