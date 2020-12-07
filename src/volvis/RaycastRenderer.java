@@ -731,8 +731,9 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     }
 
     private boolean isOnBackSide (double[] point) {
-        double dot = planeNorm[0]*(point[0] - planePoint[0]) + planeNorm[1]*(point[1] - planePoint[1]) + planeNorm[2]*(point[2] - planePoint[2]);  
-        return dot > 0;
+        double[] diff = new double[3];
+        VectorMath.difference(point, planePoint, diff);
+        return VectorMath.dotproduct(planeNorm, diff) > 0;
     }
 
     /**
