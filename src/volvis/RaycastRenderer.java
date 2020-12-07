@@ -694,7 +694,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                             switch (mode) {
                                 case COMPOSITING:
                                 case TRANSFER2D:
-                                    val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, !isEntryOnBack, modeFront);
+                                    val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, !isEntryOnBack, mode);
                                     break;
                                 case MIP:
                                     val = traceRayMIP(intersection, exitPoint, rayVector, sampleStep);
