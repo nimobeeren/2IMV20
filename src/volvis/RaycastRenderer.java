@@ -464,7 +464,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param sampleStep Sample step of the ray.
      * @return Color assigned to a ray/pixel.
      */
-    private int traceRayComposite(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep, boolean isBack, RaycastMode mode) {
+    private int traceRayComposite(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep, boolean isBack) {
         double[] lightVector = new double[3];
 
         //the light vector is directed toward the view point (which is the source of the light)
@@ -489,6 +489,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
         TFColor voxel_color = new TFColor(0, 0, 0, 0);
         TFColor colorAux = new TFColor();
+
+        RaycastMode mode = isBack ? modeBack : modeFront;
 
         do {
             // Using getVoxelTrilinear instead of getVoxel allows for a better visualization
@@ -677,7 +679,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                         switch (mode) {
                             case COMPOSITING:
                             case TRANSFER2D:
-                                val = traceRayComposite(entryPoint, middlePoint, rayVector, sampleStep, isEntryOnBack, mode);
+                                val = traceRayComposite(entryPoint, middlePoint, rayVector, sampleStep, isEntryOnBack);
                                 break;
                             case MIP:
                                 val = traceRayMIP(entryPoint, middlePoint, rayVector, sampleStep);
@@ -694,7 +696,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                             switch (mode) {
                                 case COMPOSITING:
                                 case TRANSFER2D:
-                                    val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, !isEntryOnBack, mode);
+                                    val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, !isEntryOnBack);
                                     break;
                                 case MIP:
                                     val = traceRayMIP(intersection, exitPoint, rayVector, sampleStep);
@@ -708,7 +710,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                         switch (modeFront) {
                             case COMPOSITING:
                             case TRANSFER2D:
-                                val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep, false, modeFront);
+                                val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep, false);
                                 break;
                             case MIP:
                                 val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
