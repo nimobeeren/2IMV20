@@ -666,100 +666,44 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     if (cuttingPlaneMode) {
                         boolean isEntryOnBack = isOnBackSide(entryPoint);
                         boolean isExitOnBack = isOnBackSide(exitPoint);
+                        boolean onDifferentSides = isEntryOnBack != isExitOnBack;
 
                         double[] intersection = new double[3];
                         intersectFace(planePoint, planeNorm, entryPoint, rayVector, intersection, new double[3], new double[3]);
 
-                        if (isEntryOnBack && isExitOnBack) {
-                            switch (modeBack) {
-                                case COMPOSITING:
-                                case TRANSFER2D:
-                                    val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep, true, modeBack);
-                                    break;
-                                case MIP:
-                                    val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
-                                    break;
-                                case ISO_SURFACE:
-                                    val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep, true);
-                                    break;
-                            }
-                        } else if (!isEntryOnBack && !isExitOnBack) {
-                            switch (modeFront) {
-                                case COMPOSITING:
-                                case TRANSFER2D:
-                                    val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep, false, modeFront);
-                                    break;
-                                case MIP:
-                                    val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
-                                    break;
-                                case ISO_SURFACE:
-                                    val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep, false);
-                                    break;
-                            }
+                        RaycastMode mode = isEntryOnBack ? modeBack : modeFront;
+                        double[] middlePoint = onDifferentSides ? intersection : exitPoint;
 
-                        } else if (isEntryOnBack && !isExitOnBack) {
-                            switch (modeBack) {
-                                case COMPOSITING:
-                                case TRANSFER2D:
-                                    val = traceRayComposite(entryPoint, intersection, rayVector, sampleStep, true, modeBack);
-                                    break;
-                                case MIP:
-                                    val = traceRayMIP(entryPoint, intersection, rayVector, sampleStep);
-                                    break;
-                                case ISO_SURFACE:
-                                    val = traceRayIso(entryPoint, intersection, rayVector, sampleStep, true);
-                                    break;
-                            }
-
-           
-
-                            if (val == 0) {
-                                switch (modeFront) {
-                                    case COMPOSITING:
-                                    case TRANSFER2D:
-                                        val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, false, modeFront);
-                                        break;
-                                    case MIP:
-                                        val = traceRayMIP(intersection, exitPoint, rayVector, sampleStep);
-                                        break;
-                                    case ISO_SURFACE:
-                                        val = traceRayIso(intersection, exitPoint, rayVector, sampleStep, false);
-                                        break;
-                                }
-                            }
-    
-                        } else if (!isEntryOnBack && isExitOnBack) {
-                            switch (modeFront) {
-                                case COMPOSITING:
-                                case TRANSFER2D:
-                                    val = traceRayComposite(entryPoint, intersection, rayVector, sampleStep, false, modeFront);
-                                    break;
-                                case MIP:
-                                    val = traceRayMIP(entryPoint, intersection, rayVector, sampleStep);
-                                    break;
-                                case ISO_SURFACE:
-                                    val = traceRayIso(entryPoint, intersection, rayVector, sampleStep, false);
-                                    break;
-                            }
-
-                            if (val == 0) {
-                                switch (modeBack) {
-                                    case COMPOSITING:
-                                    case TRANSFER2D:
-                                        val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, true, modeBack);
-                                        break;
-                                    case MIP:
-                                        val = traceRayMIP(intersection, exitPoint, rayVector, sampleStep);
-                                        break;
-                                    case ISO_SURFACE:
-                                        val = traceRayIso(intersection, exitPoint, rayVector, sampleStep, true);
-                                        break;
-                                }
-                            }
-    
-    
+                        switch (mode) {
+                            case COMPOSITING:
+                            case TRANSFER2D:
+                                val = traceRayComposite(entryPoint, middlePoint, rayVector, sampleStep, isEntryOnBack, mode);
+                                break;
+                            case MIP:
+                                val = traceRayMIP(entryPoint, middlePoint, rayVector, sampleStep);
+                                break;
+                            case ISO_SURFACE:
+                                val = traceRayIso(entryPoint, middlePoint, rayVector, sampleStep, isEntryOnBack);
+                                break;
                         }
+                        
+                        if (onDifferentSides && val == 0) {
+                            // See through transparent points
+                            mode = isEntryOnBack ? modeFront : modeBack;
 
+                            switch (mode) {
+                                case COMPOSITING:
+                                case TRANSFER2D:
+                                    val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, !isEntryOnBack, modeFront);
+                                    break;
+                                case MIP:
+                                    val = traceRayMIP(intersection, exitPoint, rayVector, sampleStep);
+                                    break;
+                                case ISO_SURFACE:
+                                    val = traceRayIso(intersection, exitPoint, rayVector, sampleStep, !isEntryOnBack);
+                                    break;
+                            }
+                        }
                     } else {
                         switch (modeFront) {
                             case COMPOSITING:
