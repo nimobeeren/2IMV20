@@ -409,7 +409,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param sampleStep Sample step of the ray.
      * @return Color assigned to a ray/pixel.
      */
-    private int traceRayIso(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep) {
+    private int traceRayIso(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep, boolean isBack) {
 
         double[] lightVector = new double[3];
         //We define the light vector as directed toward the view point (which is the source of the light)
@@ -423,12 +423,16 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         double[] currentPos = new double[3];
         VectorMath.setVector(increments, rayVector[0] * sampleStep, rayVector[1] * sampleStep, rayVector[2] * sampleStep);
         VectorMath.setVector(currentPos, entryPoint[0], entryPoint[1], entryPoint[2]);
+
+        TFColor baseColor = isBack ? isoColorBack : isoColorFront;
+        float isoValue = isBack ? isoValueBack : isoValueFront;
+
         do {
             double value = getVoxelTrilinear(currentPos);
             VoxelGradient gradient = getGradientTrilinear(currentPos);
 
-            if (value > isoValueFront) {
-                TFColor color = isoColorFront;
+            if (value > isoValue) {
+                TFColor color = baseColor;
                 if (shadingMode) {
                     color = computePhongShading(color, gradient, lightVector, rayVector);
                 }
@@ -460,7 +464,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param sampleStep Sample step of the ray.
      * @return Color assigned to a ray/pixel.
      */
-    private int traceRayComposite(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep) {
+    private int traceRayComposite(double[] entryPoint, double[] exitPoint, double[] rayVector, double sampleStep, boolean isBack) {
         double[] lightVector = new double[3];
 
         //the light vector is directed toward the view point (which is the source of the light)
@@ -486,16 +490,20 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         TFColor voxel_color = new TFColor(0, 0, 0, 0);
         TFColor colorAux = new TFColor();
 
+        RaycastMode mode = isBack ? modeBack : modeFront;
+
         do {
             // Using getVoxelTrilinear instead of getVoxel allows for a better visualization
             // with increased image quality.
             double value = getVoxelTrilinear(currentPos);
             VoxelGradient gradient = getGradientTrilinear(currentPos);
 
-            switch (modeFront) {
+            switch (mode) {
                 case COMPOSITING:
                     // 1D transfer function
-                    colorAux = tFuncFront.getColor((int)value);
+                    colorAux = isBack
+                        ? tFuncBack.getColor((int)value)
+                        : tFuncFront.getColor((int)value);
                     r = colorAux.r;
                     g = colorAux.g;
                     b = colorAux.b;
@@ -503,11 +511,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     break;
                 case TRANSFER2D:
                     // 2D transfer function
-                    r = tFunc2DFront.color.r;
-                    g = tFunc2DFront.color.g;
-                    b = tFunc2DFront.color.b;
-                    a = tFunc2DFront.color.a;
-                    a *= computeOpacity2DTF(tFunc2DFront.baseIntensity, tFunc2DFront.radius, value, gradient.mag);
+                    TransferFunction2D func = isBack ? tFunc2DBack : tFunc2DFront;
+                    r = func.color.r;
+                    g = func.color.g;
+                    b = func.color.b;
+                    a = func.color.a;
+                    a *= computeOpacity2DTF(func.baseIntensity, func.radius, value, gradient.mag);
                     break;
             }
 
@@ -653,21 +662,65 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 // compute the entry and exit point of the ray
                 computeEntryAndExit(pixelCoord, rayVector, entryPoint, exitPoint);
 
-                // TODO 9: Implement logic for cutting plane.
                 if ((entryPoint[0] > -1.0) && (exitPoint[0] > -1.0)) {
                     int val = 0;
-                    switch (modeFront) {
-                        case COMPOSITING:
-                        case TRANSFER2D:
-                            val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
-                        case MIP:
-                            val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
-                        case ISO_SURFACE:
-                            val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep);
-                            break;
+
+                    if (cuttingPlaneMode) {
+                        boolean isEntryOnBack = isOnBackSide(entryPoint);
+                        boolean isExitOnBack = isOnBackSide(exitPoint);
+                        boolean onDifferentSides = isEntryOnBack != isExitOnBack;
+
+                        double[] intersection = new double[3];
+                        intersectFace(planePoint, planeNorm, entryPoint, rayVector, intersection, new double[3], new double[3]);
+
+                        RaycastMode mode = isEntryOnBack ? modeBack : modeFront;
+                        double[] middlePoint = onDifferentSides ? intersection : exitPoint;
+
+                        switch (mode) {
+                            case COMPOSITING:
+                            case TRANSFER2D:
+                                val = traceRayComposite(entryPoint, middlePoint, rayVector, sampleStep, isEntryOnBack);
+                                break;
+                            case MIP:
+                                val = traceRayMIP(entryPoint, middlePoint, rayVector, sampleStep);
+                                break;
+                            case ISO_SURFACE:
+                                val = traceRayIso(entryPoint, middlePoint, rayVector, sampleStep, isEntryOnBack);
+                                break;
+                        }
+                        
+                        if (onDifferentSides && val == 0) {
+                            // See through transparent points
+                            mode = isEntryOnBack ? modeFront : modeBack;
+
+                            switch (mode) {
+                                case COMPOSITING:
+                                case TRANSFER2D:
+                                    val = traceRayComposite(intersection, exitPoint, rayVector, sampleStep, !isEntryOnBack);
+                                    break;
+                                case MIP:
+                                    val = traceRayMIP(intersection, exitPoint, rayVector, sampleStep);
+                                    break;
+                                case ISO_SURFACE:
+                                    val = traceRayIso(intersection, exitPoint, rayVector, sampleStep, !isEntryOnBack);
+                                    break;
+                            }
+                        }
+                    } else {
+                        switch (modeFront) {
+                            case COMPOSITING:
+                            case TRANSFER2D:
+                                val = traceRayComposite(entryPoint, exitPoint, rayVector, sampleStep, false);
+                                break;
+                            case MIP:
+                                val = traceRayMIP(entryPoint, exitPoint, rayVector, sampleStep);
+                                break;
+                            case ISO_SURFACE:
+                                val = traceRayIso(entryPoint, exitPoint, rayVector, sampleStep, false);
+                                break;
+                        }
                     }
+                  
                     for (int ii = i; ii < i + increment; ii++) {
                         for (int jj = j; jj < j + increment; jj++) {
                             image.setRGB(ii, jj, val);
@@ -677,6 +730,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
             }
         }
+    }
+
+    private boolean isOnBackSide (double[] point) {
+        double[] diff = new double[3];
+        VectorMath.difference(point, planePoint, diff);
+        return VectorMath.dotproduct(planeNorm, diff) > 0;
     }
 
     /**
