@@ -516,7 +516,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     g = func.color.g;
                     b = func.color.b;
                     a = func.color.a;
-                    a *= computeOpacity2DTF(func.baseIntensity, func.radius, value, gradient.mag, func);
+                    a *= computeOpacity2DTF(func, value, gradient.mag);
                     break;
             }
 
@@ -739,24 +739,21 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     }
 
     /**
-     * Computes the opacity based on the value of the pixel and values of the triangle widget.
-     * {@link #tFunc2DFront} contains the values of the base intensity and radius.
+     * Computes the opacity based on the value of the voxel and configuration of the triangle widget.
      * {@link TransferFunction2D#baseIntensity} and {@link TransferFunction2D#radius} are in image
      * intensity units.
      *
-     * @param materialValue  Value of the material.
-     * @param materialRadius Radius of the material.
-     * @param voxelValue     Voxel value.
-     * @param gradMagnitude  Gradient magnitude.
-     * @param tFunc          The 2D transfer function to apply.
-     * @return The voxel opacity after applying the transfer function
+     * @param func           2D transfer function to apply
+     * @param voxelValue     Voxel value
+     * @param gradMagnitude  Gradient magnitude
+     * @return Voxel opacity after applying the transfer function
      */
-    public double computeOpacity2DTF(double materialValue, double materialRadius, double voxelValue,
-            double gradMagnitude, TransferFunction2D tFunc) {
-        double radius = materialRadius / gradients.getMaxGradientMagnitude();
+    public double computeOpacity2DTF(TransferFunction2D func, double voxelValue, double gradMagnitude ) {
+        double materialValue = func.baseIntensity;
+        double radius = func.radius / gradients.getMaxGradientMagnitude();
 
         if (gradMagnitude == 0.0 && materialValue == voxelValue) {
-            return tFunc.color.a;
+            return func.color.a;
         }
 
         if (gradMagnitude > 0.0) {
@@ -764,7 +761,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             double valueUpper = voxelValue + radius * gradMagnitude;
             if (valueLower <= materialValue && materialValue <= valueUpper) {
                 double valueDiff = Math.abs(materialValue - voxelValue);
-                return tFunc.color.a * (1 - 1 / radius * valueDiff / gradMagnitude);
+                return func.color.a * (1 - 1 / radius * valueDiff / gradMagnitude);
             }
         }
 
