@@ -749,7 +749,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param voxelValue     Voxel value.
      * @param gradMagnitude  Gradient magnitude.
      * @param isBack         Whether we should use the parameters of the back render method.
-     * @return
+     * @return The voxel opacity after applying the transfer function
      */
     public double computeOpacity2DTF(double materialValue, double materialRadius, double voxelValue,
             double gradMagnitude, boolean isBack) {
