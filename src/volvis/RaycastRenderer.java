@@ -744,25 +744,25 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * intensity and radius. {@link TransferFunction2D#baseIntensity} and
      * {@link TransferFunction2D#radius} are in image intensity units.
      *
-     * @param material_value Value of the material.
-     * @param material_r Radius of the material.
+     * @param materialValue Value of the material.
+     * @param materialRadius Radius of the material.
      * @param voxelValue Voxel value.
      * @param gradMagnitude Gradient magnitude.
      * @return
      */
-    public double computeOpacity2DTF(double material_value, double material_r,
+    public double computeOpacity2DTF(double materialValue, double materialRadius,
             double voxelValue, double gradMagnitude) {
-        double radius = material_r / gradients.getMaxGradientMagnitude();
+        double radius = materialRadius / gradients.getMaxGradientMagnitude();
 
-        if (gradMagnitude == 0.0 && material_value == voxelValue) {
+        if (gradMagnitude == 0.0 && materialValue == voxelValue) {
             return tFunc2DFront.color.a;
         }
 
         if (gradMagnitude > 0.0) {
             double valueLower = voxelValue - radius * gradMagnitude;
             double valueUpper = voxelValue + radius * gradMagnitude;
-            if (valueLower <= material_value && material_value <= valueUpper) {
-                double valueDiff = Math.abs(material_value - voxelValue);
+            if (valueLower <= materialValue && materialValue <= valueUpper) {
+                double valueDiff = Math.abs(materialValue - voxelValue);
                 return tFunc2DFront.color.a * (1 - 1 / radius * valueDiff / gradMagnitude);
             }
         }
