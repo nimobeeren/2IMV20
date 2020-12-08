@@ -516,7 +516,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     g = func.color.g;
                     b = func.color.b;
                     a = func.color.a;
-                    a *= computeOpacity2DTF(func.baseIntensity, func.radius, value, gradient.mag);
+                    a *= computeOpacity2DTF(func.baseIntensity, func.radius, value, gradient.mag, func);
                     break;
             }
 
@@ -748,13 +748,11 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * @param materialRadius Radius of the material.
      * @param voxelValue     Voxel value.
      * @param gradMagnitude  Gradient magnitude.
-     * @param isBack         Whether we should use the parameters of the back render method.
+     * @param tFunc          The 2D transfer function to apply.
      * @return The voxel opacity after applying the transfer function
      */
     public double computeOpacity2DTF(double materialValue, double materialRadius, double voxelValue,
-            double gradMagnitude, boolean isBack) {
-        TransferFunction2D tFunc = isBack ? tFunc2DBack : tFunc2DFront;
-
+            double gradMagnitude, TransferFunction2D tFunc) {
         double radius = materialRadius / gradients.getMaxGradientMagnitude();
 
         if (gradMagnitude == 0.0 && materialValue == voxelValue) {
