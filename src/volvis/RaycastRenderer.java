@@ -744,13 +744,16 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      * intensity units.
      *
      * @param func           2D transfer function to apply
-     * @param voxelValue     Voxel value
+     * @param voxelValue     Voxel value, denoted f(x_i) in Levoy
      * @param gradMagnitude  Gradient magnitude
-     * @return Voxel opacity after applying the transfer function
+     * @return Voxel opacity after applying the transfer function, denoted alpha(x_i) in Levoy
      */
     public double computeOpacity2DTF(TransferFunction2D func, double voxelValue, double gradMagnitude ) {
         // The intensity along the middle of the triangle, denoted f_v in Levoy
         double baseValue = func.baseIntensity;
+
+        // The opacity of voxels that have exactly the intensity of baseValue, denoted alpha_v in Levoy
+        double baseOpacity = func.color.a;
 
         // Width of the triangle, normalized by the maximum gradient magnitude,
         // denoted r in Levoy
@@ -758,7 +761,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
         if (gradMagnitude == 0.0 && baseValue == voxelValue) {
             // Case 1
-            return func.color.a;
+            return baseOpacity;
         }
 
         if (gradMagnitude > 0.0) {
@@ -767,7 +770,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             if (valueLower <= baseValue && baseValue <= valueUpper) {
                 double valueDiff = Math.abs(baseValue - voxelValue);
                 // Case 2
-                return func.color.a * (1 - 1 / radius * valueDiff / gradMagnitude);
+                return baseOpacity * (1 - 1 / radius * valueDiff / gradMagnitude);
             }
         }
 
