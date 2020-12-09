@@ -134,7 +134,7 @@ By modifying this values, we can reach some satisfying conclusions, which can be
 
 \subsection{Cutting plane}
 
-The implementation of the cutting plane functionality can be found in the method {\tt raycast}. It starts by determining in which side of the cutting plane are the entry and exit points located. For that, we first calculate the difference between the point ($p$) and the plane point ($P_p$). With the obtained vector, we calculate the dot product with the plane normal ($P_N$):
+The implementation of the cutting plane functionality can be found in the method {\tt raycast}. It starts by determining on which side of the cutting plane the entry and exit points are located. For that, we first calculate the difference between the point ($p$) and the plane point ($P_p$). With the obtained vector, we calculate the dot product with the plane normal ($P_N$):
 
 $$(p-P_p)\cdot P_N$$
 
