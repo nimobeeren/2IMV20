@@ -144,7 +144,7 @@ If the entry and exit points are both on the \textbf{same side} of the cutting p
 
 In case the entry and exit points are on \textbf{different sides} of the cutting plane, we first calculate the intersection of the line segment defined by both points with the cutting plane. For that, we use the function {\tt intersectFace}. Then, we render the volume using the rendering function from the side where the entry point is on, from the entry point to the intersection point.
 
-Finally, if the entry and exit points are on different sides, and the rendering function did not render anything from the entry to the intersection point (the returning value was $0$), then that means there is no information on that side of the cutting plane to be rendered. Thus, we can "see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersecting point to the exit point on the side where the exit point is on, using the corresponding rendering function.
+Finally, if the entry and exit points are on different sides, and the rendering function did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering function.
 
 In addition to the implementation on the {\tt raycast} method, we also added a boolean parameter to indicate if we need to use the front or back-related functions and variables to the methods {\tt traceRayComposite} and {\tt traceRayIso}.
 
