@@ -37,6 +37,7 @@
 \usepackage{hyperref}                  % to enable \autoref
 \usepackage{subcaption}                % to support captions for subfigures
 \usepackage{enumitem}
+\usepackage{physics}
 
 % Title
 \title{Volume Rendering Assignment\\2IMV20\\Eindhoven University of Technology}
@@ -131,6 +132,30 @@ By modifying this values, we can reach some satisfying conclusions, which can be
 \end{itemize}
 
 \subsection{2-D transfer functions}
+
+\paragraph{Isovalue countour surfaces}
+
+While the previously shown rendering methods are effective in certain situations, they do not always allow uniquely identifying a feature of interest. By incorporating gradient information in the transfer function, we give the user another tool to visualize these features.
+
+We apply the method described by Levoy\citep{levoy_1988} to compute a voxel opacity:
+
+\begin{equation*}
+\alpha(\vb{x_i}) = \alpha_v
+\begin{cases}
+  1 &\text{if}\;|\grad f(\vb{x_i})| = 0\;\text{and}\\
+  &\quad f(\vb{x_i} = f_v)\\
+  1 - \dfrac{1}{r} \left| \dfrac{f_v - f(\vb{x_i})}{|\grad f(\vb{x_i})|}\right| &\text{if}\; |\grad f(\vb{x_i})| > 0\;\text{and}\;\\
+  &\quad f(\vb{x_i}) - r\; |\grad f(\vb{x_i})| \leq f_v \leq\\
+  &\quad f(\vb{x_i}) + r\; |\grad f(\vb{x_i})|\\
+  0 &\text{otherwise}
+\end{cases}
+\end{equation*}
+
+\noindent where:
+
+\begin{itemize}
+  \item $\alpha(\vb{x_i})$
+\end{itemize}
 
 \subsection{Cutting plane}
 
