@@ -134,6 +134,22 @@ By modifying this values, we can reach some satisfying conclusions, which can be
 
 \subsection{Cutting plane}
 
+The implementation of the cutting plane functionality can be found in the method {\tt raycast}. It starts by determining on which side of the cutting plane the entry and exit points are located. For that, we first calculate the difference between the point ($p$) and the plane point ($P_p$). With the obtained vector, we calculate the dot product with the plane normal ($P_N$):
+
+$$(p-P_p)\cdot P_N$$
+
+We considered that, if the resulting value is larger than 0, then the point is on the back side. Otherwise, it would be on the other side. By knowing in which side of the cutting plane both entry and exit points are located, we can now render the volumes according to some rules.
+
+If the entry and exit points are both on the \textbf{same side} of the cutting plane, we render the volume using the rendering function corresponding to that side, from the entry to the exit point.
+
+In case the entry and exit points are on \textbf{different sides} of the cutting plane, we first calculate the intersection of the line segment defined by both points with the cutting plane. For that, we use the function {\tt intersectFace}. Then, we render the volume using the rendering function from the side where the entry point is on, from the entry point to the intersection point.
+
+Finally, if the entry and exit points are on different sides, and the rendering function did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering function.
+
+\autoref{fig:cutplane} shows how the feature works. In (a) using compositing on one side, while the other remains invisible. This allows to see the insides of the volume. In (b) you can see two sides rendered with different techniques, in this case MIP and Isosurface.
+
+In addition to the implementation on the {\tt raycast} method, we also added a boolean parameter to indicate if we need to use the front or back-related functions and variables to the methods {\tt traceRayComposite} and {\tt traceRayIso}.
+
 \section{Conclusions}
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum posuere massa, a faucibus dui tristique eu. Proin sit amet diam sed ipsum viverra fermentum. Suspendisse at sem eget diam egestas volutpat. Sed faucibus erat quis nibh rhoncus, ac mattis libero semper. Nam accumsan orci sagittis massa consectetur posuere. Phasellus molestie porta est, eu cursus velit. Nunc vel diam eget lectus sodales aliquet. Mauris maximus velit nec nunc molestie volutpat. Ut fermentum, purus id auctor mollis, turpis odio venenatis nunc, venenatis malesuada orci ligula vel mi. Nulla ut enim ex. Nunc faucibus dictum nisi, quis blandit felis tincidunt vel. Vivamus erat purus, fermentum a enim vitae, maximus lacinia lacus. Phasellus efficitur ut sapien dapibus vulputate. Quisque nec sem ac ante luctus finibus. Sed ac magna mi.
@@ -194,7 +210,7 @@ TODO: compare both techniques and find some dataset where there's major differen
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{orange-mips}
-    \caption{MIPS with default values.}
+    \caption{MIP with default values.}
   \end{subfigure}
   \caption{Comparison of different raycasting techniques on \textit{orange} dataset.}
   \label{fig:mipscomp}
@@ -234,6 +250,24 @@ TODO: compare both techniques and find some dataset where there's major differen
   \end{subfigure}
   \caption{Comparison of the effect of changing different parameters of Phong's shading on \textit{pig8} dataset.}
   \label{fig:phong}
+\end{figure}
+
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pig8-cut-plane-coins}
+    \caption{Composite with cutting plane. Inside of the volume is visible.}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{pig8-cut-plane-renders}
+    \caption{MIP and Isosurface with shading. Each side of the volume is rendered differently.}
+  \end{subfigure}
+  \caption{Cutting plane demonstration with \textit{pig8} dataset.}
+  \label{fig:cutplane}
 \end{figure}
 
 
