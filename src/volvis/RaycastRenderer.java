@@ -516,7 +516,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                     g = func.color.g;
                     b = func.color.b;
                     a = func.color.a;
-                    a *= computeOpacity2DTF(func.baseIntensity, func.radius, value, gradient.mag);
+                    a *= computeOpacity2DTF(func, value, gradient.mag);
                     break;
             }
 
@@ -739,24 +739,43 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     }
 
     /**
-     * Computes the opacity based on the value of the pixel and values of the
-     * triangle widget. {@link #tFunc2DFront} contains the values of the base
-     * intensity and radius. {@link TransferFunction2D#baseIntensity} and
-     * {@link TransferFunction2D#radius} are in image intensity units.
+     * Computes the opacity based on the value of the voxel and configuration of the triangle widget.
+     * {@link TransferFunction2D#baseIntensity} and {@link TransferFunction2D#radius} are in image
+     * intensity units.
      *
-     * @param material_value Value of the material.
-     * @param material_r Radius of the material.
-     * @param voxelValue Voxel value.
-     * @param gradMagnitude Gradient magnitude.
-     * @return
+     * @param func           2D transfer function to apply
+     * @param voxelValue     Voxel value, denoted f(x_i) in Levoy
+     * @param gradMagnitude  Gradient magnitude
+     * @return Voxel opacity after applying the transfer function, denoted alpha(x_i) in Levoy
      */
-    public double computeOpacity2DTF(double material_value, double material_r,
-            double voxelValue, double gradMagnitude) {
+    public double computeOpacity2DTF(TransferFunction2D func, double voxelValue, double gradMagnitude ) {
+        // The intensity along the middle of the triangle, denoted f_v in Levoy
+        double baseValue = func.baseIntensity;
 
-        double opacity = 0.0;
-        double radius = material_r / gradients.getMaxGradientMagnitude();
-        // TODO 8: Implement weight based opacity.
-        return opacity;
+        // The opacity of voxels that have exactly the intensity of baseValue, denoted alpha_v in Levoy
+        double baseOpacity = func.color.a;
+
+        // Width of the triangle, normalized by the maximum gradient magnitude,
+        // denoted r in Levoy
+        double radius = func.radius / gradients.getMaxGradientMagnitude();
+
+        if (gradMagnitude == 0.0 && baseValue == voxelValue) {
+            // Case 1
+            return baseOpacity;
+        }
+
+        if (gradMagnitude > 0.0) {
+            double valueLower = voxelValue - radius * gradMagnitude;
+            double valueUpper = voxelValue + radius * gradMagnitude;
+            if (valueLower <= baseValue && baseValue <= valueUpper) {
+                double valueDiff = Math.abs(baseValue - voxelValue);
+                // Case 2
+                return baseOpacity * (1 - 1 / radius * valueDiff / gradMagnitude);
+            }
+        }
+
+        // Case 3
+        return 0.0;
     }
 
     /**
