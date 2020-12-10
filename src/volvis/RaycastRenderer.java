@@ -811,20 +811,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         System.out.println("Assigning volume");
         volume = vol;
 
-        // TODO: remove timing
-        long start = System.currentTimeMillis();
         System.out.println("Computing gradients");
         gradients = new GradientVolume(vol);
-        long end = System.currentTimeMillis();
-        System.out.println("Computing gradients took: " + (end - start) + "ms");
-
-        // TODO: remove this block
-        // Gradient testing code
-        int x = vol.getDimX() / 2;
-        int y = vol.getDimY() / 2;
-        int z = vol.getDimZ() / 2;
-        VoxelGradient grad = gradients.getGradient(x, y, z);
-        System.out.println(String.format("Gradient at (%d, %d, %d) = %s", x, y, z, grad.toString()));
 
         // set up image for storing the resulting rendering
         // the image width and height are equal to the length of the volume diagonal
