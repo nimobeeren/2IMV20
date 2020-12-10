@@ -581,9 +581,11 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         color.b += voxelColor.b * ambient;
 
         double NdotL = VectorMath.dotproduct(normal, lightVector);
-        color.r += voxelColor.r * diffusion * NdotL;
-        color.g += voxelColor.g * diffusion * NdotL;
-        color.b += voxelColor.b * diffusion * NdotL;
+        if (NdotL > 0) {
+            color.r += voxelColor.r * diffusion * NdotL;
+            color.g += voxelColor.g * diffusion * NdotL;
+            color.b += voxelColor.b * diffusion * NdotL;
+        }
 
         double[] reflectionVector = new double[3];
         VectorMath.multiply(normal, 2 * NdotL, reflectionVector);
@@ -591,10 +593,12 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
         double[] viewVector = {-rayVector[0], -rayVector[1], -rayVector[2]};
         double VdotR = VectorMath.dotproduct(viewVector, reflectionVector);
-        double powerFactor = Math.pow(VdotR, n);
-        color.r += voxelColor.r * specular * powerFactor;
-        color.g += voxelColor.g * specular * powerFactor;
-        color.b += voxelColor.b * specular * powerFactor;
+        if (VdotR > 0) {
+            double powerFactor = Math.pow(VdotR, n);
+            color.r += voxelColor.r * specular * powerFactor;
+            color.g += voxelColor.g * specular * powerFactor;
+            color.b += voxelColor.b * specular * powerFactor;
+        }
 
         return color;
     }
