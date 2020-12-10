@@ -61,7 +61,7 @@ TODO!!!
 \paragraph{Trilinear Interpolation}
 \label{trilinear_interpolation}
 
-In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. The results can be observed in \autoref{fig:trilinear}.
+In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. We expect that the visualization of the data after trilinear interpolation is implemented will be smoothe and this can be observed in \autoref{fig:trilinear}.
 
 \paragraph{Ray Composite}
 \label{ray_composite}
@@ -100,7 +100,7 @@ To achieve a smooth transition of the gradient between voxels, we apply trilinea
 
 Isosurfaces are defined by
  $$f(x; y; z) = C$$ 
-Where $C$ is a constant known as the isovalue. Similarly to Ray Composite\textsuperscript{\autoref{ray_composite}}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned. The result without shading enabled can be seen in \autoref{fig:isosurface}.
+Where $C$ is a constant known as the isovalue. Similarly to Ray Composite\textsuperscript{\autoref{ray_composite}}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned. After implementatio we should be able to clearly see parts with the same isovalue. The result without shading enabled can be seen in \autoref{fig:isosurface}. Rendering using this method is fast and does not cause any delays in the intercation with the GUI.
 
 \paragraph{Phong Shading}
 
@@ -131,6 +131,12 @@ By modifying this values, we can reach some satisfying conclusions, which can be
 
 \subsection{2-D transfer functions}
 
+
+Some bigger datasets can cause a delay of 1-3 seconds when rendering the image between changes of parameters.
+\subparagraph{Isosurface Raycast vs 2D Transfer Function}
+
+When comparing Isosurface Raycasting in \autoref{fig:carp-skelet} and the 2D Transfer Function in \autoref{fig:2dtf} (b) we can clearly see that in general the latter can be observed more clearly as the 2D Transfer fucntion is essentially an evolution of the Isosurface raycasting. But if we focus on some details, for example the small bones on the spine of the carp, we notice that they are better seen on \autoref{fig:carp-skelet} because the intensity values of these voxel is not high enough, so the opacity values that are set ar also no high enought to make the bones apprear clearly.
+
 \subsection{Cutting plane}
 
 The implementation of the cutting plane functionality can be found in the method {\tt raycast}. It starts by determining on which side of the cutting plane the entry and exit points are located. For that, we first calculate the difference between the point ($p$) and the plane point ($P_p$). With the obtained vector, we calculate the dot product with the plane normal ($P_N$):
@@ -145,7 +151,7 @@ In case the entry and exit points are on \textbf{different sides} of the cutting
 
 Finally, if the entry and exit points are on different sides, and the rendering function did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering function.
 
-\autoref{fig:cutplane} shows how the feature works. In (a) using compositing on one side, while the other remains invisible. This allows to see the insides of the volume. In (b) you can see two sides rendered with different techniques, in this case MIP and Isosurface.
+After implementation we expect to be able to see each side of the cutting plate render in a different method. \autoref{fig:cutplane} shows how the feature works. In (a) using compositing on one side, while the other remains invisible. This allows to see the insides of the volume. In (b) you can see two sides rendered with different techniques, in this case MIP and Isosurface.
 
 In addition to the implementation on the {\tt raycast} method, we also added a boolean parameter to indicate if we need to use the front or back-related functions and variables to the methods {\tt traceRayComposite} and {\tt traceRayIso}.
 
