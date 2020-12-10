@@ -417,7 +417,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         VectorMath.setVector(lightVector, rayVector[0], rayVector[1], rayVector[2]);
 
         double distance = VectorMath.distance(entryPoint, exitPoint);
-        int nrSamples = 1 + (int) Math.floor(distance / sampleStep);
+        int nrSamples = (int) Math.ceil(distance / sampleStep);
 
         double[] increments = new double[3];
         double[] currentPos = new double[3];
@@ -429,11 +429,11 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
         do {
             double value = getVoxelTrilinear(currentPos);
-            VoxelGradient gradient = getGradientTrilinear(currentPos);
-
+            
             if (value > isoValue) {
                 TFColor color = baseColor;
                 if (shadingMode) {
+                    VoxelGradient gradient = getGradientTrilinear(currentPos);
                     color = computePhongShading(color, gradient, lightVector, rayVector);
                 }
                 return computePackedPixelColor(color.r, color.g, color.b, color.a);
