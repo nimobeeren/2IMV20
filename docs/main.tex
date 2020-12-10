@@ -150,6 +150,16 @@ Finally, if the entry and exit points are on different sides, and the rendering 
 
 In addition to the implementation on the {\tt raycast} method, we also added a boolean parameter to indicate if we need to use the front or back-related functions and variables to the methods {\tt traceRayComposite} and {\tt traceRayIso}.
 
+\subsection{Results}
+
+After implementing all functions we tried different datasets and some interesting results will be shown in this section.
+
+On \autoref{fig:backpack-mip} we can see the \textit{backpack8\_small} dataset visualized by the Maximum Intensity Projection technique. The items inside the backpack are visible and can be distinguished. 
+
+Another interesting feature is shown on \autoref{fig:carp-skelet} where the skeleton of a carp is shown. For this the iso surface rendering method on the \textit{capr8} dataset is used with the isovalue set to 180.
+
+Rendering using the 2D transfer function on the \textit{tooth} dataset   can be observed on \autoref{fig:tooth}. The values used for this are 720 for intensity, 0.3 for opacity and 460 for radius. On the image the tooth's outline can be seen together with the pulp chamber inside of it.
+
 \section{Conclusions}
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vestibulum posuere massa, a faucibus dui tristique eu. Proin sit amet diam sed ipsum viverra fermentum. Suspendisse at sem eget diam egestas volutpat. Sed faucibus erat quis nibh rhoncus, ac mattis libero semper. Nam accumsan orci sagittis massa consectetur posuere. Phasellus molestie porta est, eu cursus velit. Nunc vel diam eget lectus sodales aliquet. Mauris maximus velit nec nunc molestie volutpat. Ut fermentum, purus id auctor mollis, turpis odio venenatis nunc, venenatis malesuada orci ligula vel mi. Nulla ut enim ex. Nunc faucibus dictum nisi, quis blandit felis tincidunt vel. Vivamus erat purus, fermentum a enim vitae, maximus lacinia lacus. Phasellus efficitur ut sapien dapibus vulputate. Quisque nec sem ac ante luctus finibus. Sed ac magna mi.
@@ -270,5 +280,25 @@ TODO: compare both techniques and find some dataset where there's major differen
   \label{fig:cutplane}
 \end{figure}
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{backpack-MIP}
+  \caption{MIP on \textit{backpack8\_small} dataset with inside volume visible.}
+  \label{fig:backpack-mip}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{carp-iso-180}
+  \caption{Isosurface raycasting with isovalue 180 on \textit{carp8} dataset.}
+  \label{fig:carp-skelet}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{tooth-2d}
+  \caption{2D transfer fuction rendering method on \textit{tooth} dataset with pulp chamber visible.}
+  \label{fig:tooth}
+\end{figure}
 
 \end{document}
