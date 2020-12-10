@@ -37,6 +37,7 @@
 \usepackage{hyperref}                  % to enable \autoref
 \usepackage{subcaption}                % to support captions for subfigures
 \usepackage{enumitem}
+\usepackage{physics}
 
 % Title
 \title{Volume Rendering Assignment\\2IMV20\\Eindhoven University of Technology}
@@ -94,9 +95,9 @@ The work related to gradients consists of two main parts:
 To achieve a smooth transition of the gradient between voxels, we apply trilinear interpolation, similar to \autoref{trilinear_interpolation}. The key difference is that we interpolate gradient vectors instead of scalar intensity values. To aid with scalar multiplication and vector addition, a few utility methods {\tt scale} and {\tt add} were implemented in the {\tt VoxelGradient} class.
 
 \subsection{Isosurface Raycasting and Shading}
+\label{subsec:isosurface}
 
 \paragraph{Isosurface Raycasting}
-\label{isosurface}
 
 Isosurfaces are defined by
  $$f(x; y; z) = C$$ 
@@ -130,6 +131,30 @@ By modifying this values, we can reach some satisfying conclusions, which can be
 \end{itemize}
 
 \subsection{2-D transfer functions}
+
+\paragraph{Isovalue countour surfaces}
+
+While the previously shown rendering methods are effective in certain situations, they do not always allow uniquely identifying a feature of interest. By incorporating gradient information in the transfer function, we give the user another tool to visualize these features.
+
+We apply the method described by Levoy\citep{levoy_1988} to compute a voxel opacity:
+
+\begin{equation*}
+\alpha(\vb{x_i}) = \alpha_v
+\begin{cases}
+  1 &\text{if}\;|\grad f(\vb{x_i})| = 0\;\text{and}\\
+  &\quad f(\vb{x_i} = f_v)\\
+  1 - \dfrac{1}{r} \left| \dfrac{f_v - f(\vb{x_i})}{|\grad f(\vb{x_i})|}\right| &\text{if}\; |\grad f(\vb{x_i})| > 0\;\text{and}\;\\
+  &\quad f(\vb{x_i}) - r\; |\grad f(\vb{x_i})| \leq f_v \leq\\
+  &\quad f(\vb{x_i}) + r\; |\grad f(\vb{x_i})|\\
+  0 &\text{otherwise}
+\end{cases}
+\end{equation*}
+
+While the isosurface raycasting method described in \autoref{subsec:isosurface} renders all voxels with a specific intensity value $f_v$ as fully opaque, the method presented here also assigns a non-zero opacity $\alpha(\vb{x_i})$ to voxels that have values $f(\vb{x_i})$ that are close to $f_v$. The rate at which this opacity falls off is inversely proportional to the user-specified radius $r$ and the magnitude of the gradient $\grad f(\vb{x_i})$. In addition, the opacity is scaled by a constant $\alpha_v$.
+
+The parameters of the 2-D transfer function can be configured through the graphical interface shown in \autoref{fig:2dtf}. Here, the intensity field defines $f_v$ and is graphically represented by the median of the triangle. The radius $r$ determines the width of the triangle. The opacity field defines $\alpha_v$. \autoref{fig:2dtf} also shows how different transfer functions may be used to highlight features with different intensity values.
+
+The implementation of the opacity computation can be found in the method {\tt computeOpacity2DTF} of class {\tt RaycastRenderer}.
 
 \subsection{Cutting plane}
 
@@ -251,6 +276,20 @@ TODO: compare both techniques and find some dataset where there's major differen
   \label{fig:phong}
 \end{figure}
 
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{2dtf}
+    \caption{A transfer function revealing lower density features.}
+  \end{subfigure}
+  \\~\\
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{2dtf-skeleton}
+    \caption{A transfer function revealing higher density features.}
+  \end{subfigure}
+  \caption{Comparison of different 2-D transfer functions on \textit{carp8} dataset.}
+  \label{fig:2dtf}
+\end{figure}
 
 \begin{figure}[h]
   \centering
