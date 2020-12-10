@@ -592,9 +592,9 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
         double[] viewVector = {-rayVector[0], -rayVector[1], -rayVector[2]};
         double specularHelper = VectorMath.dotproduct(viewVector, reflectionVector);
-        color.r += specular * Math.pow(specularHelper, n);
-        color.g += specular * Math.pow(specularHelper, n);
-        color.b += specular * Math.pow(specularHelper, n);
+        color.r += voxelColor.r * specular * Math.pow(specularHelper, n);
+        color.g += voxelColor.g * specular * Math.pow(specularHelper, n);
+        color.b += voxelColor.b * specular * Math.pow(specularHelper, n);
 
         return color;
     }
