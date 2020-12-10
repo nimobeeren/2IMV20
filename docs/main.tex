@@ -74,6 +74,10 @@ Where $\alpha$ is the opacity and $c_i$ the color. Since this calculation is bas
 
 The implementation can be found in the method {\tt traceRayComposite} of the {\tt RaycastRenderer} class.
 
+\subparagraph{MIP vs Composite}
+
+When comparing MIP with the Ray Composite rendering techniques, we observe that, when using MIP, some information can be lost as this technique only accounts for the highest intensity voxel in the viewing ray. If there's information behind the highest intensity voxel, it is not visible. On the other hand, with composite, since it is actually the composition of all voxels in a certain ray, we can visualize the elements in many levels of depth. You can see some of those differences on \autoref{fig:mipscomp}.
+
 \paragraph{Speed up interaction with ray composite}
 \label{speed_up}
 
@@ -152,10 +156,6 @@ In addition to the implementation on the {\tt raycast} method, we also added a b
 \section{Conclusions}
 
 TODO!!!
-
-\paragraph{MIP vs Composite}
-
-TODO: compare both techniques and find some dataset where there's major differences in details. \autoref{fig:mipscomp}
 
 \bibliographystyle{plain}
 \bibliography{references}
