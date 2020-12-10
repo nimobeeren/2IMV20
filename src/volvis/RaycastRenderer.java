@@ -532,12 +532,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 }
             }
 
-            // Front to Back composing
+            // Apply Front to Back compositing
             voxel_color.r += (1.0 - voxel_color.a) * a * r;
             voxel_color.g += (1.0 - voxel_color.a) * a * g;
             voxel_color.b += (1.0 - voxel_color.a) * a * b;
             voxel_color.a += (1.0 - voxel_color.a) * a;
 
+            // Move forward along the ray
             for (int i = 0; i < 3; i++) {
                 currentPos[i] += increments[i];
             }
@@ -549,9 +550,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         b = voxel_color.b;
         a = voxel_color.a;
 
-        //computes the color
-        int color = computePackedPixelColor(r, g, b, a);
-        return color;
+        // Pack the color into an integer
+        return computePackedPixelColor(r, g, b, a);
     }
 
     /**
