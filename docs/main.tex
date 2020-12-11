@@ -62,7 +62,7 @@ In class, various rendering methods used to visualize 3D scalar data have been d
 \paragraph{Trilinear Interpolation}
 \label{trilinear_interpolation}
 
-In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. The results can be observed in \autoref{fig:trilinear}.
+In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. We expect that the visualization of the data after trilinear interpolation is implemented will be smoother and this can be observed in \autoref{fig:trilinear}.
 
 \paragraph{Ray Composite}
 \label{ray_composite}
@@ -105,7 +105,9 @@ To achieve a smooth transition of the gradient between voxels, we apply trilinea
 
 Isosurfaces are defined by
  $$f(x; y; z) = C$$ 
-Where $C$ is a constant known as the isovalue. Similarly to Ray Composite\textsuperscript{\autoref{ray_composite}}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned. The result without shading enabled can be seen in \autoref{fig:isosurface}.
+Where $C$ is a constant known as the isovalue. Similarly to Ray Composite\textsuperscript{\autoref{ray_composite}}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned. 
+
+After implementation we should be able to clearly see parts with the same value. The result without shading enabled can be seen in \autoref{fig:isosurface}. Rendering using this method is fast and does not cause any delays in the interaction with the GUI.
 
 \paragraph{Phong Shading}
 
@@ -158,7 +160,13 @@ While the isosurface raycasting method described in \autoref{subsec:isosurface} 
 
 The parameters of the 2-D transfer function can be configured through the graphical interface shown in \autoref{fig:2dtf}. Here, the intensity field defines $f_v$ and is graphically represented by the median of the triangle. The radius $r$ determines the width of the triangle. The opacity field defines $\alpha_v$. \autoref{fig:2dtf} also shows how different transfer functions may be used to highlight features with different intensity values.
 
+Some bigger datasets can cause a delay of 1-3 seconds when rendering the image between changes of parameters.
+
 The implementation of the opacity computation can be found in the method {\tt computeOpacity2DTF} of class {\tt RaycastRenderer}.
+
+\subparagraph{Isosurface Raycast vs 2D Transfer Function}
+
+When comparing Isosurface Raycasting in \autoref{fig:carp-skelet} and the 2D Transfer Function in \autoref{fig:2dtf} (b) we can clearly see that the latter produces a more detailed view of the fish skeleton due to the way voxels with higher and lower intensity are given different opacities. But if we focus on some details, for example the small bones on the spine of the carp, we notice that they are better seen on \autoref{fig:carp-skelet} because the isosurface raycasting approach produces sharper edges.
 
 \subsection{Cutting plane}
 
@@ -177,6 +185,16 @@ Finally, if the entry and exit points are on different sides, and the rendering 
 \autoref{fig:cutplane} shows how the feature works. In (a) using compositing on one side, while the other remains invisible. This allows to see the insides of the volume. In (b) you can see two sides rendered with different techniques, in this case MIP and Isosurface.
 
 In addition to the implementation on the {\tt raycast} method, we also added a boolean parameter to indicate if we need to use the front or back-related functions and variables to the methods {\tt traceRayComposite} and {\tt traceRayIso}.
+
+\subsection{Results}
+
+After implementing all functions we tried different datasets and some interesting results will be shown in this section.
+
+In \autoref{fig:backpack-mip} we can see the \textit{backpack8\_small} dataset visualized using MIP. The items inside the backpack are visible and can be easily distinguished, because they have higher intensity than the surrounding material. As an example, this method could be useful to airport security.
+
+Another interesting feature is shown in \autoref{fig:carp-skelet} where the skeleton of a carp is visualized using isosurface raycasting. This method is particularly useful for visualizing material with very high intensities, such as bones.
+
+Rendering using the 2D transfer function on the \textit{tooth} dataset   can be observed on \autoref{fig:tooth}.The tooth's outline can be seen together with the pulp chamber inside of it.
 
 \section{Conclusions}
 
@@ -308,5 +326,25 @@ TODO!!!
   \label{fig:cutplane}
 \end{figure}
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{backpack-MIP}
+  \caption{MIP on \textit{backpack8\_small} dataset with inside volume visible.}
+  \label{fig:backpack-mip}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{carp-iso-180}
+  \caption{Isosurface raycasting with isovalue 180 on \textit{carp8} dataset.}
+  \label{fig:carp-skelet}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{tooth-2d}
+  \caption{The 2D transfer function rendering method on \textit{tooth} dataset with pulp chamber visible. The parameters used are `$f_v$ = 720`, `r = 460`, `$\alpha_v$ = 0.3`.}
+  \label{fig:tooth}
+\end{figure}
 
 \end{document}
