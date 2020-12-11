@@ -43,7 +43,7 @@
 \title{Volume Rendering Assignment\\2IMV20\\Eindhoven University of Technology}
 
 % Authors and group. Replace with your names and group number
-\author{N. Beeren \quad H.A.C. Dias \quad G.S. Slavova\\Group 13}
+\author{Nimo Beeren \quad Henrique Dias \quad Gabriela Slavova\\Group 13}
 \date{December 2020}
 
 % Begin document
@@ -53,7 +53,7 @@
 
 \section{Introduction}
 
-TODO!!!
+In class, various rendering methods used to visualize 3D scalar data have been discussed \citep{2imv20_2}. In this report, we describe our implementation of some of these methods and compare them by applying them to various datasets.
 
 \section{Implementations}
 
@@ -138,7 +138,7 @@ By modifying this values, we can reach some satisfying conclusions, which can be
 
 \paragraph{Isovalue countour surfaces}
 
-While the previously shown rendering methods are effective in certain situations, they do not always allow uniquely identifying a feature of interest. By incorporating gradient information in the transfer function, we give the user another tool to visualize these features.
+The previously shown rendering methods are effective in certain situations, but they do not always allow uniquely identifying a feature of interest. By incorporating gradient information in the transfer function, we provide another tool to visualize these features.
 
 We apply the method described by Levoy\citep{levoy_1988} to compute a voxel opacity:
 
@@ -154,7 +154,7 @@ We apply the method described by Levoy\citep{levoy_1988} to compute a voxel opac
 \end{cases}
 \end{equation*}
 
-While the isosurface raycasting method described in \autoref{subsec:isosurface} renders all voxels with a specific intensity value $f_v$ as fully opaque, the method presented here also assigns a non-zero opacity $\alpha(\vb{x_i})$ to voxels that have values $f(\vb{x_i})$ that are close to $f_v$. The rate at which this opacity falls off is inversely proportional to the user-specified radius $r$ and the magnitude of the gradient $\grad f(\vb{x_i})$. In addition, the opacity is scaled by a constant $\alpha_v$.
+While the isosurface raycasting method described in \autoref{subsec:isosurface} renders all voxels with a value larger than or equal to $f_v$ as fully opaque, the method presented here also assigns a non-zero opacity $\alpha(\vb{x_i})$ to voxels that have values $f(\vb{x_i})$ that are close to $f_v$. The rate at which this opacity falls off is inversely proportional to the user-specified radius $r$ and the magnitude of the gradient $\grad f(\vb{x_i})$. In addition, the opacity is scaled by a constant $\alpha_v$.
 
 The parameters of the 2-D transfer function can be configured through the graphical interface shown in \autoref{fig:2dtf}. Here, the intensity field defines $f_v$ and is graphically represented by the median of the triangle. The radius $r$ determines the width of the triangle. The opacity field defines $\alpha_v$. \autoref{fig:2dtf} also shows how different transfer functions may be used to highlight features with different intensity values.
 
