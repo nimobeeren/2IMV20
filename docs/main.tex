@@ -118,8 +118,8 @@ Phong's shading model was presented in class \citep{2imv20_2}:
 $$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
 
 \noindent where
-\setlist{nolistsep}
-\begin{itemize}[noitemsep]
+
+\begin{itemize}
   \item $I_a$ and $I_l$ refer to the ambient light and to the object light, respectively.
   \item $k_a$, $k_d$ and $k_s$ refer to the ambient, diffuse and specular parameters, respectively.
   \item $L$ is the light vector.
@@ -131,14 +131,14 @@ $$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
 For simplicity and due to the lack of possibility of choosing a color for each parameter from the GUI, we considered that $I_a=I_l$. For each parameter $k_a$, $k_d$, $k_s$ and $\alpha$ we used the values suggested in the assignment to get the best results with the \textit{carp8} dataset: 0.1, 0.7, 0.2 and 100 respectively.
 
 By modifying these values, we can reach some satisfying conclusions, which can be seen on \autoref{fig:phong}:
-\setlist{nolistsep}
-\begin{itemize}[noitemsep]
+
+\begin{itemize}
   \item The ambient parameter $k_a$ affects the amount of ambient light uniformly across the scene. The higher the value, the higher the intensity of ambient light. This can be seen by comparing \autoref{fig:phong} (a) and (b).
   \item The diffuse parameter $k_d$ affects how light diffuses from the surface. The higher the value, the higher the intensity of the diffuse reflection, which makes the subject appear brighter. This can be seen by comparing \autoref{fig:phong} (a) and (c).
   \item The specular component $k_s$ affects the intensity of the specular reflection. The higher the value, the more glaring the reflection. This can be seen by comparing \autoref{fig:phong} (a) and (d).
 \end{itemize}
 
-The implementation can be found in the method {\tt computePhongShading}. This method is called both from {\tt traceRayIso} and {\tt traceRayComposite} when shading is enabled.
+The implementation can be found in the method {\tt computePhongShading}. This method is called from both {\tt traceRayIso} and {\tt traceRayComposite} when shading is enabled.
 
 \subsection{2D transfer functions}
 
