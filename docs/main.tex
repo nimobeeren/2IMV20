@@ -91,7 +91,7 @@ When comparing MIP with the compositing rendering method, we observe that, when 
 \paragraph{Interactive mode}
 \label{speed_up}
 
-A software raycaster is quite slow. To make the application more responsive while manipulating the camera, we lower the resolution during rendering. We can do that by changing the values of the variables {\tt increment} and {\tt sampleStep} to bigger ones leading to lowering the number of steps along the view ray and the number of pixels sampled.  The new values for interactive mode were chosen using the trial-and-error method to find a workable trade-off between rendering quality and performance. In \autoref{fig:speedup} can be observed both the time of the rendering in interactive mode before and after the changes, and the the quality of the image. The implementation consists of a simple if-statement near the top of the {\tt raycast} method.
+To make the application more responsive while manipulating the camera, we lower the resolution during rendering. We can do that by changing the values of the variables {\tt increment} and {\tt sampleStep} to bigger ones leading to lowering the number of steps along the view ray and the number of pixels sampled.  The new values for interactive mode were chosen using the trial-and-error method to find a workable trade-off between rendering quality and performance. In \autoref{fig:speedup} can be observed both the time of the rendering in interactive mode before and after the changes, and the the quality of the image. The implementation consists of a simple if-statement near the top of the {\tt raycast} method.
 
 \paragraph{Gradients}
 \label{subsec:gradients}
@@ -130,20 +130,18 @@ $$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
   \item $I_a$ and $I_l$ refer to the ambient light and to the object light, respectively.
   \item $k_a$, $k_d$ and $k_s$ refer to the ambient, diffuse and specular parameters, respectively.
   \item $L$ is the light vector.
-  \item $N$ is the normal which can be calculated with the given gradient $G$ by applying $N= {G}/{|G|}$.
+  \item $N$ is the normal which can be calculated with the given gradient $G$ by applying $N = {G}/{|G|}$.
   \item $V$ is the view vector, calculated by simply negating each component of the given ray vector.
   \item $R$ is the reflection vector, given by $R = (2N \cdot L)N-L$.
 \end{itemize}
 
-For simplicity and due to the lack of possibility of choosing a color for each parameter from the GUI, we considered that $I_a=I_l$. For each parameter $k_a$, $k_d$, $k_s$ and $\alpha$ we used the values suggested in the assignment to get the best results with the \textit{carp8} dataset: 0.1, 0.7, 0.2 and 100 respectively.
+\noindent To emphasize the material color, we chose $I_a = I_l$. For the parameters $k_a$, $k_d$, $k_s$ and $\alpha$ we found the values suggested in the assignment to be suitable: 0.1, 0.7, 0.2 and 100 respectively.
 
-By modifying these values, we can reach some satisfying conclusions, which can be seen on \autoref{fig:phong}:
+\autoref{fig:phong} To show the effect of changing these parameters. The ambient parameter $k_a$ affects the amount of ambient light uniformly across the scene. The higher the value, the higher the intensity of ambient light. This can be seen by comparing \autoref{fig:phong} (a) and (b).
 
-\begin{itemize}
-  \item The ambient parameter $k_a$ affects the amount of ambient light uniformly across the scene. The higher the value, the higher the intensity of ambient light. This can be seen by comparing \autoref{fig:phong} (a) and (b).
-  \item The diffuse parameter $k_d$ affects how light diffuses from the surface. The higher the value, the higher the intensity of the diffuse reflection, which makes the subject appear brighter. This can be seen by comparing \autoref{fig:phong} (a) and (c).
-  \item The specular component $k_s$ affects the intensity of the specular reflection. The higher the value, the more glaring the reflection. This can be seen by comparing \autoref{fig:phong} (a) and (d).
-\end{itemize}
+The diffuse parameter $k_d$ affects the intensity of the diffuse reflection. The higher the value, the brighter the subject appears. This can be seen by comparing \autoref{fig:phong} (a) and (c).
+
+The specular component $k_s$ affects the intensity of the specular reflection. The higher the value, the more glaring the reflection. This can be seen by comparing \autoref{fig:phong} (a) and (d).
 
 The implementation can be found in the method {\tt computePhongShading}. This method is called from both {\tt traceRayIso} and {\tt traceRayComposite} when shading is enabled.
 
@@ -292,8 +290,8 @@ TODO!!!
   \\~\\
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{pig8-phong-diffusion02}
-    \caption{Diffusion $k_d=0.2$, lower than the default.}
+    \includegraphics[width=\textwidth]{pig8-phong-diffuse02}
+    \caption{Diffuse $k_d=0.2$, lower than the default.}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.45\textwidth}
