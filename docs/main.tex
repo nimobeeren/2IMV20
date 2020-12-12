@@ -64,15 +64,24 @@ Each section contains a reference to the method where the implementation can be 
 
 \paragraph{Trilinear interpolation}
 
-In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. We expect that the visualization of the data after trilinear interpolation is implemented will be smoother and this can be observed in \autoref{fig:trilinear}. The implementation can be found in the method {\tt getVoxelTrilinear}.
+In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $S_{X_0}\ldots S_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity for the given pixel coordinate:
+\begin{align*}
+  S_X =\;&(1 - \alpha) (1 - \beta) (1 - \gamma) S_{X_0}
+    + \alpha (1 - \beta) (1 - \gamma) S_{X_1}\\
+    &+ (1 - \alpha) \beta (1 - \gamma) S_{X_2}
+    + \alpha \beta (1 - \gamma) S_{X_3}\\
+    &+ (1 - \alpha) (1 - \beta) \gamma S_{X_4}
+    + \alpha (1 - \beta) \gamma S_{X_5}\\
+    &+ (1 - \alpha) \beta \gamma S_{X_6}
+    + \alpha \beta \gamma S_{X_7}
+\end{align*}
+We expect that the visualization of the data after trilinear interpolation is implemented will be smoother and this can be observed in \autoref{fig:trilinear}. The implementation can be found in the method {\tt getVoxelTrilinear}.
 
 \paragraph{Compositing}
 \label{ray_composite}
 
 To implement the compositing ray function, we applied a front-to-back compositing strategy, similar to the back-to-front strategy studied in class \citep{2imv20_2}:
-
 $$I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha_j)$$
-
 where $\alpha_j$ is the voxel opacity and $c_i$ the color. Since this calculation is based on a sum, we calculate it iteratively. Using the given {\tt rayVector} and {\tt sampleStep} values, we can calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we calculate the value using trilinear interpolation and the trilinear gradient and add it to the final voxel color. The implementation can be found in the method {\tt traceRayComposite}.
 
 \subparagraph{MIP vs compositing}
@@ -107,9 +116,7 @@ Isosurfaces are defined by
  $$f(x; y; z) = C$$ 
 Where $C$ is a constant known as the isovalue. Similarly to the compositing method described in \autoref{subsec:raycasting}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned.
 
-After implementation we should be able to clearly see parts with the same value. The result without shading enabled can be seen in \autoref{fig:isosurface}. Rendering using this method is fast and does not cause any delays in the interaction with the GUI.
-
-The implementation can be found in the method {\tt traceRayIso}.
+After implementation we should be able to clearly see parts with the same value. The result without shading enabled can be seen in \autoref{fig:isosurface}. Rendering using this method is fast and does not cause any delays in the interaction with the GUI. The implementation can be found in the method {\tt traceRayIso}.
 
 \paragraph{Phong shading}
 
