@@ -58,20 +58,20 @@ In class, various rendering methods used to visualize 3D scalar data have been d
 \section{Implementations}
 
 \subsection{Raycasting}
+\label{subsec:raycasting}
 
 \paragraph{Trilinear Interpolation}
-\label{trilinear_interpolation}
 
 In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. The implementation can be found in the method {\tt getVoxelTrilinear} of the {\tt RaycastRenderer} class. We expect that the visualization of the data after trilinear interpolation is implemented will be smoother and this can be observed in \autoref{fig:trilinear}.
 
 \paragraph{Ray Composite}
 \label{ray_composite}
 
-To implement the ray composite function, we went for a front-to-back composing strategy. This strategy uses a similar formula to the one studied in class (back-to-front composing):
+To implement the ray composite function, we went for a front-to-back compositing strategy. This strategy uses a similar formula to the one studied in class \citep{2imv20_2} (back-to-front compositing):
 
 $$I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha)$$
 
-Where $\alpha$ is the opacity and $c_i$ the color. Since this calculation is based on a sum, we calculate it iteratively. Using the given {\tt rayVector} and {\tt sampleStep} values, we can calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we calculate the value using trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} and the trilinear gradient\textsuperscript{\autoref{trilinear_gradient}} according to the formula and add it to the final voxel color.
+Where $\alpha$ is the opacity and $c_i$ the color. Since this calculation is based on a sum, we calculate it iteratively. Using the given {\tt rayVector} and {\tt sampleStep} values, we can calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we calculate the value using trilinear interpolation and the trilinear gradient and add it to the final voxel color.
 
 The implementation can be found in the method {\tt traceRayComposite} of the {\tt RaycastRenderer} class.
 
@@ -96,7 +96,7 @@ The work related to gradients consists of two main parts:
 
 \noindent When the volume is first loaded, an approximate gradient is computed for all voxels, using the method described by Levoy \citep{levoy_1988}. The resulting vectors are stored in a lookup table (LUT).
 
-To achieve a smooth transition of the gradient between voxels, we apply trilinear interpolation, similar to \autoref{trilinear_interpolation}. The key difference is that we interpolate gradient vectors instead of scalar intensity values. To aid with scalar multiplication and vector addition, a few utility methods {\tt scale} and {\tt add} were implemented in the {\tt VoxelGradient} class.
+To achieve a smooth transition of the gradient between voxels, we apply trilinear interpolation in similar fashion as done with the voxel intensities. To aid with scalar multiplication and vector addition, the utility methods {\tt scale} and {\tt add} respectively were implemented in the {\tt VoxelGradient} class.
 
 \subsection{Isosurface Raycasting and Shading}
 \label{subsec:isosurface}
@@ -105,17 +105,17 @@ To achieve a smooth transition of the gradient between voxels, we apply trilinea
 
 Isosurfaces are defined by
  $$f(x; y; z) = C$$ 
-Where $C$ is a constant known as the isovalue. Similarly to Ray Composite\textsuperscript{\autoref{ray_composite}}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation\textsuperscript{\autoref{trilinear_interpolation}} to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned. 
+Where $C$ is a constant known as the isovalue. Similarly to the Ray Composite method described in \autoref{subsec:raycasting}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned.
 
 After implementation we should be able to clearly see parts with the same value. The result without shading enabled can be seen in \autoref{fig:isosurface}. Rendering using this method is fast and does not cause any delays in the interaction with the GUI.
 
 \paragraph{Phong Shading}
 
-The implementation of Phong's shading model can be found in the method {\tt computePhongShading} of class {\tt RaycastRenderer} and follows the standard formula given during the classes:
+The implementation of Phong's shading model can be found in the method {\tt computePhongShading} of class {\tt RaycastRenderer} and follows the standard formula given during the classes \citep{2imv20_2}:
 
 $$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
 
-Where:
+\noindent where
 \setlist{nolistsep}
 \begin{itemize}[noitemsep]
   \item $I_a$ and $I_l$ refer to the ambient light and to the object light, respectively.
