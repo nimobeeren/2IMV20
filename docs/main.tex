@@ -127,9 +127,9 @@ $$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
 \noindent where
 
 \begin{itemize}
-  \item $I_a$ and $I_l$ refer to the ambient light and to the object light, respectively.
-  \item $k_a$, $k_d$ and $k_s$ refer to the ambient, diffuse and specular parameters, respectively.
-  \item $L$ is the light vector.
+  \item $I_a$ and $I_l$ are the color of the ambient light and the direct light, respectively.
+  \item $k_a$, $k_d$ and $k_s$ are the ambient, diffuse and specular parameters, respectively.
+  \item $L$ is the light vector, pointing away from the source.
   \item $N$ is the normal which can be calculated with the given gradient $G$ by applying $N = {G}/{|G|}$.
   \item $V$ is the view vector, calculated by simply negating each component of the given ray vector.
   \item $R$ is the reflection vector, given by $R = (2N \cdot L)N-L$.
