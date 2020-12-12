@@ -57,32 +57,32 @@ In class, various rendering methods used to visualize 3D scalar data have been d
 
 Each section contains a reference to the method where the implementation can be found. Unless otherwise mentioned, these methods are members of the {\tt RaycastRenderer} class.
 
-\section{Implementations}
+\section{Implementation}
 
 \subsection{Raycasting}
 \label{subsec:raycasting}
 
-\paragraph{Trilinear Interpolation}
+\paragraph{Trilinear interpolation}
 
 In order to achieve a smooth transition of intensity between voxels, we apply some interpolation. Given a 3D pixel coordinate $X$, we find the voxels $X_0 \ldots X_7$ such that these voxels form the vertices of a cube that contains $X$. Using the known intensities $s_{X_0}\ldots s_{X_7}$, we apply trilinear interpolation to obtain an approximate intensity $s_X$ for the pixel coordinate, as described in the lecture slides \citep{2imv20_2}. We expect that the visualization of the data after trilinear interpolation is implemented will be smoother and this can be observed in \autoref{fig:trilinear}. The implementation can be found in the method {\tt getVoxelTrilinear}.
 
-\paragraph{Ray Composite}
+\paragraph{Compositing}
 \label{ray_composite}
 
-To implement the ray composite function, we went for a front-to-back compositing strategy. This strategy uses a similar formula to the one studied in class \citep{2imv20_2} (back-to-front compositing):
+To implement the compositing ray function, we applied a front-to-back compositing strategy, similar to the back-to-front strategy studied in class \citep{2imv20_2}:
 
-$$I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha)$$
+$$I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha_j)$$
 
-Where $\alpha$ is the opacity and $c_i$ the color. Since this calculation is based on a sum, we calculate it iteratively. Using the given {\tt rayVector} and {\tt sampleStep} values, we can calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we calculate the value using trilinear interpolation and the trilinear gradient and add it to the final voxel color. The implementation can be found in the method {\tt traceRayComposite}.
+where $\alpha_j$ is the voxel opacity and $c_i$ the color. Since this calculation is based on a sum, we calculate it iteratively. Using the given {\tt rayVector} and {\tt sampleStep} values, we can calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we calculate the value using trilinear interpolation and the trilinear gradient and add it to the final voxel color. The implementation can be found in the method {\tt traceRayComposite}.
 
-\subparagraph{MIP vs Composite}
+\subparagraph{MIP vs compositing}
 
-When comparing MIP with the Ray Composite rendering techniques, we observe that, when using MIP, some information can be lost as this technique only accounts for the highest intensity voxel in the viewing ray. If there's information behind the highest intensity voxel, it is not visible. On the other hand, with composite, since it is actually the composition of all voxels in a certain ray, we can visualize the elements in many levels of depth. You can see some of those differences on \autoref{fig:mipscomp}.
+When comparing MIP with the compositing rendering method, we observe that, when using MIP, some information can be lost as this method only accounts for the highest intensity voxel in the viewing ray. If there is information behind the highest intensity voxel, it is not visible. On the other hand, with composite, since it is actually the composition of all voxels in a certain ray, we can visualize the elements in many levels of depth. You can see some of those differences on \autoref{fig:mipscomp}.
 
-\paragraph{Speed up interaction with ray composite}
+\paragraph{Interactive mode}
 \label{speed_up}
 
-A software raycaster is quite slow. To make the application more responsive while manipulating the camera, we lower the resolution during rendering. We can do that by changing the values of the variables {\tt increment} and {\tt sampleStep} to bigger ones leading to lowering the number of steps along the view ray and the number of pixels sampled.  The new values for interactive mode were chosen using the trial-and-error method to find a workable trade-off between rendering quality and performance. In \autoref{fig:speedup} can be observed both the time of the rendering in Interactive mode before and after the changes, and the the quality of the image. The implementation consists of a simple if-statement near the top of the {\tt raycast} method.
+A software raycaster is quite slow. To make the application more responsive while manipulating the camera, we lower the resolution during rendering. We can do that by changing the values of the variables {\tt increment} and {\tt sampleStep} to bigger ones leading to lowering the number of steps along the view ray and the number of pixels sampled.  The new values for interactive mode were chosen using the trial-and-error method to find a workable trade-off between rendering quality and performance. In \autoref{fig:speedup} can be observed both the time of the rendering in interactive mode before and after the changes, and the the quality of the image. The implementation consists of a simple if-statement near the top of the {\tt raycast} method.
 
 \paragraph{Gradients}
 \label{subsec:gradients}
@@ -98,20 +98,20 @@ The work related to gradients consists of two main parts:
 
 To achieve a smooth transition of the gradient between voxels, we apply trilinear interpolation in similar fashion as done with the voxel intensities. To aid with scalar multiplication and vector addition, the utility methods {\tt scale} and {\tt add} respectively were implemented in the {\tt VoxelGradient} class.
 
-\subsection{Isosurface Raycasting and Shading}
+\subsection{Isosurface raycasting and shading}
 \label{subsec:isosurface}
 
-\paragraph{Isosurface Raycasting}
+\paragraph{Isosurface raycasting}
 
 Isosurfaces are defined by
  $$f(x; y; z) = C$$ 
-Where $C$ is a constant known as the isovalue. Similarly to the Ray Composite method described in \autoref{subsec:raycasting}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned.
+Where $C$ is a constant known as the isovalue. Similarly to the compositing method described in \autoref{subsec:raycasting}, we use the given {\tt rayVector} and {\tt sampleStep} values to calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we use trilinear interpolation to calculate the value and then we compare it to the value of {\tt isoValueFront} which is the value specified in the GUI of the application. If the current value is greater we check if shading is enabled and apply it using {\tt computePhongShading} if needed, and return the {\tt isoColorFront} which is the chosen color in the GUI of the application or the newly computed color after the shading is applied to the  {\tt isoColorFront}. If no greater than {\tt isoValueFront} values are found, black is returned.
 
 After implementation we should be able to clearly see parts with the same value. The result without shading enabled can be seen in \autoref{fig:isosurface}. Rendering using this method is fast and does not cause any delays in the interaction with the GUI.
 
 The implementation can be found in the method {\tt traceRayIso}.
 
-\paragraph{Phong Shading}
+\paragraph{Phong shading}
 
 Phong's shading model was presented in class \citep{2imv20_2}:
 
@@ -138,9 +138,9 @@ By modifying these values, we can reach some satisfying conclusions, which can b
   \item The specular component $k_s$ affects the intensity of the specular reflection. The higher the value, the more glaring the reflection. This can be seen by comparing \autoref{fig:phong} (a) and (d).
 \end{itemize}
 
-The implementation can be found in the method {\tt computePhongShading}.
+The implementation can be found in the method {\tt computePhongShading}. This method is called both from {\tt traceRayIso} and {\tt traceRayComposite} when shading is enabled.
 
-\subsection{2-D transfer functions}
+\subsection{2D transfer functions}
 
 \paragraph{Isovalue countour surfaces}
 
@@ -162,15 +162,15 @@ We apply the method described by Levoy\citep{levoy_1988} to compute a voxel opac
 
 While the isosurface raycasting method described in \autoref{subsec:isosurface} renders all voxels with a value larger than or equal to $f_v$ as fully opaque, the method presented here also assigns a non-zero opacity $\alpha(\vb{x_i})$ to voxels that have values $f(\vb{x_i})$ that are close to $f_v$. The rate at which this opacity falls off is inversely proportional to the user-specified radius $r$ and the magnitude of the gradient $\grad f(\vb{x_i})$. In addition, the opacity is scaled by a constant $\alpha_v$.
 
-The parameters of the 2-D transfer function can be configured through the graphical interface shown in \autoref{fig:2dtf}. Here, the intensity field defines $f_v$ and is graphically represented by the median of the triangle. The radius $r$ determines the width of the triangle. The opacity field defines $\alpha_v$. \autoref{fig:2dtf} also shows how different transfer functions may be used to highlight features with different intensity values.
+The parameters of the 2D transfer function can be configured through the graphical interface shown in \autoref{fig:2dtf}. Here, the intensity field defines $f_v$ and is graphically represented by the median of the triangle. The radius $r$ determines the width of the triangle. The opacity field defines $\alpha_v$. \autoref{fig:2dtf} also shows how different transfer functions may be used to highlight features with different intensity values.
 
 Some bigger datasets can cause a delay of 1-3 seconds when rendering the image between changes of parameters.
 
 The code implementing the opacity computation can be found in the method {\tt computeOpacity2DTF}.
 
-\subparagraph{Isosurface Raycast vs 2D Transfer Function}
+\subparagraph{Isosurface raycasting vs 2D transfer function}
 
-When comparing Isosurface Raycasting in \autoref{fig:carp-skelet} and the 2D Transfer Function in \autoref{fig:2dtf} (b) we can clearly see that the latter produces a more detailed view of the fish skeleton due to the way voxels with higher and lower intensity are given different opacities. But if we focus on some details, for example the small bones on the spine of the carp, we notice that they are better seen on \autoref{fig:carp-skelet} because the isosurface raycasting approach produces sharper edges.
+When comparing isosurface raycasting in \autoref{fig:carp-skelet} and the 2D transfer function in \autoref{fig:2dtf} (b) we can clearly see that the latter produces a more detailed view of the fish skeleton due to the way voxels with higher and lower intensity are given different opacities. But if we focus on some details, for example the small bones on the spine of the carp, we notice that they are better seen on \autoref{fig:carp-skelet} because the isosurface raycasting approach produces sharper edges.
 
 \subsection{Cutting plane}
 
@@ -186,7 +186,7 @@ In case the entry and exit points are on \textbf{different sides} of the cutting
 
 Finally, if the entry and exit points are on different sides, and the rendering function did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering function.
 
-\autoref{fig:cutplane} shows how the feature works. In (a) using compositing on one side, while the other remains invisible. This allows to see the insides of the volume. In (b) you can see two sides rendered with different techniques, in this case MIP and Isosurface.
+\autoref{fig:cutplane} shows how the feature works. In (a) using compositing on one side, while the other remains invisible. This allows to see the insides of the volume. In (b) you can see two sides rendered with different methods, in this case MIP and isosurface.
 
 In addition to the implementation in the {\tt raycast} method, we also added a boolean parameter to the methods {\tt traceRayComposite} and {\tt traceRayIso} to determine  which half of the volume we are rendering.
 
@@ -198,7 +198,7 @@ In \autoref{fig:backpack-mip} we can see the \textit{backpack8\_small} dataset v
 
 Another interesting feature is shown in \autoref{fig:carp-skelet} where the skeleton of a carp is visualized using isosurface raycasting. This method is particularly useful for visualizing material with very high intensities, such as bones.
 
-Rendering using the 2D transfer function on the \textit{tooth} dataset   can be observed on \autoref{fig:tooth}.The tooth's outline can be seen together with the pulp chamber inside of it.
+Rendering using the 2D transfer function on the \textit{tooth} dataset can be observed on \autoref{fig:tooth}. The tooth's outline can be seen together with the pulp chamber inside of it.
 
 \section{Conclusions}
 
@@ -324,7 +324,7 @@ TODO!!!
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{pig8-cut-plane-renders}
-    \caption{MIP and Isosurface with shading. Each side of the volume is rendered differently.}
+    \caption{MIP and isosurface with shading. Each side of the volume is rendered differently.}
   \end{subfigure}
   \caption{Cutting plane demonstration with \textit{pig8} dataset.}
   \label{fig:cutplane}
