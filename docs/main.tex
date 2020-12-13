@@ -173,17 +173,17 @@ The code implementing the opacity computation can be found in the method {\tt co
 
 \subsection{Cutting plane}
 
-The user can choose to use a different rendering method or parameters for two halves of the volume, separated by a so called cutting plane. To achieve this, we start by determining on which side of the plane the entry and exit points are located. For that, we first calculate the difference between the point $p$ and the plane point $P_p$. With the obtained vector, we calculate the dot product with the plane normal $P_N$:
+The user can choose to use a different rendering method or parameters for two halves of the volume, separated by a cutting plane. The cutting plane is defined by a position vector $P_p$ and a normal vector $P_N$. To determine on which side of the plane the entry and exit points are located, we consider:
 
 $$(p-P_p)\cdot P_N$$
 
-We considered that, if the resulting value is larger than 0, then the point is on the back side. Otherwise, it would be on the other side. By knowing in which side of the cutting plane both entry and exit points are located, we can now render the volumes according to some rules.
+\noindent If the resulting value is larger than 0, then the point $p$ is on the back side, and otherwise it is on the front. We can now render the volume according to some rules.
 
-If the entry and exit points are both on the \textbf{same side} of the cutting plane, we render the volume using the rendering function corresponding to that side, from the entry to the exit point.
+If the entry and exit points are both on the \textbf{same side} of the cutting plane, we render the ray using the rendering method corresponding to that side.
 
-In case the entry and exit points are on \textbf{different sides} of the cutting plane, we first calculate the intersection of the line segment defined by both points with the cutting plane. For that, we use the function {\tt intersectFace}. Then, we render the volume using the rendering function from the side where the entry point is on, from the entry point to the intersection point.
+If the entry and exit points are on \textbf{different sides} of the cutting plane, we first calculate the intersection of the ray with the cutting plane using the given provided method {\tt intersectFace}. Then, we render the volume using the rendering method from the side where the entry point is on, from the entry point to the intersection point.
 
-Finally, if the entry and exit points are on different sides, and the rendering function did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering function.
+Finally, if the entry and exit points are on different sides, and the rendering method did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering method.
 
 \autoref{fig:cutplane} shows how the feature works. In (a) using compositing on one side, while the other remains invisible. This allows to see the insides of the volume. In (b) you can see two sides rendered with different methods, in this case MIP and isosurface.
 
