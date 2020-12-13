@@ -84,10 +84,6 @@ To implement the compositing ray function, we applied a front-to-back compositin
 $$I(p)=\sum^{n-1}_{i=0}c_i\prod^{n-1}_{j=i+1}(1-\alpha_j)$$
 where $\alpha_j$ is the voxel opacity and $c_i$ the color. Since this calculation is based on a sum, we calculate it iteratively. Using the given {\tt rayVector} and {\tt sampleStep} values, we can calculate the incremental step to go from {\tt entryPoint} to {\tt exitPoint}. For each voxel, we calculate the value using trilinear interpolation and the trilinear gradient and add it to the final voxel color. The implementation can be found in the method {\tt traceRayComposite}.
 
-\subparagraph{MIP vs compositing}
-
-When comparing MIP with the compositing rendering method, we observe that, when using MIP, some information can be lost as this method only accounts for the highest intensity voxel in the viewing ray. If there is information behind the highest intensity voxel, it is not visible. On the other hand, with composite, since it is actually the composition of all voxels in a certain ray, we can visualize the elements in many levels of depth. You can see some of those differences on \autoref{fig:mipscomp}.
-
 \paragraph{Interactive mode}
 \label{speed_up}
 
@@ -122,20 +118,22 @@ After implementation we should be able to clearly see parts with the same value.
 
 Phong's shading model was presented in class \citep{2imv20_2}:
 
-$$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
+$$I = I_a k_a + I_l k_d(L \cdot N) + I_l k_s(V \cdot R)^\alpha$$
 
 \noindent where
 
 \begin{itemize}
   \item $I_a$ and $I_l$ are the color of the ambient light and the direct light, respectively.
   \item $k_a$, $k_d$ and $k_s$ are the ambient, diffuse and specular parameters, respectively.
-  \item $L$ is the light vector, pointing away from the source.
-  \item $N$ is the normal which can be calculated with the given gradient $G$ by applying $N = {G}/{|G|}$.
-  \item $V$ is the view vector, calculated by simply negating each component of the given ray vector.
+  \item $L$ is the light vector, pointing towards the light source.
+  \item $N$ is the normal vector which can be approxmiated by $N = {G}/{|G|}$ where $G$ is the local gradient vector.
+  \item $V$ is the view vector, pointing towards the camera.
   \item $R$ is the reflection vector, given by $R = (2N \cdot L)N-L$.
 \end{itemize}
 
-\noindent To emphasize the material color, we chose $I_a = I_l$. For the parameters $k_a$, $k_d$, $k_s$ and $\alpha$ we found the values suggested in the assignment to be suitable: 0.1, 0.7, 0.2 and 100 respectively.
+\noindent It should be noted that the model is only valid when the dot products are positive. That is, when we are lighting a surface from the front. To avoid this problem, we chose to ignore the diffuse component when $L \cdot N < 0$ and to ignore the specular component when $V \cdot R < 0$.
+
+To keep the light neutral in color, we chose $I_a = I_l = \text{white}$. For the parameters $k_a$, $k_d$, $k_s$ and $\alpha$ we found the values suggested in the assignment to be suitable: 0.1, 0.7, 0.2 and 100 respectively.
 
 \autoref{fig:phong} shows the effect of changing these parameters. The ambient parameter $k_a$ affects the amount of ambient light uniformly across the scene. The higher the value, the higher the intensity of ambient light. This can be seen by comparing \autoref{fig:phong} (a) and (b).
 
@@ -173,35 +171,49 @@ Some bigger datasets can cause a delay of 1-3 seconds when rendering the image b
 
 The code implementing the opacity computation can be found in the method {\tt computeOpacity2DTF}.
 
-\subparagraph{Isosurface raycasting vs 2D transfer function}
-
-When comparing isosurface raycasting in \autoref{fig:carp-skelet} and the 2D transfer function in \autoref{fig:2dtf} (b) we can clearly see that the latter produces a more detailed view of the fish skeleton due to the way voxels with higher and lower intensity are given different opacities. But if we focus on some details, for example the small bones on the spine of the carp, we notice that they are better seen on \autoref{fig:carp-skelet} because the isosurface raycasting approach produces sharper edges.
-
 \subsection{Cutting plane}
 
-The user can choose to use a different rendering method or parameters for two halves of the volume, separated by a so called cutting plane. To achieve this, we start by determining on which side of the plane the entry and exit points are located. For that, we first calculate the difference between the point $p$ and the plane point $P_p$. With the obtained vector, we calculate the dot product with the plane normal $P_N$:
+The user can choose to use a different rendering method or parameters for two halves of the volume, separated by a cutting plane. The cutting plane is defined by a position vector $P_p$ and a normal vector $P_N$. To determine on which side of the plane the entry and exit points are located, we consider:
 
 $$(p-P_p)\cdot P_N$$
 
-We considered that, if the resulting value is larger than 0, then the point is on the back side. Otherwise, it would be on the other side. By knowing in which side of the cutting plane both entry and exit points are located, we can now render the volumes according to some rules.
+\noindent If the resulting value is larger than 0, then the point $p$ is on the back side, and otherwise it is on the front. We can now render the volume according to some rules.
 
-If the entry and exit points are both on the \textbf{same side} of the cutting plane, we render the volume using the rendering function corresponding to that side, from the entry to the exit point.
+If the entry and exit points are both on the \textbf{same side} of the cutting plane, we render the ray using the rendering method corresponding to that side.
 
-In case the entry and exit points are on \textbf{different sides} of the cutting plane, we first calculate the intersection of the line segment defined by both points with the cutting plane. For that, we use the function {\tt intersectFace}. Then, we render the volume using the rendering function from the side where the entry point is on, from the entry point to the intersection point.
+If the entry and exit points are on \textbf{different sides} of the cutting plane, we first calculate the intersection of the ray with the cutting plane using the provided method {\tt intersectFace}. Then, we render the volume using the rendering method from the side where the entry point is on, from the entry point to the intersection point.
 
-Finally, if the entry and exit points are on different sides, and the rendering function did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering function.
+Finally, if the entry and exit points are on different sides, and the rendering method did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering method.
 
 \autoref{fig:cutplane} shows how the feature works. In (a) using compositing on one side, while the other remains invisible. This allows to see the insides of the volume. In (b) you can see two sides rendered with different methods, in this case MIP and isosurface.
 
 In addition to the implementation in the {\tt raycast} method, we also added a boolean parameter to the methods {\tt traceRayComposite} and {\tt traceRayIso} to determine  which half of the volume we are rendering.
 
-\subsection{Results}
+\section{Discussion}
 
-After implementing all functions we tried different datasets and some interesting results will be shown in this section.
+\paragraph{MIP}
 
-In \autoref{fig:backpack-mip} we can see the \textit{backpack8\_small} dataset visualized using MIP. The items inside the backpack are visible and can be easily distinguished, because they have higher intensity than the surrounding material. As an example, this method could be useful to airport security.
+One of the strenghts of MIP is being simple and fast, which makes it suitable for situations where powerful hardware is not available, or where there is no time to tweak the parameters. A drawback is that some information can be lost as this method only accounts for the highest intensity voxel in each ray.
 
-Another interesting feature is shown in \autoref{fig:carp-skelet} where the skeleton of a carp is visualized using isosurface raycasting. This method is particularly useful for visualizing material with very high intensities, such as bones.
+\autoref{fig:backpack-mip} shows a backpack visualized using MIP. The items inside the backpack are visible and can be easily distinguished, because they have higher intensity than the surrounding material. This method could be useful to airport security, for example.
+
+\paragraph{Compositing}
+
+The main advantage of compositing over MIP is the ability to visualize regions of different intensities inside a volume. In addition, it is possible to give each region a different color by modifying the transfer function.
+
+MIP and compositing can be compared in \autoref{fig:mipscomp}. Using MIP, we do not see the inside of the volume because the outside has higher intensity. Using the composite ray function, we can specifically highlight the region of lower intensity, revealing some coins inside the pig.
+
+\paragraph{Isosurface raycasting}
+
+Isosurface raycasting is most useful when the region we want to visualize has much higher intensity than the material around it, for example flesh vs. air. Like MIP, it is also fast to compute.
+
+\autoref{fig:isosurface} shows the results of isosuface raycasting with and without shading. While the unshaded version produces a uniform silhouette, applying Phong shading creates a much richer perception of depth.
+
+Another interesting example is shown in \autoref{fig:carp-skelet} where the skeleton of a carp is visualized. We can see most of the bones of the fish, but parts on the top and bottom of the fish are also visible.
+
+\paragraph{Isovalue contour surface}
+
+When comparing isosurface raycasting in \autoref{fig:carp-skelet} and the isovalue contour surface in \autoref{fig:2dtf} (b) we can clearly see that the latter produces a more detailed view of the fish skeleton due to the way voxels with higher and lower intensity are given different opacities. But if we focus on some details, for example the small bones on the spine of the carp, we notice that they are better seen on \autoref{fig:carp-skelet} because the isosurface raycasting approach produces sharper edges.
 
 Rendering using the 2D transfer function on the \textit{tooth} dataset can be observed on \autoref{fig:tooth}. The tooth's outline can be seen together with the pulp chamber inside of it.
 
@@ -252,25 +264,31 @@ TODO!!!
 
 \begin{figure}[h]
   \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{orange-composite}
-    \caption{Composite with default values.}
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{pig8-mip}
+    \caption{MIP conceals the inside of the volume.}
   \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{orange-mips}
-    \caption{MIP with default values.}
+  \\~\\
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{pig8-composite}
+    \caption{Composite rendering highlights two regions of different intensity.}
   \end{subfigure}
-  \caption{Comparison of different raycasting techniques on \textit{orange} dataset.}
+  \caption{Comparison of MIP and composite rendering methods on the \textit{pig8} dataset.}
   \label{fig:mipscomp}
 \end{figure}
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\textwidth]{iso-surface}
-  \caption{Isosurface raycasting without shading enabled on \textit{carp8} dataset.}
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{carp-iso-95}
+    \caption{Phong shading disabled.}
+  \end{subfigure}
+  \\~\\
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{carp-iso-95-shaded}
+    \caption{Phong shading enabled.}
+  \end{subfigure}
+  \caption{Isosurface raycasting with $C = 95$, with and without shading on the \textit{carp8} dataset.}
   \label{fig:isosurface}
 \end{figure}
 
@@ -314,7 +332,7 @@ TODO!!!
     \includegraphics[width=\textwidth]{2dtf-skeleton}
     \caption{A transfer function revealing higher density features.}
   \end{subfigure}
-  \caption{Comparison of different 2-D transfer functions on \textit{carp8} dataset.}
+  \caption{Comparison of different 2D transfer functions on \textit{carp8} dataset.}
   \label{fig:2dtf}
 \end{figure}
 
@@ -323,7 +341,7 @@ TODO!!!
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{pig8-cut-plane-coins}
-    \caption{Composite with cutting plane. Inside of the volume is visible.}
+    \caption{The back half rendered with composite, the front half invisble. The inside of the volume is revealed.}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.45\textwidth}
@@ -331,28 +349,28 @@ TODO!!!
     \includegraphics[width=\textwidth]{pig8-cut-plane-renders}
     \caption{MIP and isosurface with shading. Each side of the volume is rendered differently.}
   \end{subfigure}
-  \caption{Cutting plane demonstration with \textit{pig8} dataset.}
+  \caption{Cutting plane demonstration on the \textit{pig8} dataset.}
   \label{fig:cutplane}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{backpack-MIP}
-  \caption{MIP on \textit{backpack8\_small} dataset with inside volume visible.}
+  \caption{MIP of the \textit{backpack8\_small} dataset, revealing the contents of the backpack.}
   \label{fig:backpack-mip}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{carp-iso-180}
-  \caption{Isosurface raycasting with isovalue 180 on \textit{carp8} dataset.}
+  \caption{Isosurface raycasting with $C = 180$ on the \textit{carp8} dataset.}
   \label{fig:carp-skelet}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{tooth-2d}
-  \caption{The 2D transfer function rendering method on \textit{tooth} dataset with pulp chamber visible. The parameters used are `$f_v$ = 720`, `r = 460`, `$\alpha_v$ = 0.3`.}
+  \caption{The 2D transfer function rendering method on \textit{tooth} dataset with pulp chamber visible. The parameters used are $f_v = 720$, $r = 460$, $\alpha_v = 0.3$.}
   \label{fig:tooth}
 \end{figure}
 
