@@ -195,7 +195,7 @@ In addition to the implementation in the {\tt raycast} method, we also added a b
 
 One of the strenghts of MIP is being simple and fast, which makes it suitable for situations where powerful hardware is not available, or where there is no time to tweak the parameters. A drawback is that some information can be lost as this method only accounts for the highest intensity voxel in each ray.
 
-\autoref{fig:backpack-mip} shows a backpack visualized using MIP. The items inside the backpack are visible and can be easily distinguished, because they have higher intensity than the surrounding material. As an example, this method could be useful to airport security.
+\autoref{fig:backpack-mip} shows a backpack visualized using MIP. The items inside the backpack are visible and can be easily distinguished, because they have higher intensity than the surrounding material. This method could be useful to airport security, for example.
 
 \paragraph{Compositing}
 
@@ -205,7 +205,11 @@ MIP and compositing can be compared in \autoref{fig:mipscomp}. Using MIP, we do 
 
 \paragraph{Isosurface raycasting}
 
-Another interesting feature is shown in \autoref{fig:carp-skelet} where the skeleton of a carp is visualized using isosurface raycasting. This method is particularly useful for visualizing material with very high intensities, such as bones.
+Isosurface raycasting is most useful when the region we want to visualize has much higher intensity than the material around it, for example flesh vs. air.
+
+\autoref{fig:isosurface} shows the results of isosuface raycasting with and without shading. While the unshaded version produces a uniform silhouette, applying Phong shading creates a much richer perception of depth.
+
+Another interesting example is shown in \autoref{fig:carp-skelet} where the skeleton of a carp is visualized. We can see most of the bones of the fish, but parts on the top and bottom of the fish are also visible.
 
 \paragraph{Isovalue contour surface}
 
@@ -275,8 +279,16 @@ TODO!!!
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=\textwidth]{iso-surface}
-  \caption{Isosurface raycasting without shading enabled on \textit{carp8} dataset.}
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{carp-iso-95}
+    \caption{Phong shading disabled.}
+  \end{subfigure}
+  \\~\\
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{carp-iso-95-shaded}
+    \caption{Phong shading enabled.}
+  \end{subfigure}
+  \caption{Isosurface raycasting with $C = 95$, with and without shading on the \textit{carp8} dataset.}
   \label{fig:isosurface}
 \end{figure}
 
@@ -329,7 +341,7 @@ TODO!!!
   \begin{subfigure}[b]{0.45\textwidth}
     \centering
     \includegraphics[width=\textwidth]{pig8-cut-plane-coins}
-    \caption{Composite with cutting plane. Inside of the volume is visible.}
+    \caption{The back half rendered with composite, the front half invisble. The inside of the volume is revealed.}
   \end{subfigure}
   \hfill
   \begin{subfigure}[b]{0.45\textwidth}
@@ -337,28 +349,28 @@ TODO!!!
     \includegraphics[width=\textwidth]{pig8-cut-plane-renders}
     \caption{MIP and isosurface with shading. Each side of the volume is rendered differently.}
   \end{subfigure}
-  \caption{Cutting plane demonstration with \textit{pig8} dataset.}
+  \caption{Cutting plane demonstration on the \textit{pig8} dataset.}
   \label{fig:cutplane}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{backpack-MIP}
-  \caption{MIP on \textit{backpack8\_small} dataset with inside volume visible.}
+  \caption{MIP of the \textit{backpack8\_small} dataset, revealing the contents of the backpack.}
   \label{fig:backpack-mip}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{carp-iso-180}
-  \caption{Isosurface raycasting with isovalue 180 on \textit{carp8} dataset.}
+  \caption{Isosurface raycasting with $C = 180$ on the \textit{carp8} dataset.}
   \label{fig:carp-skelet}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\textwidth]{tooth-2d}
-  \caption{The 2D transfer function rendering method on \textit{tooth} dataset with pulp chamber visible. The parameters used are `$f_v$ = 720`, `r = 460`, `$\alpha_v$ = 0.3`.}
+  \caption{The 2D transfer function rendering method on \textit{tooth} dataset with pulp chamber visible. The parameters used are $f_v = 720$, $r = 460$, $\alpha_v = 0.3$.}
   \label{fig:tooth}
 \end{figure}
 
