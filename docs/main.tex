@@ -199,9 +199,9 @@ One of the strenghts of MIP is being simple and fast, which makes it suitable fo
 
 \paragraph{Compositing}
 
-The main advantage of compositing over MIP is the ability to visualize multiple layers of a volume. In particular, it is possible to highlight regions of different density by modifying the transfer function. Some of the differences between compositing and MIP can be seen in \autoref{fig:mipscomp}.
+The main advantage of compositing over MIP is the ability to visualize regions of different intensities inside a volume. In addition, it is possible to give each region a different color by modifying the transfer function.
 
-% TODO: showcase TF
+MIP and compositing can be compared in \autoref{fig:mipscomp}. Using MIP, we do not see the inside of the volume because the outside has higher intensity. Using the composite ray function, we can specifically highlight the region of lower intensity, revealing some coins inside the pig.
 
 \paragraph{Isosurface raycasting}
 
@@ -260,18 +260,16 @@ TODO!!!
 
 \begin{figure}[h]
   \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{orange-composite}
-    \caption{Composite with default values.}
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{pig8-mip}
+    \caption{MIP conceals the inside of the volume.}
   \end{subfigure}
-  \hfill
-  \begin{subfigure}[b]{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{orange-mips}
-    \caption{MIP with default values.}
+  \\~\\
+  \begin{subfigure}[b]{\textwidth}
+    \includegraphics[width=\textwidth]{pig8-composite}
+    \caption{Composite rendering highlights two regions of different intensity.}
   \end{subfigure}
-  \caption{Comparison of different raycasting techniques on \textit{orange} dataset.}
+  \caption{Comparison of MIP and composite rendering methods on the \textit{pig8} dataset.}
   \label{fig:mipscomp}
 \end{figure}
 
@@ -322,7 +320,7 @@ TODO!!!
     \includegraphics[width=\textwidth]{2dtf-skeleton}
     \caption{A transfer function revealing higher density features.}
   \end{subfigure}
-  \caption{Comparison of different 2-D transfer functions on \textit{carp8} dataset.}
+  \caption{Comparison of different 2D transfer functions on \textit{carp8} dataset.}
   \label{fig:2dtf}
 \end{figure}
 
