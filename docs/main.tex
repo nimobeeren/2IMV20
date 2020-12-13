@@ -118,20 +118,22 @@ After implementation we should be able to clearly see parts with the same value.
 
 Phong's shading model was presented in class \citep{2imv20_2}:
 
-$$ I = I_a k_a + I_lk_d(L \cdot N)+I_l k_s (V \cdot R)^\alpha$$
+$$I = I_a k_a + I_l k_d(L \cdot N) + I_l k_s(V \cdot R)^\alpha$$
 
 \noindent where
 
 \begin{itemize}
   \item $I_a$ and $I_l$ are the color of the ambient light and the direct light, respectively.
   \item $k_a$, $k_d$ and $k_s$ are the ambient, diffuse and specular parameters, respectively.
-  \item $L$ is the light vector, pointing away from the source.
-  \item $N$ is the normal which can be calculated with the given gradient $G$ by applying $N = {G}/{|G|}$.
-  \item $V$ is the view vector, calculated by simply negating each component of the given ray vector.
+  \item $L$ is the light vector, pointing towards the light source.
+  \item $N$ is the normal vector which can be approxmiated by $N = {G}/{|G|}$ where $G$ is the local gradient vector.
+  \item $V$ is the view vector, pointing towards the camera.
   \item $R$ is the reflection vector, given by $R = (2N \cdot L)N-L$.
 \end{itemize}
 
-\noindent To emphasize the material color, we chose $I_a = I_l$. For the parameters $k_a$, $k_d$, $k_s$ and $\alpha$ we found the values suggested in the assignment to be suitable: 0.1, 0.7, 0.2 and 100 respectively.
+\noindent It should be noted that the model is only valid when the dot products are positive. That is, when we are lighting a surface from the front. To avoid this problem, we chose to ignore the diffuse component when $L \cdot N < 0$ and to ignore the specular component when $V \cdot R < 0$.
+
+To keep the light neutral in color, we chose $I_a = I_l = \text{white}$. For the parameters $k_a$, $k_d$, $k_s$ and $\alpha$ we found the values suggested in the assignment to be suitable: 0.1, 0.7, 0.2 and 100 respectively.
 
 \autoref{fig:phong} shows the effect of changing these parameters. The ambient parameter $k_a$ affects the amount of ambient light uniformly across the scene. The higher the value, the higher the intensity of ambient light. This can be seen by comparing \autoref{fig:phong} (a) and (b).
 
