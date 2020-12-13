@@ -135,11 +135,11 @@ $$I = I_a k_a + I_l k_d(L \cdot N) + I_l k_s(V \cdot R)^\alpha$$
 
 To keep the light neutral in color, we chose $I_a = I_l = \text{white}$. For the parameters $k_a$, $k_d$, $k_s$ and $\alpha$ we found the values suggested in the assignment to be suitable: 0.1, 0.7, 0.2 and 100 respectively.
 
-\autoref{fig:phong} shows the effect of changing these parameters. The ambient parameter $k_a$ affects the amount of ambient light uniformly across the scene. The higher the value, the higher the intensity of ambient light. This can be seen by comparing \autoref{fig:phong} (a) and (b).
+\autoref{fig:phong} shows the effect of changing these parameters. The ambient parameter $k_a$ affects the amount of ambient light uniformly across the scene. The higher the value, the higher the intensity of ambient light. This can be seen by comparing subfigures (a) and (b).
 
-The diffuse parameter $k_d$ affects the intensity of the diffuse reflection. The higher the value, the brighter the subject appears. This can be seen by comparing \autoref{fig:phong} (a) and (c).
+The diffuse parameter $k_d$ affects the intensity of the diffuse reflection. The higher the value, the brighter the subject appears. This can be seen by comparing subfigures (a) and (c).
 
-The specular component $k_s$ affects the intensity of the specular reflection. The higher the value, the more glaring the reflection. This can be seen by comparing \autoref{fig:phong} (a) and (d).
+The specular component $k_s$ affects the intensity of the specular reflection. The higher the value, the more glaring the reflection. This can be seen by comparing subfigures (a) and (d).
 
 The implementation can be found in the method {\tt computePhongShading}. This method is called from both {\tt traceRayIso} and {\tt traceRayComposite} when shading is enabled.
 
