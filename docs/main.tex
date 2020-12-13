@@ -181,7 +181,7 @@ $$(p-P_p)\cdot P_N$$
 
 If the entry and exit points are both on the \textbf{same side} of the cutting plane, we render the ray using the rendering method corresponding to that side.
 
-If the entry and exit points are on \textbf{different sides} of the cutting plane, we first calculate the intersection of the ray with the cutting plane using the given provided method {\tt intersectFace}. Then, we render the volume using the rendering method from the side where the entry point is on, from the entry point to the intersection point.
+If the entry and exit points are on \textbf{different sides} of the cutting plane, we first calculate the intersection of the ray with the cutting plane using the provided method {\tt intersectFace}. Then, we render the volume using the rendering method from the side where the entry point is on, from the entry point to the intersection point.
 
 Finally, if the entry and exit points are on different sides, and the rendering method did not render anything on the ray from the entry to the intersection point (the opacity of all voxels was $0$), then we can ``see through" that point so we need to render the other side. To correctly implement that, we now render the half-ray from the intersection point to the exit point, using the corresponding rendering method.
 
