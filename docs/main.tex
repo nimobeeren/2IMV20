@@ -190,6 +190,7 @@ Finally, if the entry and exit points are on different sides, and the rendering 
 In addition to the implementation in the {\tt raycast} method, we also added a boolean parameter to the methods {\tt traceRayComposite} and {\tt traceRayIso} to determine  which half of the volume we are rendering.
 
 \section{Discussion}
+\label{discussion}
 
 \paragraph{MIP}
 
@@ -219,7 +220,11 @@ Rendering using the 2D transfer function on the \textit{tooth} dataset can be ob
 
 \section{Conclusions}
 
-TODO!!!
+Working on this assigment provided us experience and insight on the inner workings of some volume rendering methods, namely MIP, compositing, isosurface and 2D transfer. Each method has its own advantages and disadvantes as discussed in \autoref{discussion}.
+
+Regarding lighting, we also had the opportunity of implementing the standard Phong's shading model, which gave us a deeper understanding on how light works in 3D environments.
+
+Finally, but not the least, the functionality of the cutting plane shows itself useful to see how volumes are inside. This can be very useful, for example, in medical imagiology, as well as in other fields.
 
 \bibliographystyle{plain}
 \bibliography{references}
