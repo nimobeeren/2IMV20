@@ -12,10 +12,10 @@ jobs:
       - name: Compile LaTeX
         uses: xu-cheng/latex-action@v2
         with:
-          working_directory: docs
+          working_directory: InfoVis/docs
           root_file: main.tex
       - name: Upload document
         uses: actions/upload-artifact@v2
         with:
           name: Report PDF
-          path: docs/main.pdf
+          path: InfoVis/docs/main.pdf

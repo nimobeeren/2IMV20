@@ -1,5 +1,6 @@
 # 🌈 2IMV20 Visualization
 
-The main class is in `src/gui/VolVisApplication.java`.
+This repository contains two separate projects:
 
-*Needs JDK 1.8 , JDK 11 doesn't work.*
+- Volume Visualization, in the [`VolVis`](VolVis/) directory; and
+- Information Visualization, in the [`InfoVis`](InfoVis/) directory.
