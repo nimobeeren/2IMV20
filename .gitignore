@@ -2,10 +2,3 @@
 .vscode/
 .idea/
 nbproject/
-
-# Build
-/out/
-/build/
-
-# Data
-/*data/
