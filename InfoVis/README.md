@@ -3,7 +3,7 @@
 ## Installation
 
 1. Install [Node.js](https://nodejs.org/) v12 or higher.
-2. Run `npm install` while in the `InfoVis` directory
+2. Install the project dependencies with `npm install`.
 
 ## Usage
 
