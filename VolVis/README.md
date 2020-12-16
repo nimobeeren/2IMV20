@@ -1,4 +1,4 @@
-# 🌈 2IMV20 Visualization
+# 🐟 VolVis
 
 The main class is in `src/gui/VolVisApplication.java`.
 
