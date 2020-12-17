@@ -3,9 +3,12 @@
 ## Installation
 
 1. Install [Node.js](https://nodejs.org/) v12 or higher.
+2. Open the `client` directory in a terminal.
 2. Install the project dependencies with `npm install`.
 
 ## Usage
+
+Ensure you are in the `client` directory before running `npm` commands.
 
 ### Development
 
