@@ -68,6 +68,7 @@ export default {
 
     // Watch the `public` directory and refresh the
     // browser on changes when not in production
+    // @ts-ignore
     !production && livereload("public"),
 
     // If we're building for production (npm run build
