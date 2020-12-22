@@ -7,6 +7,6 @@ jobs:
   latex:
     runs-on: ubuntu-latest
     steps:
-      uses: ./.github/actions/latex
-      with:
-        working_directory: InfoVis/docs
+      - uses: ./.github/actions/latex
+        with:
+          working_directory: InfoVis/docs
