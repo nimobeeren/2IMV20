@@ -4,7 +4,7 @@ on:
     paths:
       - 'VolVis/docs/**'
 jobs:
-  latex:
+  build_latex:
     runs-on: ubuntu-latest
     steps:
       - name: Check out latest changes
