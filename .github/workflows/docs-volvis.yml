@@ -9,6 +9,13 @@ jobs:
     steps:
       - name: Check out latest changes
         uses: actions/checkout@v2
-      - uses: ./.github/actions/latex
+      - name: Build LaTeX
+        uses: xu-cheng/latex-action@v2
         with:
           working_directory: VolVis/docs
+          root_file: main.tex
+      - name: Upload document
+        uses: actions/upload-artifact@v2
+        with:
+          name: Report PDF
+          path: VolVis/docs/main.pdf
