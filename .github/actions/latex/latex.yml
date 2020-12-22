@@ -1,8 +1,10 @@
-name: Build LaTeX document
-on: 
-  pull_request:
-    paths:
-      - 'docs/**'
+name: Build LaTeX
+description: Build and upload LaTeX document
+inputs:
+  working_directory:
+    description: Directory where main.tex is located
+    required: true
+    default: '.'
 jobs:
   build_latex:
     runs-on: ubuntu-latest
@@ -12,10 +14,10 @@ jobs:
       - name: Compile LaTeX
         uses: xu-cheng/latex-action@v2
         with:
-          working_directory: InfoVis/docs
+          working_directory: $WORKING_DIRECTORY
           root_file: main.tex
       - name: Upload document
         uses: actions/upload-artifact@v2
         with:
           name: Report PDF
-          path: InfoVis/docs/main.pdf
+          path: $WORKING_DIRECTORY/main.pdf

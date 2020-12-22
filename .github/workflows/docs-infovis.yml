@@ -1,0 +1,12 @@
+name: Build InfoVis docs
+on: 
+  pull_request:
+    paths:
+      - 'InfoVis/docs/**'
+jobs:
+  latex:
+    runs-on: ubuntu-latest
+    steps:
+      uses: ./.github/actions/latex
+      with:
+        working_directory: InfoVis/docs
