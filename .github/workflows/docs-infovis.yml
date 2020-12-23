@@ -1,15 +1,15 @@
-name: Build LaTeX document
+name: Build InfoVis docs
 on: 
   pull_request:
     paths:
-      - 'docs/**'
+      - 'InfoVis/docs/**'
 jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
       - name: Check out latest changes
         uses: actions/checkout@v2
-      - name: Compile LaTeX
+      - name: Build LaTeX
         uses: xu-cheng/latex-action@v2
         with:
           working_directory: InfoVis/docs
