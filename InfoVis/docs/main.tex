@@ -129,7 +129,7 @@ Technology. E-mail: \{g.slavova, h.a.coelho.dias, n.beeren\}@student.tue.nl.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%% START OF THE PAPER %%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
@@ -141,11 +141,19 @@ Technology. E-mail: \{g.slavova, h.a.coelho.dias, n.beeren\}@student.tue.nl.
 
 \maketitle
 
-Briefly introduce the topic that you are going to treat in your work and why it is relevant.
+% Briefly introduce the topic that you are going to treat in your work and why it is relevant.
+
+In recent times, it has become increasingly clear to most people that climate change is affecting life on Earth. As temperatures rise globally, many animals are forced to adapt to their environment \cite{parmesan2007pheno,gaughan2009domestic}. Among the best-documented instances of such adaptation are changes in bird migration times \cite{miller2008bird,visser2008climate,jenni2003timing}. This paper presents an interactive visualization with the goal to communicate these findings.
 
 \subsection{Problem Description}
 
-Describe the general goal of your work. Ideally, this section should depict the main domain/topic of your work, what your visual approach will achieve overall and how complex the addressed problem is.
+% Describe the general goal of your work. Ideally, this section should depict the main domain/topic of your work, what your visual approach will achieve overall and how complex the addressed problem is.
+
+Despite evidence presented in numerous studies \cite{solomon2007climate,parry2007climate}, it has proved to be difficult to communicate the effects of climate change to people \cite{lee2015predictors,brulle2012shifting,moser2011communicating}. We believe that visualizing effects that can be observed in everyday life is an important way of fostering public engagement. One such effect is the change in the time of the year during which migratory birds can be observed in their breeding habitat. As global temperatures increased, birds have been migrating to their breeding habitats earlier in the year \cite{cotton2003avian,huppop2003north,marra2005influence}. Using a visual approach, we intend to show this correlation in a way that is interpretable to experts and non-experts alike.
+
+Both bird migration and surface temperature changes are cyclic processes with an annual period. In order to infer trends in these processes, we should consider data from multiple years, or even decades. However, because of the cyclic nature, it is difficult to directly compare one year to another. One of the challenges of this problem is to visualize trends over the long term, without obscuring the patterns that occur every year.
+
+Another attribute that these processes have in common is that they are both geographic. That is, both produce data that is associated with a particular place on Earth \cite{iso2014geo}. It is essential to visualize both in such a way that one does not obscure the other, while their correlation is still visible.
 
 \section{Data Analysis}
 
