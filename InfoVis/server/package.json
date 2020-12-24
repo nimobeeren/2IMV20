@@ -1,0 +1,6 @@
+{
+  "name": "bird-vis-server",
+  "version": "1.0.0",
+  "repository": "https://github.com/nimobeeren/2IMV20",
+  "main": "server.js"
+}
