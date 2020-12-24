@@ -1,23 +1,21 @@
 const path = require("path");
 const http = require("http");
+const fs = require("fs");
 
-const dataDir = "../data/ebird/ebd_barswa_201901_201912_relNov-2020";
-const file = path.resolve(dataDir, "ebd_export.json");
-const raw = require(file);
-
-const observations = [];
-for (let i = 0; i < 100; i++) {
-  observations.push({
-    date: raw.date[i],
-    lat: raw.lat[i],
-    lon: raw.lon[i],
-    count: raw.count[i],
-  });
-}
+const dataDir = "../data/ebird/output";
+const file = path.resolve(dataDir, "ebd_export.csv");
 
 const requestListener = (req, res) => {
+  let raw;
+  try {
+    raw = fs.readFileSync(file);
+  } catch (e) {
+    res.writeHead(500);
+    return res.end(e.message);
+  }
+
   res.writeHead(200);
-  res.end(JSON.stringify(observations));
+  res.end(raw);
 };
 
 const port = 5000;
