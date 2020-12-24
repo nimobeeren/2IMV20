@@ -14,6 +14,7 @@ ebd <- auk_ebd("full/ebd_relNov-2020.txt", file_sampling = "sampling/ebd_samplin
 ebd_filters <- ebd %>%
     auk_species("Barn Swallow") %>% # only observations of Barn Swallows
     auk_date(c("1950-01-01", "2020-12-31")) %>% # only from 1950 and later
+    # seems like line below does nothing? output still contains obs outside this range
     auk_bbox(c(-30, -90, 60, 90)) # only Europe and Africa (longitude between 30W and 60E)
 
 # define output files
