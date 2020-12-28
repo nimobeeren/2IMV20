@@ -3,9 +3,11 @@ const http = require("http");
 const fs = require("fs");
 
 const dataDir = "../data/ebird/output";
-const file = path.resolve(dataDir, "ebd_export.csv");
+const file = path.resolve(dataDir, "ebd_export2.csv");
 
 const requestListener = (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
   let raw;
   try {
     raw = fs.readFileSync(file);
@@ -18,7 +20,7 @@ const requestListener = (req, res) => {
   res.end(raw);
 };
 
-const port = 5000;
+const port = 8080;
 const server = http.createServer(requestListener);
 server.listen(port);
 console.info(`Listening on port ${port}`);
