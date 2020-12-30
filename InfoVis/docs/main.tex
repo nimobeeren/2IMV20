@@ -165,7 +165,23 @@ In order to visualize the problem, we need two different datasets: one that incl
 
 \subsection{Data Abstraction: What}
 
-After a short description on the data has been provided, you will present a data abstraction (\emph{What}) describing the type of data that you cope with: tabular, network, types of attributes (e.g, quantitative, sequential), spatial, etc.
+% After a short description on the data has been provided, you will present a data abstraction (\emph{What}) describing the type of data that you cope with: tabular, network, types of attributes (e.g, quantitative, sequential), spatial, etc.
+
+The eBird Basic Dataset \cite{ebird2020data} consists of a large static table containing items that each correspond to a particular observation of a bird or a group of birds. For each observation, a number of attributes are provided, though we are only interested in the following subset:
+
+\paragraph{Species} A categorical attribute represented as the scientific name, e.g. \textit{Anas platyrhynchos}. The eBird taxonomy\cite{ebird2019taxonomy} specifies exactly what is meant by these names.
+
+\paragraph{Date} An ordered, quantitative and diverging attribute in year-month-day format (yyyy-mm-dd).
+
+\paragraph{Location} A spatial attribute consisting of a vector with components latitude and longitude. Each component is itself an ordered, quantitive and cyclic attribute represented as decimal degrees, where negative values denote S/E and positive values denote N/W for latitude/longitude respectively. The precision varies between observations, but is typically 0.001 degrees or more precise (which is less than 1 km on Earth's surface).
+
+\paragraph{Count} An ordered, quantitative and diverging attribute represented as an integer. Since participants are allowed to group multiple birds in a single observation, the value can be 1 or greater.
+
+\
+
+TODO: which bird
+
+TODO: other transformations
 
 \section{Task Analysis}
 
