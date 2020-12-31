@@ -169,19 +169,17 @@ In order to visualize the problem, we need two different datasets: one that incl
 
 The eBird Basic Dataset \cite{ebird2020data} consists of a large static table containing items that each correspond to a particular observation of a bird or a group of birds. For each observation, a number of attributes are provided, though we are only interested in the following subset:
 
-\paragraph{Species} A categorical attribute represented as the scientific name, e.g. \textit{Anas platyrhynchos}. The eBird taxonomy\cite{ebird2019taxonomy} specifies exactly what is meant by these names.
+\paragraph{Species} A categorical attribute represented by the scientific name, e.g. \textit{Anas platyrhynchos}. The eBird taxonomy\cite{ebird2019taxonomy} specifies exactly what is meant with these names.
 
 \paragraph{Date} An ordered, quantitative and diverging attribute in year-month-day format (yyyy-mm-dd).
 
-\paragraph{Location} A spatial attribute consisting of a vector with components latitude and longitude. Each component is itself an ordered, quantitive and cyclic attribute represented as decimal degrees, where negative values denote S/E and positive values denote N/W for latitude/longitude respectively. The precision varies between observations, but is typically 0.001 degrees or more precise (which is less than 1 km on Earth's surface).
+\paragraph{Location} A spatial attribute consisting of a vector with components latitude and longitude. Each component is itself an ordered, quantitive and cyclic attribute represented as decimal degrees, where positive values denote N/W and negative values denote S/E for latitude/longitude respectively. The precision varies between observations, but is typically 0.001 degrees or more precise (which is less than 1 km on Earth's surface).
 
 \paragraph{Count} An ordered, quantitative and diverging attribute represented as an integer. Since participants are allowed to group multiple birds in a single observation, the value can be 1 or greater.
 
-\
+\vspace{2mm}
 
-TODO: which bird
-
-TODO: other transformations
+We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a single species, since different species exhibit significantly different migratory behavior. We chose the Barn Swallow (\textit{Hirundo rustica}) because it is a relatively common migratory bird, and it typically migrates over a large distance \cite{turner1989swallow}. Next, we restrict the dataset geographically to Europe and Africa. These transformations allow us to focus on a general population of birds. Finally, we exclude observations outside the years 1950-2020, since that matches the domain of the temperature dataset we use.
 
 \section{Task Analysis}
 
