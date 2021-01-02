@@ -2,8 +2,7 @@ const path = require("path");
 const http = require("http");
 const fs = require("fs");
 
-const dataDir = "../data/ebird/output";
-const file = path.resolve(dataDir, "ebd_export.csv");
+const file = path.resolve("../data/ebird/ebd_export.csv");
 
 const requestListener = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
