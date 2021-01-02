@@ -5,6 +5,3 @@ node_modules/
 .vscode/
 .idea/
 nbproject/
-
-# Jupyter autosaves
-.ipynb_checkpoints/
