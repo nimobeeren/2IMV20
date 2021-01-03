@@ -161,7 +161,11 @@ Another attribute that these processes have in common is that they are both geog
 
 % Here you should describe the data that you will use, its main characteristics and how it relates to the domain you are treating.
 
-In order to visualize the problem, we need two different datasets: one that includes information about birds migration and one including temperature changes over the years. For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2020data}. The eBird citizen science project is unmatched in scale, containing over 600 million observations, including nearly every bird species on Earth \cite{strimas2020ebird}. Submissions are individually reviewed to ensure accuracy of information. As people are contributing to this dataset continuously, the information inside is up-to-date, but the record also goes many years back.
+In order to visualize the problem, we need two different datasets: one that includes information about birds migration and one including temperature changes over the years.
+
+For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2020data}. The eBird citizen science project is unmatched in scale, containing over 600 million observations, including nearly every bird species on Earth \cite{strimas2020ebird}. Submissions are individually reviewed to ensure accuracy of information. As people are contributing to this dataset continuously, the information inside is up-to-date, but the record also goes many years back.
+
+For the second, we have chosen the Terraclimate dataset \cite{terraclimatedata} by Climatology Lab, which provides diverse information about climate - precipitation, minimum and maximum temperatures, vapor pressure, etc - over the years, since 1958. For the use case in study, we only use the maximum temperature values.
 
 \subsection{Data Abstraction: What}
 
@@ -180,6 +184,10 @@ The eBird Basic Dataset \cite{ebird2020data} consists of a large static table co
 \vspace{2mm}
 
 We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a single species, since different species exhibit significantly different migratory behavior. We chose the Barn Swallow (\textit{Hirundo rustica}) because it is a relatively common migratory bird, and it typically migrates over a large distance \cite{turner1989swallow}. Next, we restrict the dataset geographically to Europe and Africa. These transformations allow us to focus on a general population of birds. Finally, we exclude observations outside the years 1950-2020, since that matches the domain of the temperature dataset we use.
+
+The Terraclimate dataset \cite{terraclimatedata} consists of a series of netCDF files for each year since 1958 up until 2019. These files provide information regarding the maximum temperature observed in a certain month per latitude and longitude with a $\approx 4$ km spatial resolution. Due to the high precision of the data, we perform a number of transformations on the dataset in order to get a smaller, yet reliable, set of temperatures.
+
+% note that the 2020 file might be released quite soon!
 
 \section{Task Analysis}
 
