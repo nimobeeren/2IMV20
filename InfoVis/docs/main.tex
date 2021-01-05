@@ -165,7 +165,7 @@ In order to visualize the problem, we need two different datasets: one that incl
 
 For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2020data}. The eBird citizen science project is unmatched in scale, containing over 600 million observations, including nearly every bird species on Earth \cite{strimas2020ebird}. Submissions are individually reviewed to ensure accuracy of information. As people are contributing to this dataset continuously, the information inside is up-to-date, but the record also goes many years back.
 
-For the second, we have chosen the Terraclimate dataset \cite{terraclimatedata} by Climatology Lab, which provides diverse information about climate - precipitation, minimum and maximum temperatures, vapor pressure, etc - over the years, since 1958. For the use case in study, we only use the maximum temperature values.
+For the second, we have chosen the Terraclimate dataset \cite{terraclimatedata} by Climatology Lab, which provides diverse information about climate - precipitation, minimum and maximum temperatures, vapor pressure, etc - over the years, since 1958. For the use case in study, we only use the maximum temperature values. One of the main advantages of this dataset is the use of climatically aided interpolation, combining values from the WorldClim \cite{worldclim} dataset with other datasets such as CRU Ts4.0 \cite{cru} and JRA55 \cite{j55r}.
 
 \subsection{Data Abstraction: What}
 
@@ -185,7 +185,13 @@ The eBird Basic Dataset \cite{ebird2020data} consists of a large static table co
 
 We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a single species, since different species exhibit significantly different migratory behavior. We chose the Barn Swallow (\textit{Hirundo rustica}) because it is a relatively common migratory bird, and it typically migrates over a large distance \cite{turner1989swallow}. Next, we restrict the dataset geographically to Europe and Africa. These transformations allow us to focus on a general population of birds. Finally, we exclude observations outside the years 1950-2020, since that matches the domain of the temperature dataset we use.
 
-The Terraclimate dataset \cite{terraclimatedata} consists of a series of netCDF files for each year since 1958 up until 2019. These files provide information regarding the maximum temperature observed in a certain month per latitude and longitude with a $\approx 4$ km spatial resolution. Due to the high precision of the data, we perform a number of transformations on the dataset in order to get a smaller, yet reliable, set of temperatures.
+The Terraclimate dataset \cite{terraclimatedata} consists of a large static muldimensional table containing items where each corresponds to a certain observation in a certain location and point in time. For each observation, a few attributes are provided, though we are only interested in the following subset:
+
+\paragraph{Latitude} A quantitative attribute represented as decimal degrees, varying from -90.0 to 90.0.
+
+\paragraph{Longitude} A quantitative attribute represented as decimal degrees, varying from -180.0 to 180.0.
+
+\paragraph{Maximum temperature} A quantitive attribute represented as decimal degrees, in Celcius degrees.
 
 % note that the 2020 file might be released quite soon!
 
