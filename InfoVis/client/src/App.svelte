@@ -1,5 +1,6 @@
 <script>
-  import Test from './Test.svelte'
+  import Test from "./Test.svelte";
+  import Map from "./Map.svelte";
 
   export let name;
 </script>
@@ -29,4 +30,5 @@
 <main>
   <h1>Hello {name}!</h1>
   <Test />
+  <Map />
 </main>
