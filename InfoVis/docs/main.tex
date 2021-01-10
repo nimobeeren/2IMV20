@@ -141,13 +141,9 @@ Technology. E-mail: \{g.slavova, h.a.coelho.dias, n.beeren\}@student.tue.nl.
 
 \maketitle
 
-% Briefly introduce the topic that you are going to treat in your work and why it is relevant.
-
 In recent times, it has become increasingly clear to most people that climate change is affecting life on Earth. As temperatures rise globally, many animals are forced to adapt to their environment \cite{parmesan2007pheno,gaughan2009domestic,root2003fingerprints}. Among the best-documented instances of such adaptation are changes in bird migration times \cite{miller2008bird,visser2008climate,jenni2003timing}. This paper presents an interactive visualization with the goal to communicate these findings.
 
 \subsection{Problem Description}
-
-% Describe the general goal of your work. Ideally, this section should depict the main domain/topic of your work, what your visual approach will achieve overall and how complex the addressed problem is.
 
 Despite evidence presented in numerous studies \cite{solomon2007climate,parry2007climate}, it has proved to be difficult to communicate the effects of climate change to people \cite{lee2015predictors,brulle2012shifting,moser2011communicating}. We believe that visualizing effects that can be observed in everyday life is an important way of fostering public engagement. One such effect is the change in the time of the year during which migratory birds can be observed in their breeding habitat. As global temperatures increased, birds have been migrating to their breeding habitats earlier in the year \cite{cotton2003avian,huppop2003north,marra2005influence}. Using a visual approach, we intend to show this correlation in a way that is interpretable to experts and non-experts alike.
 
@@ -159,8 +155,6 @@ Another attribute that these processes have in common is that they are both geog
 
 \subsection{Domain Data Specification}
 
-% Here you should describe the data that you will use, its main characteristics and how it relates to the domain you are treating.
-
 In order to visualize the problem, we need two different datasets: one that includes information about birds migration and one including temperature changes over the years.
 
 For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2020data}. The eBird citizen science project is unmatched in scale, containing over 600 million observations, including nearly every bird species on Earth \cite{strimas2020ebird}. Submissions are individually reviewed to ensure accuracy of information. As people are contributing to this dataset continuously, the information inside is up-to-date, but the record also goes many years back.
@@ -168,8 +162,6 @@ For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2
 For the second, we have chosen the Terraclimate dataset \cite{terraclimatedata} by Climatology Lab, which provides diverse information about climate - precipitation, minimum and maximum temperatures, vapor pressure, etc - over the years, since 1958. For the use case in study, we only use the maximum temperature values. One of the main advantages of this dataset is the use of climatically aided interpolation, combining values from the WorldClim \cite{worldclim} dataset with other datasets such as CRU Ts4.0 \cite{cru} and JRA55 \cite{j55r}.
 
 \subsection{Data Abstraction: What}
-
-% After a short description on the data has been provided, you will present a data abstraction (\emph{What}) describing the type of data that you cope with: tabular, network, types of attributes (e.g, quantitative, sequential), spatial, etc.
 
 The eBird Basic Dataset \cite{ebird2020data} consists of a large static table containing items that each correspond to a particular observation of a bird or a group of birds. For each observation, a number of attributes are provided, though we are only interested in the following subset:
 
@@ -194,6 +186,10 @@ The Terraclimate dataset \cite{terraclimatedata} consists of a large static muld
 \paragraph{Longitude} An ordered quantitative cyclic attribute represented as decimal degrees, varying from -180.0 to 180.0.
 
 \paragraph{Maximum temperature} A quantitive attribute represented as decimal degrees, in Celcius degrees.
+
+\vspace{2mm}
+
+Although other variables are available, such as the minimum temperature and precipitation, we chose to use the maximum temperature. By doing so, we can better visualize how the increasing temperatures have been influencing the dates of bird migrations.
 
 % TODO: mention transformations
 % note that the 2020 file might be released quite soon!
