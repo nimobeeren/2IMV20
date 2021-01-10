@@ -75,7 +75,7 @@
 \vgtcpapertype{application/design study}
 
 %% Paper title.
-\title{Title of your work}
+\title{How climate change affects bird migration}
 
 %% This is how authors are specified in the journal style
 
@@ -98,7 +98,7 @@ Technology. E-mail: \{g.slavova, h.a.coelho.dias, n.beeren\}@student.tue.nl.
 
 %% Keywords that describe your work. Will show as 'Index Terms' in journal
 %% please capitalize first letter and insert punctuation after last keyword
-\keywords{keyword 1, keyword 2, \ldots}
+\keywords{Climate change, bird migration.}
 
 %% ACM Computing Classification System (CCS). 
 %% See <http://www.acm.org/class/1998/> for details.
@@ -141,13 +141,9 @@ Technology. E-mail: \{g.slavova, h.a.coelho.dias, n.beeren\}@student.tue.nl.
 
 \maketitle
 
-% Briefly introduce the topic that you are going to treat in your work and why it is relevant.
-
 In recent times, it has become increasingly clear to most people that climate change is affecting life on Earth. As temperatures rise globally, many animals are forced to adapt to their environment \cite{parmesan2007pheno,gaughan2009domestic,root2003fingerprints}. Among the best-documented instances of such adaptation are changes in bird migration times \cite{miller2008bird,visser2008climate,jenni2003timing}. This paper presents an interactive visualization with the goal to communicate these findings.
 
 \subsection{Problem Description}
-
-% Describe the general goal of your work. Ideally, this section should depict the main domain/topic of your work, what your visual approach will achieve overall and how complex the addressed problem is.
 
 Despite evidence presented in numerous studies \cite{solomon2007climate,parry2007climate}, it has proved to be difficult to communicate the effects of climate change to people \cite{lee2015predictors,brulle2012shifting,moser2011communicating}. We believe that visualizing effects that can be observed in everyday life is an important way of fostering public engagement. One such effect is the change in the time of the year during which migratory birds can be observed in their breeding habitat. As global temperatures increased, birds have been migrating to their breeding habitats earlier in the year \cite{cotton2003avian,huppop2003north,marra2005influence}. Using a visual approach, we intend to show this correlation in a way that is interpretable to experts and non-experts alike.
 
@@ -159,17 +155,13 @@ Another attribute that these processes have in common is that they are both geog
 
 \subsection{Domain Data Specification}
 
-% Here you should describe the data that you will use, its main characteristics and how it relates to the domain you are treating.
-
 In order to visualize the problem, we need two different datasets: one that includes information about birds migration and one including temperature changes over the years.
 
 For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2020data}. The eBird citizen science project is unmatched in scale, containing over 600 million observations, including nearly every bird species on Earth \cite{strimas2020ebird}. Submissions are individually reviewed to ensure accuracy of information. As people are contributing to this dataset continuously, the information inside is up-to-date, but the record also goes many years back.
 
-For the second, we have chosen the Terraclimate dataset \cite{terraclimatedata} by Climatology Lab, which provides diverse information about climate - precipitation, minimum and maximum temperatures, vapor pressure, etc - over the years, since 1958. For the use case in study, we only use the maximum temperature values.
+For the second, we have chosen the Terraclimate dataset \cite{terraclimatedata} by Climatology Lab, which provides diverse information about climate - precipitation, minimum and maximum temperatures, vapor pressure, etc - over the years, since 1958. For the use case in study, we only use the maximum temperature values. One of the main advantages of this dataset is the use of climatically aided interpolation, combining values from the WorldClim \cite{worldclim} dataset with other datasets such as CRU Ts4.0 \cite{cru} and JRA55 \cite{j55r}.
 
 \subsection{Data Abstraction: What}
-
-% After a short description on the data has been provided, you will present a data abstraction (\emph{What}) describing the type of data that you cope with: tabular, network, types of attributes (e.g, quantitative, sequential), spatial, etc.
 
 The eBird Basic Dataset \cite{ebird2020data} consists of a large static table containing items that each correspond to a particular observation of a bird or a group of birds. For each observation, a number of attributes are provided, though we are only interested in the following subset:
 
@@ -185,36 +177,48 @@ The eBird Basic Dataset \cite{ebird2020data} consists of a large static table co
 
 We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a single species, since different species exhibit significantly different migratory behavior. We chose the Barn Swallow (\textit{Hirundo rustica}) because it is a relatively common migratory bird, and it typically migrates over a large distance \cite{turner1989swallow}. Next, we restrict the dataset geographically to Europe and Africa. These transformations allow us to focus on a general population of birds. Finally, we exclude observations outside the years 1950-2020, since that matches the domain of the temperature dataset we use.
 
-The Terraclimate dataset \cite{terraclimatedata} consists of a series of netCDF files for each year since 1958 up until 2019. These files provide information regarding the maximum temperature observed in a certain month per latitude and longitude with a $\approx 4$ km spatial resolution. Due to the high precision of the data, we perform a number of transformations on the dataset in order to get a smaller, yet reliable, set of temperatures.
+\vspace{2mm}
 
+The Terraclimate dataset \cite{terraclimatedata} consists of a large static muldimensional field containing items where each corresponds to a certain observation in a certain location and point in time. For each observation, a few attributes are provided, though we are only interested in the following subset:
+
+\paragraph{Latitude} An ordered quantitative cyclic attribute represented as decimal degrees, varying from -90.0 to 90.0.
+
+\paragraph{Longitude} An ordered quantitative cyclic attribute represented as decimal degrees, varying from -180.0 to 180.0.
+
+\paragraph{Maximum temperature} A quantitive attribute represented as decimal degrees, in Celcius degrees.
+
+\vspace{2mm}
+
+Although other variables are available, such as the minimum temperature and precipitation, we chose to use the maximum temperature. By doing so, we can better visualize how the increasing temperatures have been influencing the dates of bird migrations.
+
+% TODO: mention transformations
 % note that the 2020 file might be released quite soon!
 
 \section{Task Analysis}
 
 \subsection{Domain Specific Tasks}
 
-In this section, you must analyze the possible visualization tasks that an expert in the chosen domain would be interested in. Ideally, you would present a set of tasks and questions that are intimately related to the chosen domain.
+% In this section, you must analyze the possible visualization tasks that an expert in the chosen domain would be interested in. Ideally, you would present a set of tasks and questions that are intimately related to the chosen domain.
 
 \subsection{Task Abstraction: Why}
 
-Once you have defined a set of domain specific tasks, you must generalize them to be domain independent to be able to use the principles from visualization. In this sense, we propose you follow the principles described in Munzner's book \cite{munzner2014visualization} and described in the lectures.
+% Once you have defined a set of domain specific tasks, you must generalize them to be domain independent to be able to use the principles from visualization. In this sense, we propose you follow the principles described in Munzner's book \cite{munzner2014visualization} and described in the lectures.
 
 \section{Visualization and Interaction Design: How}
 
-Describe and motivate your choices for the visual encodings and interaction design (\emph{How}). You should not think about implementation yet, but rather what visual encodings fit best to address the task/data results presented earlier. You must justify your choices based on the design principles described in the course. Here is where you explicitly link your tasks, questions and data to the design, and argue why the chosen design will enable users to perform the tasks and answer their questions. Explain the main interactions provided in your solution.
+% Describe and motivate your choices for the visual encodings and interaction design (\emph{How}). You should not think about implementation yet, but rather what visual encodings fit best to address the task/data results presented earlier. You must justify your choices based on the design principles described in the course. Here is where you explicitly link your tasks, questions and data to the design, and argue why the chosen design will enable users to perform the tasks and answer their questions. Explain the main interactions provided in your solution.
 
 \section{Realization}
 
-After you have a visualization design, you should elaborate on what you have implemented and what compromises were made. For instance, your ideal solution may consider edge bundling \cite{holten2006hierarchical} but you could not implement it in your final solution. In this section, you should also mention what framework/technology you used for your implementation and justify why you chose it.
+% After you have a visualization design, you should elaborate on what you have implemented and what compromises were made. For instance, your ideal solution may consider edge bundling \cite{holten2006hierarchical} but you could not implement it in your final solution. In this section, you should also mention what framework/technology you used for your implementation and justify why you chose it.
 
 \section{Use Cases}
 
-Describe the analysis of the data and how your application was used to perform the analysis. Here you demonstrate how to use your application to perform the tasks and answer the questions as an evaluation of your design and implementation.
-
+% Describe the analysis of the data and how your application was used to perform the analysis. Here you demonstrate how to use your application to perform the tasks and answer the questions as an evaluation of your design and implementation.
 
 \section{Discussion and Conclusion}
 
-Finally, you will reflect on what you have achieved. For instance, this section should discuss whether you managed to do what you initially planned, whether your initial choices worked well or not, things that you discovered that were not correct, etc. Conclusions about your whole work would be provided.
+% Finally, you will reflect on what you have achieved. For instance, this section should discuss whether you managed to do what you initially planned, whether your initial choices worked well or not, things that you discovered that were not correct, etc. Conclusions about your whole work would be provided.
 
 \bibliographystyle{abbrv}
 \bibliography{main}
