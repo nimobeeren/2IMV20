@@ -110,7 +110,9 @@
 
   $: {
     (async () => {
-      console.log(`Updating from ${startYear} to ${endYear}, month ${month}`);
+      console.log(
+        `Updating from ${startYear} to ${endYear}, month ${month}; showing ${currentYear}`
+      );
       temperature.source.fetch(startYear, endYear);
       await renderTemperature();
     })();
