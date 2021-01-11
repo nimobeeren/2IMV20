@@ -25,6 +25,23 @@
     grid: {},
   };
 
+  function blackout(map) {
+    L.rectangle(
+      [
+        [-90, -180],
+        [90, -30],
+      ],
+      { color: "black", weight: 0, fillOpacity: 0.5 }
+    ).addTo(map);
+    L.rectangle(
+      [
+        [-90, 60],
+        [90, 180],
+      ],
+      { color: "black", weight: 0, fillOpacity: 0.5 }
+    ).addTo(map);
+  }
+
   onMount(() => {
     temperature.map = L.map("temperature-map", {
       attributionControl: false,
@@ -45,6 +62,9 @@
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }
     ).addTo(birds.map);
+
+    blackout(temperature.map);
+    blackout(birds.map);
 
     for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat++) {
       temperature.grid[lat] = {};
