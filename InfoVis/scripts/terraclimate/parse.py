@@ -2,7 +2,8 @@ import numpy as np
 import xarray as xr
 import json
 
-year = 1958
+year = 2000
+# The precision we 
 gridStep = 1
 
 file = f'../../data/raw/terraclimate/TerraClimate_tmax_{year}.nc'
@@ -40,4 +41,5 @@ for i in range(1, 13):
   
   data = data + [currLatData]
 
-print(json.dumps(data))
+file = open(f'../../data/terraclimate/{year}.json', 'w')
+file.write(json.dumps(data))
