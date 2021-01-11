@@ -72,7 +72,7 @@
   async function renderTemperature() {
     if (!temperature.map) return;
 
-    const yearData = await temperature.source.get(startYear);
+    const yearData = await temperature.source.get(currentYear);
     const data = yearData[month - 1];
 
     for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat++) {
@@ -96,22 +96,44 @@
     })();
   }
 
+  export let currentYear;
   export let startYear;
   export let endYear;
   export let month;
 </script>
 
 <style>
+  .container {
+    display: grid;
+    grid-template-rows: 4rem auto 8rem;
+  }
+
   .maps {
     display: flex;
     width: 100%;
-    height: 80vh;
+    height: 100%;
     margin: 0 auto;
   }
 
-  .scales {
+  .year {
+    text-align: center;
+    font-size: 2rem;
+    line-height: 2rem;
+    font-style: italic;
+    text-transform: uppercase;
+    padding: 1rem 0;
+  }
+
+  .info {
     display: grid;
     grid-template-columns: 50% 50%;
+  }
+
+  .info > div {
+    text-align: center;
+    max-width: 30rem;
+    width: 100%;
+    margin: 1rem auto;
   }
 
   .map {
@@ -120,17 +142,26 @@
   }
 </style>
 
-<div>
-  <div class="scales">
-    <Scale
-      colors={TEMPERATURE_SCALE_COLORS}
-      domain={TEMPERATURE_SCALE_DOMAIN}
-      unit="°C" />
-    <Scale colors={['#bdc3c7', '#2980b9']} domain={[1, 2, 3, 4]} unit="k" />
-  </div>
+<div class="container">
+  <div class="year">Year {currentYear}</div>
 
   <div class="maps">
     <div class="map" id="temperature-map" />
     <div class="map" id="birds-map" />
+  </div>
+
+  <div class="info">
+    <div>
+      <strong>Maximum Temperature</strong>
+      <Scale
+        colors={TEMPERATURE_SCALE_COLORS}
+        domain={TEMPERATURE_SCALE_DOMAIN}
+        unit="°C" />
+    </div>
+
+    <div>
+      <strong>Birds Density</strong>
+      <Scale colors={['#bdc3c7', '#2980b9']} domain={[1, 2, 3, 4]} unit="k" />
+    </div>
   </div>
 </div>
