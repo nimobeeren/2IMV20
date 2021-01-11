@@ -3,7 +3,7 @@
 
   let observations;
   onMount(async () => {
-    const res = await fetch("http://localhost:5001");
+    const res = await fetch("/data/ebird/ebd_export.csv");
     const raw = await res.text();
     observations = raw.split("\n");
   });
