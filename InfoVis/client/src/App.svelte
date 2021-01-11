@@ -1,56 +1,69 @@
 <script>
-  import { FIRST_YEAR, LAST_YEAR, MONTHS } from './consts'
-  import Temperature from './Temperature.svelte'
+  import { FIRST_YEAR, LAST_YEAR, MONTHS } from "./utils";
+  import Maps from "./Maps.svelte";
 
-  let year; // This should be used for animations, by changing the year gradually.
+  let yearRange = false;
   let startYear = FIRST_YEAR;
-  let endYear;
-  let month;
+  let endYear = FIRST_YEAR;
+  let month = 3;
+
+  $: {
+    if (!yearRange) {
+      endYear = startYear;
+    }
+  }
 </script>
 
 <style>
   main {
-    text-align: center;
     padding: 1em;
-    max-width: 240px;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
   }
-
-  h1 {
-    color: #ff3e00;
-    text-transform: uppercase;
-    font-size: 4em;
-    font-weight: 100;
-  }
-
-  @media (min-width: 640px) {
-    main {
-      max-width: none;
-    }
+  #controls {
+    display: grid;
+    grid-template-columns: 8rem 20rem;
+    grid-template-rows: auto;
+    align-items: center;
+    grid-row-gap: 1rem;
+    margin: 0 0 1rem 0;
   }
 </style>
 
+<svelte:head>
+  <title>Climate Change and Bird Migraton</title>
+</svelte:head>
 <main>
-  <label for="start-year">Start year</label>
-  <select id="start-year" bind:value={startYear}>
-    {#each {length: LAST_YEAR - FIRST_YEAR + 1} as _, i}
-			<option value={i + FIRST_YEAR}>{i + FIRST_YEAR}</option>
-		{/each}
-  </select>
+  <div id="controls">
+    <input type="checkbox" id="year-range" bind:checked={yearRange} />
+    <label for="year-range">Animate a range of years</label>
 
-  <label for="end-year">End year</label>
-  <select id="end-year" bind:value={endYear}>
-    {#each {length: LAST_YEAR - startYear + 1} as _, i}
-			<option value={i + startYear}>{i + startYear}</option>
-		{/each}
-  </select>
+    <label for="start-year">{#if yearRange}Start year{:else}Year{/if}</label>
+    <select id="start-year" bind:value={startYear}>
+      {#each { length: LAST_YEAR - FIRST_YEAR + 1 } as _, i}
+        <option value={i + FIRST_YEAR}>{i + FIRST_YEAR}</option>
+      {/each}
+    </select>
 
-  <label for="month">Month</label>
-  <select id="month" bind:value={month}>
-    {#each MONTHS as month, i}
-			<option value={i + 1}>{month}</option>
-		{/each}
-  </select>
+    {#if yearRange}
+      <label for="end-year">End year</label>
+      <select id="end-year" bind:value={endYear}>
+        {#each { length: LAST_YEAR - startYear + 1 } as _, i}
+          <option value={i + startYear}>{i + startYear}</option>
+        {/each}
+      </select>
 
-  <Temperature year={year || startYear} startYear={startYear} endYear={endYear} month={month} />
+      <!-- TODO: animation interval -->
+    {/if}
+
+    <label for="month">Month</label>
+    <select id="month" bind:value={month}>
+      {#each MONTHS as month, i}
+        <option value={i + 1}>{month}</option>
+      {/each}
+    </select>
+  </div>
+
+  <Maps {startYear} {endYear} {month} />
 </main>
