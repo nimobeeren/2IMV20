@@ -2,9 +2,10 @@
   import { FIRST_YEAR, LAST_YEAR, MONTHS } from './consts'
   import Temperature from './Temperature.svelte'
 
-  export let startYear = FIRST_YEAR;
-  export let endYear;
-  export let month;
+  let year; // This should be used for animations, by changing the year gradually.
+  let startYear = FIRST_YEAR;
+  let endYear;
+  let month;
 </script>
 
 <style>
@@ -30,8 +31,6 @@
 </style>
 
 <main>
-  <h1>Hello!</h1>
-
   <label for="start-year">Start year</label>
   <select id="start-year" bind:value={startYear}>
     {#each {length: LAST_YEAR - FIRST_YEAR + 1} as _, i}
@@ -41,8 +40,8 @@
 
   <label for="end-year">End year</label>
   <select id="end-year" bind:value={endYear}>
-    {#each {length: LAST_YEAR - startYear} as _, i}
-			<option value={i + startYear + 1}>{i + startYear + 1}</option>
+    {#each {length: LAST_YEAR - startYear + 1} as _, i}
+			<option value={i + startYear}>{i + startYear}</option>
 		{/each}
   </select>
 
@@ -53,5 +52,5 @@
 		{/each}
   </select>
 
-  <Temperature startYear={startYear} endYear={endYear} month={month} />
+  <Temperature year={year || startYear} startYear={startYear} endYear={endYear} month={month} />
 </main>
