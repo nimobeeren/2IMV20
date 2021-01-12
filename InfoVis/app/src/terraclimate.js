@@ -1,7 +1,13 @@
 import { scaleLinear } from "d3-scale";
 
-export const SCALE_DOMAIN = [-15, 0, 15, 30];
-export const SCALE_COLORS = ["#2980b9", "#ecf0f1", "#f1c40f", "#c0392b"];
+export const SCALE_DOMAIN = [-10, 0, 10, 20, 30];
+export const SCALE_COLORS = [
+  "#2980b9",
+  "#ecf0f1",
+  "#f1c40f",
+  "#e67e22",
+  "#c0392b",
+];
 
 export const SCALE_FUNCTION = scaleLinear()
   .domain(SCALE_DOMAIN)
