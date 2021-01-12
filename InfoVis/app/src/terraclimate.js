@@ -27,7 +27,7 @@ export class Terraclimate {
           const response = await fetch(`data/terraclimate/${year}.json`);
           this.raw[year] = await response.json();
           this.parsed[year] = this._convert(this.raw[year]);
-          console.info(`Fetched data from ${year}`);
+          console.info(`Fetched temperature data from ${year}`);
         })();
       }
     }

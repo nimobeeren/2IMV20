@@ -12,6 +12,11 @@
   } from "./terraclimate";
   import Scale from "./Scale.svelte";
 
+  export let currentYear;
+  export let startYear;
+  export let endYear;
+  export let month;
+
   const CENTER = [35.775972, 17.636095];
 
   const MAP_OPTIONS = {
@@ -100,11 +105,6 @@
       await renderTemperature();
     })();
   }
-
-  export let currentYear;
-  export let startYear;
-  export let endYear;
-  export let month;
 </script>
 
 <style>

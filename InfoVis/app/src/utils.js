@@ -1,4 +1,4 @@
-export const LATITUDE_RANGE = [-90, 90];
+export const LATITUDE_RANGE = [-45, 75];
 export const LONGITUDE_RANGE = [-30, 60];
 
 export const FIRST_YEAR = 1958;
