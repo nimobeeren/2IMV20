@@ -14,6 +14,15 @@
 
   const CENTER = [35.775972, 17.636095];
 
+  const MAP_OPTIONS = {
+    style: {
+      color: "#ffffff",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 0,
+    },
+  };
+
   const temperature = {
     source: new Terraclimate(),
     map: null,
@@ -25,24 +34,7 @@
     grid: {},
   };
 
-  function blackout(map) {
-    L.rectangle(
-      [
-        [-90, -180],
-        [90, -30],
-      ],
-      { color: "black", weight: 0, fillOpacity: 0.5 }
-    ).addTo(map);
-    L.rectangle(
-      [
-        [-90, 60],
-        [90, 180],
-      ],
-      { color: "black", weight: 0, fillOpacity: 0.5 }
-    ).addTo(map);
-  }
-
-  onMount(() => {
+  onMount(async () => {
     temperature.map = L.map("temperature-map", {
       attributionControl: false,
     }).setView(CENTER, 3);
@@ -51,42 +43,33 @@
     temperature.map.sync(birds.map);
     birds.map.sync(temperature.map);
 
-    L.tileLayer(
-      "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png"
-    ).addTo(temperature.map);
-
-    L.tileLayer(
-      "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
-      {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }
-    ).addTo(birds.map);
-
-    blackout(temperature.map);
-    blackout(birds.map);
+    const map = await (
+      await fetch(
+        "https://raw.githubusercontent.com/martynafford/natural-earth-geojson/master/110m/cultural/ne_110m_admin_0_countries.json"
+      )
+    ).json();
 
     for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat++) {
       temperature.grid[lat] = {};
       birds.grid[lat] = {};
 
       for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon++) {
-        temperature.grid[lat][lon] = L.rectangle(
-          [
-            [lat, lon],
-            [lat + 1, lon + 1],
-          ],
-          { color: "transparent", weight: 0, fillOpacity: 0.7 }
-        ).addTo(temperature.map);
-        birds.grid[lat][lon] = L.rectangle(
-          [
-            [lat, lon],
-            [lat + 1, lon + 1],
-          ],
-          { color: "transparent", weight: 0, fillOpacity: 0.7 }
-        ).addTo(birds.map);
+        const coord = [
+          [lat - 1, lon],
+          [lat, lon + 1],
+        ];
+
+        const opt = { color: "transparent", weight: 0, fillOpacity: 1 };
+
+        temperature.grid[lat][lon] = L.rectangle(coord, opt).addTo(
+          temperature.map
+        );
+        birds.grid[lat][lon] = L.rectangle(coord, opt).addTo(birds.map);
       }
     }
+
+    L.geoJSON(map, MAP_OPTIONS).addTo(temperature.map);
+    L.geoJSON(map, MAP_OPTIONS).addTo(birds.map);
   });
 
   async function renderTemperature() {
