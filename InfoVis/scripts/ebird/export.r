@@ -7,8 +7,8 @@ library(tidyverse)
 select <- dplyr::select
 
 # define paths
-f_ebd <- "../data/ebird/output/ebd_barswa_1950_2020.txt"
-f_export <- "../data/ebird/output/ebd_export.csv"
+f_ebd <- "../../app/public/data/ebird/output/ebd_barswa_1950_2020.txt"
+f_export <- "../../app/public/data/ebird/output/ebd_export.csv"
 
 # read the ebd file (can take a while, don't run on full 300GB dataset)
 ebd <- read_ebd(f_ebd)

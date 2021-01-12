@@ -7,7 +7,7 @@ library(tidyverse)
 select <- dplyr::select
 
 # load full ebird observation and sampling data
-auk::auk_set_ebd_path("../data/ebird/", overwrite = TRUE)
+auk::auk_set_ebd_path("../../app/public/data/ebird/", overwrite = TRUE)
 ebd <- auk_ebd("full/ebd_relNov-2020.txt", file_sampling = "sampling/ebd_sampling_relNov-2020.txt")
 
 # specify filters without executing them yet
@@ -18,7 +18,7 @@ ebd_filters <- ebd %>%
     auk_bbox(c(-30, -90, 60, 90)) # only Europe and Africa (longitude between 30W and 60E)
 
 # define output files
-output_dir <- "../data/ebird/output"
+output_dir <- "../../app/public/data/ebird/output"
 if (!dir.exists(output_dir)) {
     dir.create(output_dir)
 }
