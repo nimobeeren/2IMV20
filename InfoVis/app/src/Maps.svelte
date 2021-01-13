@@ -100,7 +100,7 @@
 
     for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat++) {
       for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon++) {
-        if (data[lat][lon]) {
+        if (data[lat] && data[lat][lon]) {
           temp.grid[lat][lon].setStyle({
             color: data[lat][lon].c,
           });
