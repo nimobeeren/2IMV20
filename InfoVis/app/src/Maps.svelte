@@ -150,7 +150,6 @@
     width: 100%;
     padding-top: 95%;
     position: relative;
-    border: 1px dashed black;
     background-color: white;
     color: black;
   }
