@@ -1,5 +1,12 @@
+import L from "leaflet";
+
 export const LATITUDE_RANGE = [-45, 75];
 export const LONGITUDE_RANGE = [-30, 60];
+
+export const BOUNDS = L.latLngBounds(
+  L.latLng(LATITUDE_RANGE[0], LONGITUDE_RANGE[0]),
+  L.latLng(LATITUDE_RANGE[1], LONGITUDE_RANGE[1])
+);
 
 export const FIRST_YEAR = 1958;
 export const LAST_YEAR = 2019;
