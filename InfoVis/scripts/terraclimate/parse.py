@@ -1,27 +1,47 @@
 import numpy as np
 import xarray as xr
+import json
 
-year = 1958
-latStep = 10
-lonStep = 10
+# The precision we
+gridStep = 1
 
-file = f'../../data/raw/terraclimate/TerraClimate_tmax_{year}.nc'
-ds = xr.open_dataset(file)
+for year in range(1958, 2020):
+  print(f"processing {year}")
+  file = f'../../data/raw/terraclimate/TerraClimate_tmax_{year}.nc'
+  ds = xr.open_dataset(file)
 
-print('year,month,lat,lon,tmax')
+  data = []
 
-for i in range(1, 13):
-  month = f'{i:02}'
-  da = ds.tmax.sel(time=f'{year}-{month}-01')
+  for i in range(1, 13):
+    month = f'{i:02}'
+    da = ds.tmax.sel(time=f'{year}-{month}-01')
+    currLatData = []
+    lat = 90
+    while lat > -90:
+      currLonData = []
+      lon = -30
+      while lon < 60:
+        v = da.sel(
+          lat=slice(lat, lat-gridStep),
+          lon=slice(lon, lon+gridStep)
+        ).values.flatten()
 
-  for lat in range(90, -90, -latStep):
-    for lon in range(-180, 180, lonStep):
-      v = da.sel(
-        lat=slice(lat, lat-latStep),
-        lon=slice(lon, lon+lonStep)
-      ).values.flatten()
+        clean = [x for x in v if ~np.isnan(x)]
+        if len(clean) > 0: # there is data!
+          avg = sum(clean) / len(clean)
+          currLonData += [avg]
+        else:
+          currLonData += [None]
+        lon += gridStep
+      clean = [x for x in currLonData if x is not None]
+      if len(clean) == 0:
+        currLatData += [None]
+      else:
+        currLatData += [currLonData]
+      lat -= gridStep
 
-      clean = [x for x in v if ~np.isnan(x)]
-      if len(clean) > 0: # there is data!
-        avg = sum(clean) / len(clean)
-        print(f'{year},{i},{lat},{lon},{avg}')
+    data = data + [currLatData]
+
+  file = open(f'../../app/public/data/terraclimate/{year}.json', 'w')
+  file.write(json.dumps(data))
+  print(f"processing {year} ended")
