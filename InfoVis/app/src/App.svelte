@@ -58,11 +58,11 @@
   }
 
   .sidebar {
-    padding: 1rem;
+    padding: 1rem 0;
   }
   #controls {
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: repeat(2, 1fr);
     grid-gap: 2rem;
   }
 

@@ -151,7 +151,7 @@
     padding-top: 95%;
     position: relative;
     border: 1px dashed black;
-    background-color: cornsilk;
+    background-color: white;
     color: black;
   }
 
@@ -176,7 +176,7 @@
     align-items: center;
     font-size: 6rem;
   }
-  .graph {
+  .maps {
     display: grid;
     grid-template-columns: 50% 50%;
     grid-template-rows: auto 8rem;
@@ -184,7 +184,7 @@
 
   .info {
     text-align: center;
-    max-width: 20rem;
+    max-width: 25rem;
     width: 100%;
     margin: 1rem auto 0;
   }
@@ -200,14 +200,14 @@
 
 <svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
-<div class="outer">
+<div class="outer" id="graph">
   <div class="inner">
     <div class="loading" style="display: {loading ? 'flex' : 'none'}">
       Loading...
     </div>
     <div class="year">Year {currentYear}</div>
 
-    <div class="graph">
+    <div class="maps">
       <div class="map" id="temperature-map" />
       <div class="map" id="birds-map" />
 

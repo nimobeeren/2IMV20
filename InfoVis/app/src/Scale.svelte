@@ -21,6 +21,7 @@
     padding: 0 1rem;
     margin: 0.5rem 0px;
     width: 100%;
+    box-sizing: border-box;
   }
 
   .domain {
