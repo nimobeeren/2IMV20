@@ -2,14 +2,14 @@ import numpy as np
 import xarray as xr
 import json
 
-file = f'../../data/gistemp/gistemp250_GHCNv4.nc'
+file = f'../../data/gistemp/gistemp1200_GHCNv4_ERSSTv5.nc'
 ds = xr.open_dataset(file)
 
 parsed = {}
 
-for year in range(2019, 2020):
+for year in range(1950, 1980):
   print(f'Processing {year}')
-  parsed[year] = []
+  parsed = []
 
   for month in range(1, 13):
     mdata = []
@@ -30,7 +30,6 @@ for year in range(2019, 2020):
         else:
           ldata += [float(da[0])]
       mdata += [ldata]
-    parsed[year] += [mdata]
-
-file = open(f'../../app/public/data/gistemp.json', 'w')
-file.write(json.dumps(parsed))
+    parsed += [mdata]
+  file = open(f'../../app/public/data/gistemp/{year}.json', 'w')
+  file.write(json.dumps(parsed))

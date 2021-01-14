@@ -1,11 +1,10 @@
 <script>
-  import { FIRST_YEAR, LAST_YEAR, MONTHS } from "./utils";
+  import { MIN_YEAR, MAX_YEAR, MONTHS } from "./utils";
   import Maps from "./Maps.svelte";
 
-  let yearRange = false;
-  let currentYear = FIRST_YEAR;
-  let startYear = FIRST_YEAR;
-  let endYear = FIRST_YEAR;
+  let startYear = MIN_YEAR;
+  let endYear = MAX_YEAR;
+  let year = MIN_YEAR;
   let month = 3;
   let playing = false;
   let yearsPerSecond = 2;
@@ -21,11 +20,11 @@
   }
 
   async function play() {
-    currentYear = startYear;
+    year = startYear;
     await wait(frequency());
 
-    while (currentYear < endYear && playing) {
-      currentYear++;
+    while (year < endYear && playing) {
+      year++;
       await wait(frequency());
     }
 
@@ -33,14 +32,8 @@
   }
 
   $: {
-    if (!yearRange) {
-      endYear = startYear;
-    }
-
     if (playing) {
       play();
-    } else {
-      currentYear = startYear;
     }
   }
 </script>
@@ -48,7 +41,7 @@
 <style>
   main {
     width: 100%;
-    max-width: 960px;
+    max-width: 900px;
     margin: 0 auto;
   }
 
@@ -75,6 +68,11 @@
     grid-auto-rows: minmax(min-content, max-content);
     grid-gap: 1rem;
   }
+
+  .slider {
+    display: grid;
+    grid-template-columns: 7rem auto;
+  }
 </style>
 
 <svelte:head>
@@ -87,13 +85,22 @@
 
     <div id="controls">
       <div>
-        <input
-          type="checkbox"
-          id="year-range"
-          disabled={playing}
-          bind:checked={yearRange} />
-        <label for="year-range">Animate a range of years</label>
+        <label for="start-year">Start Year</label>
+        <select id="start-year" bind:value={startYear} disabled={playing}>
+          {#each { length: MAX_YEAR - MIN_YEAR + 1 } as _, i}
+            <option value={i + MIN_YEAR}>{i + MIN_YEAR}</option>
+          {/each}
+        </select>
 
+        <label for="end-year">End year</label>
+        <select disabled={playing} id="end-year" bind:value={endYear}>
+          {#each { length: MAX_YEAR - startYear + 1 } as _, i}
+            <option value={i + startYear}>{i + startYear}</option>
+          {/each}
+        </select>
+      </div>
+
+      <div>
         <label for="month">Month</label>
         <select disabled={playing} id="month" bind:value={month}>
           {#each MONTHS as month, i}
@@ -101,30 +108,8 @@
           {/each}
         </select>
 
-        <label for="start-year">{#if yearRange}
-            Start year
-          {:else}Year{/if}</label>
-        <select id="start-year" bind:value={startYear} disabled={playing}>
-          {#each { length: LAST_YEAR - FIRST_YEAR + 1 } as _, i}
-            <option value={i + FIRST_YEAR}>{i + FIRST_YEAR}</option>
-          {/each}
-        </select>
-      </div>
-
-      <div>
-        <label for="end-year">End year</label>
-        <select
-          disabled={playing || !yearRange}
-          id="end-year"
-          bind:value={endYear}>
-          {#each { length: LAST_YEAR - startYear + 1 } as _, i}
-            <option value={i + startYear}>{i + startYear}</option>
-          {/each}
-        </select>
-
         <label for="frequency">Years per second ({yearsPerSecond})</label>
         <input
-          disabled={!yearRange}
           type="range"
           id="frequency"
           min="1"
@@ -133,13 +118,23 @@
 
         <span><!-- i am important. leave me here --></span>
         <button
-          disabled={!yearRange}
           on:click={() => {
             playing = !playing;
           }}>{#if playing}Stop{:else}Start{/if}</button>
       </div>
     </div>
+
+    <div class="slider">
+      <label for="curr-year">View year ({year})</label>
+      <input
+        disabled={playing}
+        type="range"
+        id="curr-year"
+        min={MIN_YEAR}
+        max={MAX_YEAR}
+        bind:value={year} />
+    </div>
   </div>
 
-  <Maps {currentYear} {startYear} {endYear} {month} />
+  <Maps {year} minYear={MIN_YEAR} maxYear={MAX_YEAR} {month} />
 </main>
