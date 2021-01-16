@@ -9,47 +9,31 @@
     SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
     SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
   } from "./gistemp";
+  import { MIN_YEAR, MAX_YEAR } from "./utils";
 
-  export let year, minYear, maxYear, month;
+  export let year;
+  export let month;
 
-  let prevMinYear, prevMaxYear;
   let windowHeight, windowWidth;
-  let ready = false;
   let loading = true;
 
   let geometryData;
-  onMount(async () => {
-    geometryData = await (await fetch("/data/map.json")).json();
-  });
-
-  const temperatureSource = new Gistemp();
   let temperatureData;
 
-  onMount(async () => {
-    await temperatureSource.fetch(minYear, 1955); // TODO: revert
-    const yearData = temperatureSource.get(year);
-    temperatureData = yearData[month - 1];
+  const temperatureSource = new Gistemp();
 
-    ready = true;
+  onMount(async () => {
+    geometryData = await fetch("/data/map.json").then((res) => res.json());
+
+    // Prefetch all the temperature data
+    await temperatureSource.fetch(MIN_YEAR, MAX_YEAR);
+    temperatureData = temperatureSource.get(year, month);
+
     loading = false;
   });
 
-  // TODO: fetch when min/max years change
-  // $: {
-  //   (async () => {
-  //     if (!ready || loading) {
-  //       return;
-  //     }
-
-  //     if (minYear != prevMinYear || maxYear != prevMaxYear) {
-  //       prevMinYear = minYear;
-  //       prevMaxYear = maxYear;
-  //       loading = true;
-  //       await temperatureSource.fetch(minYear, maxYear);
-  //       loading = false;
-  //     }
-  //   })();
-  // }
+  // Update temperature when year/month change
+  $: temperatureData = temperatureSource.get(year, month);
 </script>
 
 <style>

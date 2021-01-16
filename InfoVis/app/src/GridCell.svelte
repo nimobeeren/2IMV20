@@ -7,6 +7,8 @@
   export let size = 1;
   export let color;
 
+  let layer;
+
   const { getMap } = getContext(L);
 
   $: {
@@ -17,13 +19,17 @@
         [lat + size, lon + size],
       ];
       const options = {
-        color,
         weight: 0,
         fillOpacity: 100,
-        pane: "tilePane", // moves the layer behind map geometry
+        pane: "tilePane", // hack: moves the layer behind map geometry
       };
       // @ts-ignore
-      L.rectangle(coord, options).addTo(map);
+      layer = L.rectangle(coord, options).addTo(map);
     }
   }
+
+  // TODO: update position when lat/lon change
+
+  // Update layer color when color prop changes
+  $: layer.setStyle({ color });
 </script>

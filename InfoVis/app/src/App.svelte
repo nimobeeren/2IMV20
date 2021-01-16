@@ -135,5 +135,5 @@
     </div>
   </div>
 
-  <Maps {year} minYear={MIN_YEAR} maxYear={MAX_YEAR} {month} />
+  <Maps {year} {month} />
 </main>

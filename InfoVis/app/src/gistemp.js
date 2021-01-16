@@ -11,6 +11,7 @@ export const SCALE_COLORS = [
 
 export const SCALE_FUNCTION = scaleLinear()
   .domain(SCALE_DOMAIN)
+  // @ts-ignore
   .range(SCALE_COLORS);
 
 export class Gistemp {
@@ -19,9 +20,12 @@ export class Gistemp {
   }
 
   async fetch(from, to) {
+    if (to === undefined) {
+      to = from;
+    }
     for (let year = from; year <= to; year++) {
       if (!this.data[year]) {
-        const response = await fetch(`data/gistemp/${year}.json`);
+        const response = await fetch(`/data/gistemp/${year}.json`);
         const raw = await response.json();
         this.data[year] = this._convert(raw);
         console.info(`Fetched temperature data from ${year}`);
@@ -55,7 +59,11 @@ export class Gistemp {
     });
   }
 
-  get(year) {
-    return this.data[year];
+  get(year, month) {
+    if (month) {
+      return this.data[year]?.[month - 1];
+    } else {
+      return this.data[year];
+    }
   }
 }

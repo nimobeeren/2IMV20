@@ -6,7 +6,6 @@
 
   let gridCells = [];
   $: {
-    console.log({ data });
     if (data) {
       gridCells = [];
       for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
