@@ -5,6 +5,8 @@
   export let data;
   export let options = {};
 
+  let layer;
+
   const defaultOptions = {
     style: {
       color: "#333333",
@@ -16,11 +18,13 @@
 
   const { getMap } = getContext(L);
 
-  // TODO: remove when props change
   $: {
     const map = getMap();
     if (data && map) {
-      L.geoJSON(data, { ...defaultOptions, ...options }).addTo(map);
+      if (layer) {
+        layer.remove();
+      }
+      layer = L.geoJSON(data, { ...defaultOptions, ...options }).addTo(map);
     }
   }
 </script>

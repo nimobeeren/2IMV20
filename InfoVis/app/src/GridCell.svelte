@@ -14,6 +14,12 @@
   $: {
     const map = getMap();
     if (lat && lon && map) {
+      // Remove the old layer if there is one
+      if (layer) {
+        layer.remove();
+      }
+
+      // Add a new layer
       const coord = [
         [lat, lon],
         [lat + size, lon + size],
@@ -27,8 +33,6 @@
       layer = L.rectangle(coord, options).addTo(map);
     }
   }
-
-  // TODO: update position when lat/lon change
 
   // Update layer color when color prop changes
   $: layer.setStyle({ color });
