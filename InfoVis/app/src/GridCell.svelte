@@ -20,7 +20,9 @@
         color,
         weight: 0,
         fillOpacity: 100,
+        pane: "tilePane", // moves the layer behind map geometry
       };
+      // @ts-ignore
       L.rectangle(coord, options).addTo(map);
     }
   }

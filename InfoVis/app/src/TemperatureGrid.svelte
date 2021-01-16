@@ -18,7 +18,7 @@
           gridCells.push({
             lat,
             lon,
-            color: data?.[lat]?.[lon]?.c ?? "transparent",
+            color: data[lat]?.[lon]?.c ?? "transparent",
           });
         }
       }
