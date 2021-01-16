@@ -14,11 +14,9 @@
   export let year;
   export let month;
 
-  let windowHeight, windowWidth;
-  let loading = true;
-
   let geometryData;
   let temperatureData;
+  let loading = true;
 
   const temperatureSource = new Gistemp();
 
@@ -88,8 +86,6 @@
     font-weight: bold;
   }
 </style>
-
-<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
 
 <div class="outer" id="graph">
   <div class="inner">
