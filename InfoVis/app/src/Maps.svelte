@@ -1,15 +1,17 @@
 <script>
-  import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
+  import { onMount } from "svelte";
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
 
-  import { onMount } from "svelte";
+  import Scale from "./Scale.svelte";
+  import LeafletMap from "./LeafletMap.svelte";
+  import MapGeometry from "./MapGeometry.svelte";
+  import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
   import {
     Gistemp,
     SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
     SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
   } from "./gistemp";
-  import Scale from "./Scale.svelte";
 
   export let year, minYear, maxYear, month;
 
@@ -19,126 +21,93 @@
   let ready = false;
   let loading = true;
 
-  const DATA_LAYER_OPTS = {
-    style: {
-      color: "#333333",
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0,
-    },
-  };
+  // const GRID_OPTS = {
+  //   color: "transparent",
+  //   weight: 0,
+  //   fillOpacity: 100,
+  // };
 
-  const MAP_OPTS = {
-    zoomControl: false,
-    maxBounds: BOUNDS,
-    attributionControl: false,
-    zoomSnap: 0.1,
-    dragging: false,
-    boxZoom: false,
-    scrollWheelZoom: false,
-    touchZoom: false,
-    doubleClickZoom: false,
-  };
+  // const temp = {
+  //   source: new Gistemp(),
+  //   grid: {},
+  // };
 
-  const GRID_OPTS = {
-    color: "transparent",
-    weight: 0,
-    fillOpacity: 100,
-  };
+  // const birds = {
+  //   grid: [],
+  // };
 
-  const temp = {
-    source: new Gistemp(),
-    map: null,
-    grid: {},
-  };
-
-  const birds = {
-    map: null,
-    grid: {},
-  };
+  let geometryData;
+  onMount(async () => {
+    geometryData = await (await fetch("/data/map.json")).json();
+  });
 
   onMount(async () => {
-    temp.map = L.map("temperature-map", MAP_OPTS);
-    birds.map = L.map("birds-map", MAP_OPTS);
-    fitBounds();
+    // Draw rectangles for temperature grid
+    // for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
+    //   temp.grid[lat] = {};
 
-    const map = await (await fetch("/data/map.json")).json();
+    //   for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
+    //     const coord = [
+    //       [lat, lon],
+    //       [lat + 2, lon + 2],
+    //     ];
 
-    for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
-      temp.grid[lat] = {};
-      birds.grid[lat] = {};
+    //     // temp.grid[lat][lon] = L.rectangle(coord, GRID_OPTS).addTo(temp.map);
+    //   }
+    // }
 
-      for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
-        const coord = [
-          [lat, lon],
-          [lat + 2, lon + 2],
-        ];
-
-        temp.grid[lat][lon] = L.rectangle(coord, GRID_OPTS).addTo(temp.map);
-        birds.grid[lat][lon] = L.rectangle(coord, GRID_OPTS).addTo(birds.map);
-      }
-    }
-
-    L.geoJSON(map, DATA_LAYER_OPTS).addTo(temp.map);
-    L.geoJSON(map, DATA_LAYER_OPTS).addTo(birds.map);
-
-    await temp.source.fetch(minYear, maxYear);
+    // await temp.source.fetch(minYear, maxYear);
 
     ready = true;
     loading = false;
   });
 
-  function fitBounds() {
-    temp.map.fitBounds(BOUNDS);
-    birds.map.fitBounds(BOUNDS);
-  }
+  // async function renderTemperature() {
+  //   if (!temp.map) return;
 
-  async function renderTemperature() {
-    if (!temp.map) return;
+  //   const yearData = await temp.source.get(year);
+  //   const data = yearData[month - 1];
 
-    const yearData = await temp.source.get(year);
-    const data = yearData[month - 1];
+  //   for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
+  //     for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
+  //       if (data[lat] && data[lat][lon]) {
+  //         temp.grid[lat][lon].setStyle({
+  //           color: data[lat][lon].c,
+  //         });
+  //       } else {
+  //         temp.grid[lat][lon].setStyle({ color: "transparent" });
+  //       }
+  //     }
+  //   }
+  // }
 
-    for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
-      for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
-        if (data[lat] && data[lat][lon]) {
-          temp.grid[lat][lon].setStyle({
-            color: data[lat][lon].c,
-          });
-        } else {
-          temp.grid[lat][lon].setStyle({ color: "transparent" });
-        }
-      }
-    }
-  }
+  // $: {
+  //   (async () => {
+  //     if (!ready || loading) {
+  //       return;
+  //     }
 
-  $: {
-    (async () => {
-      if (!ready || loading) {
-        return;
-      }
+  //     if (windowHeight != prevWindowHeight || windowWidth != prevWindowWidth) {
+  //       prevWindowHeight = windowHeight;
+  //       prevWindowWidth = windowWidth;
+  //       // fitBounds();
+  //     }
 
-      if (windowHeight != prevWindowHeight || windowWidth != prevWindowWidth) {
-        prevWindowHeight = windowHeight;
-        prevWindowWidth = windowWidth;
-        fitBounds();
-      }
+  //     if (minYear != prevMinYear || maxYear != prevMaxYear) {
+  //       prevMinYear = minYear;
+  //       prevMaxYear = maxYear;
+  //       loading = true;
+  //       // await temp.source.fetch(minYear, maxYear);
+  //       loading = false;
+  //     }
 
-      if (minYear != prevMinYear || maxYear != prevMaxYear) {
-        prevMinYear = minYear;
-        prevMaxYear = maxYear;
-        loading = true;
-        await temp.source.fetch(minYear, maxYear);
-        loading = false;
-      }
-
-      if (year != prevYear || month != prevMonth) {
-        prevMonth = month;
-        prevYear = year;
-        await renderTemperature();
-      }
-    })();
-  }
+  //     if (year != prevYear || month != prevMonth) {
+  //       prevMonth = month;
+  //       prevYear = year;
+  //       // await renderTemperature();
+  //     }
+  //   })();
+  // }
 </script>
 
 <style>
@@ -171,6 +140,7 @@
     align-items: center;
     font-size: 6rem;
   }
+
   .maps {
     display: grid;
     grid-template-columns: 50% 50%;
@@ -203,8 +173,14 @@
     <div class="year">Year {year}</div>
 
     <div class="maps">
-      <div class="map" id="temperature-map" />
-      <div class="map" id="birds-map" />
+      <LeafletMap>
+        <MapGeometry data={geometryData} />
+        <!-- <TemperatureGrid data={temperatureData} /> -->
+      </LeafletMap>
+      <LeafletMap>
+        <MapGeometry data={geometryData} />
+        <!-- <BirdGrid data={birdData} /> -->
+      </LeafletMap>
 
       <div class="info">
         <strong>Temperature Anomaly</strong>
