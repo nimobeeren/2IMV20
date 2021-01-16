@@ -17,18 +17,15 @@ export class Terraclimate {
   constructor() {
     this.raw = {};
     this.parsed = {};
-    this.promises = {};
   }
 
-  fetch(from, to) {
+  async fetch(from, to) {
     for (let year = from; year <= to; year++) {
-      if (!this.raw[year] && !this.promises[year]) {
-        this.promises[year] = (async () => {
-          const response = await fetch(`data/terraclimate/${year}.json`);
-          this.raw[year] = await response.json();
-          this.parsed[year] = this._convert(this.raw[year]);
-          console.info(`Fetched data from ${year}`);
-        })();
+      if (!this.raw[year]) {
+        const response = await fetch(`data/terraclimate/${year}.json`);
+        this.raw[year] = await response.json();
+        this.parsed[year] = this._convert(this.raw[year]);
+        console.info(`Fetched temperature data from ${year}`);
       }
     }
   }
@@ -65,13 +62,7 @@ export class Terraclimate {
       return this.parsed[year];
     }
 
-    if (this.promises[year]) {
-      await this.promises[year];
-      return this.parsed[year];
-    }
-
-    this.fetch(year, year);
-    await this.promises[year];
+    await this.fetch(year, year);
     return this.parsed[year];
   }
 }

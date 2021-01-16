@@ -1,14 +1,13 @@
 <script>
+  export let domain;
+  export let colors;
+  export let unit;
+
   let background = "white";
 
   $: {
     background = `linear-gradient(0.25turn, ${colors.join(", ")})`;
-    console.log(background);
   }
-
-  export let domain;
-  export let colors;
-  export let unit;
 </script>
 
 <style>
@@ -22,6 +21,7 @@
     padding: 0 1rem;
     margin: 0.5rem 0px;
     width: 100%;
+    box-sizing: border-box;
   }
 
   .domain {
