@@ -1,11 +1,11 @@
 import { scaleLinear } from "d3-scale";
 
-export const SCALE_DOMAIN = [-4, 0, 4, 8, 12];
+export const SCALE_DOMAIN = [-4, -2, 0, 2, 4];
 export const SCALE_COLORS = [
   "#2980b9",
+  "#3498db",
   "#ecf0f1",
   "#f1c40f",
-  "#e67e22",
   "#c0392b",
 ];
 
@@ -15,20 +15,16 @@ export const SCALE_FUNCTION = scaleLinear()
 
 export class Gistemp {
   constructor() {
-    this.raw = {};
-    this.parsed = {};
-    this.promises = {};
+    this.data = {};
   }
 
-  fetch(from, to) {
+  async fetch(from, to) {
     for (let year = from; year <= to; year++) {
-      if (!this.raw[year] && !this.promises[year]) {
-        this.promises[year] = (async () => {
-          const response = await fetch(`data/gistemp/${year}.json`);
-          this.raw[year] = await response.json();
-          this.parsed[year] = this._convert(this.raw[year]);
-          console.info(`Fetched temperature data from ${year}`);
-        })();
+      if (!this.data[year]) {
+        const response = await fetch(`data/gistemp/${year}.json`);
+        const raw = await response.json();
+        this.data[year] = this._convert(raw);
+        console.info(`Fetched temperature data from ${year}`);
       }
     }
   }
@@ -60,17 +56,6 @@ export class Gistemp {
   }
 
   async get(year) {
-    if (this.parsed[year]) {
-      return this.parsed[year];
-    }
-
-    if (this.promises[year]) {
-      await this.promises[year];
-      return this.parsed[year];
-    }
-
-    this.fetch(year, year);
-    await this.promises[year];
-    return this.parsed[year];
+    return this.data[year];
   }
 }

@@ -6,15 +6,15 @@
 
   import { onMount } from "svelte";
   import {
-    Terraclimate,
+    Gistemp,
     SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
     SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
-  } from "./terraclimate";
+  } from "./gistemp";
   import Scale from "./Scale.svelte";
 
-  export let currentYear, startYear, endYear, month;
+  export let year, minYear, maxYear, month;
 
-  let prevCurrentYear, prevStartYear, prevEndYear, prevMonth;
+  let prevYear, prevMinYear, prevMaxYear, prevMonth;
   let prevWindowHeight, prevWindowWidth;
   let windowHeight, windowWidth;
   let ready = false;
@@ -44,11 +44,11 @@
   const GRID_OPTS = {
     color: "transparent",
     weight: 0,
-    fillOpacity: 1,
+    fillOpacity: 100,
   };
 
   const temp = {
-    source: new Terraclimate(),
+    source: new Gistemp(),
     map: null,
     grid: {},
   };
@@ -65,14 +65,14 @@
 
     const map = await (await fetch("/data/map.json")).json();
 
-    for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat++) {
+    for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
       temp.grid[lat] = {};
       birds.grid[lat] = {};
 
-      for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon++) {
+      for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
         const coord = [
-          [lat - 1, lon],
-          [lat, lon + 1],
+          [lat, lon],
+          [lat + 2, lon + 2],
         ];
 
         temp.grid[lat][lon] = L.rectangle(coord, GRID_OPTS).addTo(temp.map);
@@ -82,6 +82,8 @@
 
     L.geoJSON(map, DATA_LAYER_OPTS).addTo(temp.map);
     L.geoJSON(map, DATA_LAYER_OPTS).addTo(birds.map);
+
+    await temp.source.fetch(minYear, maxYear);
 
     ready = true;
     loading = false;
@@ -95,11 +97,11 @@
   async function renderTemperature() {
     if (!temp.map) return;
 
-    const yearData = await temp.source.get(currentYear);
+    const yearData = await temp.source.get(year);
     const data = yearData[month - 1];
 
-    for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat++) {
-      for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon++) {
+    for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
+      for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
         if (data[lat] && data[lat][lon]) {
           temp.grid[lat][lon].setStyle({
             color: data[lat][lon].c,
@@ -118,27 +120,22 @@
       }
 
       if (windowHeight != prevWindowHeight || windowWidth != prevWindowWidth) {
-        console.log(
-          `Dimensions changed; width=${windowWidth} height=${windowHeight}`
-        );
         prevWindowHeight = windowHeight;
         prevWindowWidth = windowWidth;
         fitBounds();
       }
 
-      if (startYear != prevStartYear || endYear != prevEndYear) {
-        console.log(`Range changed; startYear=${startYear} endYear=${endYear}`);
-        prevStartYear = startYear;
-        prevEndYear = endYear;
+      if (minYear != prevMinYear || maxYear != prevMaxYear) {
+        prevMinYear = minYear;
+        prevMaxYear = maxYear;
         loading = true;
-        await temp.source.fetch(startYear, endYear);
+        await temp.source.fetch(minYear, maxYear);
         loading = false;
       }
 
-      if (currentYear != prevCurrentYear || month != prevMonth) {
-        console.log(`Year changed; currentYear=${currentYear} month=${month}`);
+      if (year != prevYear || month != prevMonth) {
         prevMonth = month;
-        prevCurrentYear = currentYear;
+        prevYear = year;
         await renderTemperature();
       }
     })();
@@ -204,14 +201,14 @@
     <div class="loading" style="display: {loading ? 'flex' : 'none'}">
       Loading...
     </div>
-    <div class="year">Year {currentYear}</div>
+    <div class="year">Year {year}</div>
 
     <div class="maps">
       <div class="map" id="temperature-map" />
       <div class="map" id="birds-map" />
 
       <div class="info">
-        <strong>Maximum Temperature</strong>
+        <strong>Temperature Anomaly</strong>
         <Scale
           colors={TEMPERATURE_SCALE_COLORS}
           domain={TEMPERATURE_SCALE_DOMAIN}
