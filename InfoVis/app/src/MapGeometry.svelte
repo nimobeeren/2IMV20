@@ -16,6 +16,7 @@
 
   const { getMap } = getContext(L);
 
+  // TODO: remove when props change
   $: {
     const map = getMap();
     if (data && map) {

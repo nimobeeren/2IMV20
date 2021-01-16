@@ -55,7 +55,7 @@ export class Gistemp {
     });
   }
 
-  async get(year) {
+  get(year) {
     return this.data[year];
   }
 }

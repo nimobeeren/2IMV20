@@ -1,12 +1,9 @@
 <script>
   import { onMount } from "svelte";
-  import L from "leaflet";
-  import "leaflet/dist/leaflet.css";
-
   import Scale from "./Scale.svelte";
   import LeafletMap from "./LeafletMap.svelte";
   import MapGeometry from "./MapGeometry.svelte";
-  import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
+  import TemperatureGrid from "./TemperatureGrid.svelte";
   import {
     Gistemp,
     SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
@@ -15,96 +12,41 @@
 
   export let year, minYear, maxYear, month;
 
-  let prevYear, prevMinYear, prevMaxYear, prevMonth;
-  let prevWindowHeight, prevWindowWidth;
+  let prevMinYear, prevMaxYear;
   let windowHeight, windowWidth;
   let ready = false;
   let loading = true;
-
-  // const GRID_OPTS = {
-  //   color: "transparent",
-  //   weight: 0,
-  //   fillOpacity: 100,
-  // };
-
-  // const temp = {
-  //   source: new Gistemp(),
-  //   grid: {},
-  // };
-
-  // const birds = {
-  //   grid: [],
-  // };
 
   let geometryData;
   onMount(async () => {
     geometryData = await (await fetch("/data/map.json")).json();
   });
 
+  const temperatureSource = new Gistemp();
+  let temperatureData;
+
   onMount(async () => {
-    // Draw rectangles for temperature grid
-    // for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
-    //   temp.grid[lat] = {};
-
-    //   for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
-    //     const coord = [
-    //       [lat, lon],
-    //       [lat + 2, lon + 2],
-    //     ];
-
-    //     // temp.grid[lat][lon] = L.rectangle(coord, GRID_OPTS).addTo(temp.map);
-    //   }
-    // }
-
-    // await temp.source.fetch(minYear, maxYear);
+    await temperatureSource.fetch(minYear, 1955); // TODO: revert
+    const yearData = temperatureSource.get(year);
+    temperatureData = yearData[month - 1];
 
     ready = true;
     loading = false;
   });
 
-  // async function renderTemperature() {
-  //   if (!temp.map) return;
-
-  //   const yearData = await temp.source.get(year);
-  //   const data = yearData[month - 1];
-
-  //   for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
-  //     for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
-  //       if (data[lat] && data[lat][lon]) {
-  //         temp.grid[lat][lon].setStyle({
-  //           color: data[lat][lon].c,
-  //         });
-  //       } else {
-  //         temp.grid[lat][lon].setStyle({ color: "transparent" });
-  //       }
-  //     }
-  //   }
-  // }
-
+  // TODO: fetch when min/max years change
   // $: {
   //   (async () => {
   //     if (!ready || loading) {
   //       return;
   //     }
 
-  //     if (windowHeight != prevWindowHeight || windowWidth != prevWindowWidth) {
-  //       prevWindowHeight = windowHeight;
-  //       prevWindowWidth = windowWidth;
-  //       // fitBounds();
-  //     }
-
   //     if (minYear != prevMinYear || maxYear != prevMaxYear) {
   //       prevMinYear = minYear;
   //       prevMaxYear = maxYear;
   //       loading = true;
-  //       // await temp.source.fetch(minYear, maxYear);
+  //       await temperatureSource.fetch(minYear, maxYear);
   //       loading = false;
-  //     }
-
-  //     if (year != prevYear || month != prevMonth) {
-  //       prevMonth = month;
-  //       prevYear = year;
-  //       // await renderTemperature();
   //     }
   //   })();
   // }
@@ -174,8 +116,8 @@
 
     <div class="maps">
       <LeafletMap>
+        <TemperatureGrid data={temperatureData} />
         <MapGeometry data={geometryData} />
-        <!-- <TemperatureGrid data={temperatureData} /> -->
       </LeafletMap>
       <LeafletMap>
         <MapGeometry data={geometryData} />
