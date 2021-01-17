@@ -10,10 +10,8 @@
   $: if (scale) {
     ticks = scale.ticks(numTicks);
     colors = ticks.map(scale);
-  }
-
-  $: {
-    background = `linear-gradient(0.25turn, ${colors.join(", ")})`;
+    console.log({ ticks, numTicks, colors });
+    background = `linear-gradient(to right, ${colors.join(", ")})`;
   }
 </script>
 

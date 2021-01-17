@@ -1,7 +1,11 @@
 <script context="module">
-  import { scaleLinear } from "d3-scale";
+  import { scaleLog } from "d3-scale";
 
-  export const scale = scaleLinear().domain([0, 1]).range(["white", "red"]);
+  export const scale = scaleLog()
+    .base(10)
+    .domain([1, 100])
+    .range(["white", "red"])
+    .clamp(true);
 </script>
 
 <script>
@@ -11,11 +15,14 @@
 
   let grid;
 
-  // Parse data and map intensities to the color scale
   $: if (data) {
     grid = data.map((cell) => {
-      let [lat, lon, intensity] = cell;
-      return { lat, lon, color: scale(intensity) };
+      // Parse data, this depends on the JSON structure
+      const [lat, lon, intensity] = cell;
+
+      // Map intensity to color scale
+      let percent = intensity * 100;
+      return { lat, lon, color: scale(percent) };
     });
   }
 </script>
