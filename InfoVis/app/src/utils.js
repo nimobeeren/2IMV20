@@ -8,8 +8,8 @@ export const BOUNDS = L.latLngBounds(
   L.latLng(LATITUDE_RANGE[1], LONGITUDE_RANGE[1])
 );
 
-export const MIN_YEAR = 1950;
-export const MAX_YEAR = 2019;
+export const MIN_YEAR = 1966;
+export const MAX_YEAR = 2019; // TODO: Revert
 export const MONTHS = [
   "January",
   "February",

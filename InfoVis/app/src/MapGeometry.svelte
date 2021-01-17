@@ -1,5 +1,5 @@
 <script>
-  import { getContext } from "svelte";
+  import { getContext, onDestroy } from "svelte";
   import L from "leaflet";
 
   export let data;
@@ -27,4 +27,10 @@
       layer = L.geoJSON(data, { ...defaultOptions, ...options }).addTo(map);
     }
   }
+
+  onDestroy(() => {
+    if (layer) {
+      layer.remove();
+    }
+  });
 </script>

@@ -1,5 +1,5 @@
 <script>
-  import { getContext } from "svelte";
+  import { getContext, onDestroy } from "svelte";
   import L from "leaflet";
 
   export let lat;
@@ -35,5 +35,13 @@
   }
 
   // Update layer color when color prop changes
-  $: layer.setStyle({ color });
+  $: if (layer) {
+    layer.setStyle({ color });
+  }
+
+  onDestroy(() => {
+    if (layer) {
+      layer.remove();
+    }
+  });
 </script>
