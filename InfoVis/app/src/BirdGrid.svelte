@@ -4,7 +4,7 @@
   export const scale = scaleLog()
     .base(10)
     .domain([1, 100])
-    .range(["white", "red"])
+    .range(["white", "blue"])
     .clamp(true);
 </script>
 

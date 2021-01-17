@@ -5,7 +5,7 @@
   let startYear = MIN_YEAR;
   let endYear = MAX_YEAR;
   let year = MIN_YEAR;
-  let month = 3;
+  let month = 8;
   let playing = false;
   let yearsPerSecond = 2;
 

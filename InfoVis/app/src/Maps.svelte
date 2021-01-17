@@ -115,12 +115,12 @@
       </LeafletMap>
 
       <div class="info">
-        <strong>Temperature Anomaly</strong>
+        <strong>Temperature anomaly</strong>
         <Scale scale={temperatureScale} unit="°C" />
       </div>
 
       <div class="info">
-        <strong>Birds Density</strong>
+        <strong>Bird density</strong>
         <Scale scale={birdScale} unit="%" />
       </div>
     </div>
