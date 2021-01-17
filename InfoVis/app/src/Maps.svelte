@@ -6,7 +6,7 @@
   import TemperatureGrid, {
     scale as temperatureScale,
   } from "./TemperatureGrid.svelte";
-  import BirdGrid from "./BirdGrid.svelte";
+  import BirdGrid, { scale as birdScale } from "./BirdGrid.svelte";
   import { Gistemp } from "./gistemp";
   import { MIN_YEAR, MAX_YEAR } from "./utils";
 
@@ -121,7 +121,7 @@
 
       <div class="info">
         <strong>Birds Density</strong>
-        <!-- <Scale colors={['#bdc3c7', '#2980b9']} domain={[1, 2, 3, 4]} unit="k" /> -->
+        <Scale scale={birdScale} unit="%" />
       </div>
     </div>
   </div>

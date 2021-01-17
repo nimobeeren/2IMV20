@@ -1,12 +1,12 @@
 <script context="module">
-  const SCALE_DOMAIN = [-4, -2, 0, 2, 4];
-  const SCALE_COLORS = ["#2980b9", "#3498db", "#ecf0f1", "#f1c40f", "#c0392b"];
+  import { scaleLinear } from "d3-scale";
 
-  export const scale = scaleLinear().domain(SCALE_DOMAIN).range(SCALE_COLORS);
+  export const scale = scaleLinear()
+    .domain([-4, -2, 0, 2, 4])
+    .range(["#2980b9", "#3498db", "#ecf0f1", "#f1c40f", "#c0392b"]);
 </script>
 
 <script>
-  import { scaleLinear } from "d3-scale";
   import GridCell from "./GridCell.svelte";
   import { LATITUDE_RANGE, LONGITUDE_RANGE } from "./utils";
 
