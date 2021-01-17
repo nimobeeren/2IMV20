@@ -1,19 +1,3 @@
-import { scaleLinear } from "d3-scale";
-
-export const SCALE_DOMAIN = [-4, -2, 0, 2, 4];
-export const SCALE_COLORS = [
-  "#2980b9",
-  "#3498db",
-  "#ecf0f1",
-  "#f1c40f",
-  "#c0392b",
-];
-
-export const SCALE_FUNCTION = scaleLinear()
-  .domain(SCALE_DOMAIN)
-  // @ts-ignore
-  .range(SCALE_COLORS);
-
 export class Gistemp {
   constructor() {
     this.data = {};
@@ -47,10 +31,7 @@ export class Gistemp {
 
         for (let i = 0, lon = -179; i <= temps.length; i++, lon += 2) {
           if (temps[i]) {
-            parsed[lat][lon] = {
-              t: temps[i],
-              c: SCALE_FUNCTION(temps[i]),
-            };
+            parsed[lat][lon] = temps[i];
           }
         }
       }

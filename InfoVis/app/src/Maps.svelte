@@ -3,13 +3,12 @@
   import Scale from "./Scale.svelte";
   import LeafletMap from "./LeafletMap.svelte";
   import MapGeometry from "./MapGeometry.svelte";
-  import TemperatureGrid from "./TemperatureGrid.svelte";
-  import BirdGrid from "./BirdGrid.svelte";
-  import {
-    Gistemp,
+  import TemperatureGrid, {
     SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
     SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
-  } from "./gistemp";
+  } from "./TemperatureGrid.svelte";
+  import BirdGrid from "./BirdGrid.svelte";
+  import { Gistemp } from "./gistemp";
   import { MIN_YEAR, MAX_YEAR } from "./utils";
 
   export let year;
