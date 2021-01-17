@@ -10,7 +10,6 @@
   const defaultOptions = {
     zoomControl: false,
     maxBounds: BOUNDS,
-    attributionControl: false,
     zoomSnap: 0.1,
     dragging: false,
     boxZoom: false,

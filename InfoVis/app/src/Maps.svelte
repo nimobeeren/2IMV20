@@ -95,7 +95,7 @@
     <div class="year">Year {year}</div>
 
     <div class="maps">
-      <LeafletMap>
+      <LeafletMap options={{ attributionControl: false }}>
         <TemperatureGrid data={temperatureData} />
         <MapGeometry data={geometryData} />
       </LeafletMap>
