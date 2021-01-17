@@ -1,9 +1,16 @@
 <script>
-  export let domain;
-  export let colors;
+  export let scale;
   export let unit;
+  export let numTicks = 5;
 
-  let background = "white";
+  let ticks;
+  let colors;
+  let background = "transparent";
+
+  $: if (scale) {
+    ticks = scale.ticks(numTicks);
+    colors = ticks.map(scale);
+  }
 
   $: {
     background = `linear-gradient(0.25turn, ${colors.join(", ")})`;
@@ -73,7 +80,7 @@
   <div class="top">
     <div class="bar" style="background: {background}" />
     <div class="domain">
-      {#each domain as val}<span>{val}</span>{/each}
+      {#each ticks as tick}<span>{tick}</span>{/each}
     </div>
   </div>
   <div class="units">{unit}</div>

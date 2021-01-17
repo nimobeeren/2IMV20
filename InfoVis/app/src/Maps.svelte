@@ -4,8 +4,7 @@
   import LeafletMap from "./LeafletMap.svelte";
   import MapGeometry from "./MapGeometry.svelte";
   import TemperatureGrid, {
-    SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
-    SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
+    scale as temperatureScale,
   } from "./TemperatureGrid.svelte";
   import BirdGrid from "./BirdGrid.svelte";
   import { Gistemp } from "./gistemp";
@@ -117,15 +116,12 @@
 
       <div class="info">
         <strong>Temperature Anomaly</strong>
-        <Scale
-          colors={TEMPERATURE_SCALE_COLORS}
-          domain={TEMPERATURE_SCALE_DOMAIN}
-          unit="°C" />
+        <Scale scale={temperatureScale} unit="°C" />
       </div>
 
       <div class="info">
         <strong>Birds Density</strong>
-        <Scale colors={['#bdc3c7', '#2980b9']} domain={[1, 2, 3, 4]} unit="k" />
+        <!-- <Scale colors={['#bdc3c7', '#2980b9']} domain={[1, 2, 3, 4]} unit="k" /> -->
       </div>
     </div>
   </div>
