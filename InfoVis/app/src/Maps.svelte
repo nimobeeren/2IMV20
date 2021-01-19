@@ -60,6 +60,10 @@
     birds.map = L.map("birds-map", MAP_OPTS);
 
     fitBounds();
+
+    temp.map.sync(birds.map);
+    birds.map.sync(temp.map);
+
     addGrayLayer(temp.map);
     addGrayLayer(birds.map);
 
