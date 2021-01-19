@@ -1,20 +1,17 @@
 <script>
-  import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
   import L from "leaflet";
   import "leaflet.sync";
   import "leaflet/dist/leaflet.css";
-
   import { onMount } from "svelte";
-  import {
-    Gistemp,
-    SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
-    SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
-  } from "./gistemp";
+
+  import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
+  import {SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,SCALE_COLORS as TEMPERATURE_SCALE_COLORS} from "./gistemp";
   import Scale from "./Scale.svelte";
 
-  export let year, minYear, maxYear, month;
+  export let year, month;
+  export let gistemp;
 
-  let prevYear, prevMinYear, prevMaxYear, prevMonth;
+  let prevYear, prevMonth;
   let prevWindowHeight, prevWindowWidth;
   let windowHeight, windowWidth;
   let ready = false;
@@ -48,7 +45,6 @@
   };
 
   const temp = {
-    source: new Gistemp(),
     map: null,
     grid: {},
   };
@@ -83,8 +79,6 @@
     L.geoJSON(map, DATA_LAYER_OPTS).addTo(temp.map);
     L.geoJSON(map, DATA_LAYER_OPTS).addTo(birds.map);
 
-    await temp.source.fetch(minYear, maxYear);
-
     ready = true;
     loading = false;
   });
@@ -94,10 +88,10 @@
     birds.map.fitBounds(BOUNDS);
   }
 
-  async function renderTemperature() {
+  function renderTemperature() {
     if (!temp.map) return;
 
-    const yearData = await temp.source.get(year);
+    const yearData = gistemp.get(year);
     const data = yearData[month - 1];
 
     for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
@@ -125,18 +119,10 @@
         fitBounds();
       }
 
-      if (minYear != prevMinYear || maxYear != prevMaxYear) {
-        prevMinYear = minYear;
-        prevMaxYear = maxYear;
-        loading = true;
-        await temp.source.fetch(minYear, maxYear);
-        loading = false;
-      }
-
       if (year != prevYear || month != prevMonth) {
         prevMonth = month;
         prevYear = year;
-        await renderTemperature();
+        renderTemperature();
       }
     })();
   }
@@ -161,17 +147,6 @@
     grid-template-rows: 3.5rem auto;
   }
 
-  .loading {
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    position: absolute;
-    z-index: 10000;
-    color: white;
-    justify-content: center;
-    align-items: center;
-    font-size: 6rem;
-  }
   .maps {
     display: grid;
     grid-template-columns: 50% 50%;
@@ -198,9 +173,6 @@
 
 <div class="outer" id="graph">
   <div class="inner">
-    <div class="loading" style="display: {loading ? 'flex' : 'none'}">
-      Loading...
-    </div>
     <div class="year">Year {year}</div>
 
     <div class="maps">

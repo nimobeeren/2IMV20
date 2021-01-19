@@ -1,6 +1,8 @@
 <script>
   import { MIN_YEAR, MAX_YEAR, MONTHS } from "./utils";
   import Maps from "./Maps.svelte";
+  import { Gistemp } from "./gistemp";
+  import { onMount } from "svelte";
 
   let startYear = MIN_YEAR;
   let endYear = MAX_YEAR;
@@ -8,6 +10,14 @@
   let month = 3;
   let playing = false;
   let yearsPerSecond = 2;
+  let loading = true;
+
+  const gistemp = new Gistemp();
+
+  onMount(async () => {
+    await gistemp.fetch(MIN_YEAR, MAX_YEAR);
+    loading = false;
+  })
 
   function wait(time) {
     return new Promise((resolve, reject) => {
@@ -50,6 +60,20 @@
     margin: 0 0 1rem;
   }
 
+  .loading {
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-size: 6rem;
+  }
+
   .sidebar {
     padding: 1rem 0;
   }
@@ -80,6 +104,10 @@
 </svelte:head>
 
 <main>
+  <div class="loading" style="display: {loading ? 'flex' : 'none'}">
+    Loading...
+  </div>
+
   <div class="sidebar">
     <h1>Climate Change and Bird Migration</h1>
 
@@ -136,5 +164,7 @@
     </div>
   </div>
 
-  <Maps {year} minYear={MIN_YEAR} maxYear={MAX_YEAR} {month} />
+  {#if !loading}
+    <Maps {year} gistemp={gistemp} {month} />
+  {/if}
 </main>

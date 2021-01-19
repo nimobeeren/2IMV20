@@ -1,4 +1,4 @@
-import { scaleLinear } from "d3-scale";
+import { scaleLinear } from "d3";
 
 export const SCALE_DOMAIN = [-4, -2, 0, 2, 4];
 export const SCALE_COLORS = [
@@ -55,7 +55,7 @@ export class Gistemp {
     });
   }
 
-  async get(year) {
+  get(year) {
     return this.data[year];
   }
 }
