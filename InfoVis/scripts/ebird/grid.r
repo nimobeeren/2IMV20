@@ -16,19 +16,16 @@ f_output <- "../../app/public/data/ebird/ebd_grid_barswa_1980_2020.json"
 print("Reading CSV file")
 ebd_input <- read.csv(f_input, header = FALSE, col.names = c("date", "lat", "lon", "count"))
 
-# clean and subset the data
-print("Generating grid data")
+# clean and filter the data
 ebd <- ebd_input %>%
-    transmute(
-        date = as_date(date),
-        lat_round = floor(lat),
-        lon_round = floor(lon),
-        count = count
-    ) %>%
+    # convert numbers to dates
+    mutate(date = as_date(date)) %>%
     # filter out very large observations
     filter(count < 1000) %>%
     # filter out observations before 1980
     filter(year(date) >= 1980)
+
+print("Generating grid")
 
 # compute monthly count totals needed to compute monthly frequency
 month_summary <- ebd %>%
@@ -43,6 +40,8 @@ month_summary <- ebd %>%
 grid <- ebd %>%
     mutate(
         month = floor_date(date, unit="month"),
+        lat_round = floor(lat),
+        lon_round = floor(lon)
     ) %>%
     # sum counts for all rows with the same month, lat and lon
     group_by(month, lat_round, lon_round) %>%
