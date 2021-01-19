@@ -2,6 +2,7 @@
   import L from "leaflet";
   import "leaflet.sync";
   import "leaflet/dist/leaflet.css";
+  import { numToMonth } from "./utils";
   import { onMount, createEventDispatcher } from "svelte";
 
   const dispatch = createEventDispatcher();
@@ -63,12 +64,12 @@
     temp.map.sync(birds.map);
     birds.map.sync(temp.map);
 
-    temp.map.on('moveend', () => {
-      const bounds = temp.map.getBounds()
-      dispatch('bounds', {
+    temp.map.on("moveend", () => {
+      const bounds = temp.map.getBounds();
+      dispatch("bounds", {
         lat: [Math.floor(bounds.getSouth()), Math.ceil(bounds.getNorth())],
-        lon: [Math.floor(bounds.getWest()), Math.ceil(bounds.getEast())]
-      })
+        lon: [Math.floor(bounds.getWest()), Math.ceil(bounds.getEast())],
+      });
     });
 
     const map = await (await fetch("/data/map.json")).json();
@@ -173,12 +174,12 @@
     margin: 1rem auto 0;
   }
 
-  .year {
+  .title {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1;
     margin: 1rem 0;
-    font-weight: bold;
+    font-weight: 400;
   }
 </style>
 
@@ -186,7 +187,7 @@
 
 <div class="outer" id="graph">
   <div class="inner">
-    <div class="year">Year {year}</div>
+    <div class="title">{numToMonth(month)} of {year}</div>
 
     <div class="maps">
       <div class="map" id="temperature-map" />

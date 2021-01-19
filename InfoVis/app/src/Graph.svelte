@@ -1,6 +1,7 @@
 <script>
   import { line, curveNatural, scaleLinear, extent, scaleTime } from "d3";
   import { onMount } from "svelte";
+  import { numToMonth } from "./utils";
 
   export let startYear, endYear, month;
   export let latRange, lonRange;
@@ -105,7 +106,7 @@
     position: relative;
     background-color: white;
     color: black;
-		margin: 1rem 0;
+    margin: 1rem 0;
   }
 
   .inner {
@@ -114,13 +115,18 @@
     left: 0;
     bottom: 0;
     right: 0;
-    padding: 20px;
+    display: grid;
+    grid-template-rows: 3.25rem auto;
   }
 
-  .container,
+  .container > div,
   svg {
     width: 100%;
     height: 100%;
+  }
+
+  .container {
+    padding: 1rem;
   }
 
   .y-tick text {
@@ -135,48 +141,66 @@
   .x-tick:first-of-type {
     display: none;
   }
+
+  .title {
+    text-align: center;
+    font-size: 1.25rem;
+    line-height: 1;
+    margin: 1rem 0;
+    font-weight: 400;
+  }
 </style>
 
 <div class="outer">
   <div class="inner">
-    <div class="container" bind:clientWidth={width} bind:clientHeight={height}>
-      <svg>
-        {#if ready}
-          <g>
-            <path d={path(data)} fill="none" stroke="#c0392b" />
-          </g>
+    <div class="title">
+      Regional average anomaly for the month of
+      {numToMonth(month)}
+      from
+      {startYear}
+      to
+      {endYear}
+    </div>
+    <div class="container">
+      <div bind:clientWidth={width} bind:clientHeight={height}>
+        <svg>
+          {#if ready}
+            <g>
+              <path d={path(data)} fill="none" stroke="#c0392b" />
+            </g>
 
-          <g transform="translate({margin.left}, 0)">
-            <path stroke="currentColor" d={yPath} fill="none" />
+            <g transform="translate({margin.left}, 0)">
+              <path stroke="currentColor" d={yPath} fill="none" />
 
-            {#each yTicks as y}
-              <g
-                class="y-tick"
-                opacity="1"
-                transform="translate(0,{yScale(y)})">
-                <line stroke="currentColor" x2="-5" />
-                <text dy="0.32em" fill="currentColor" x="-{margin.left}">
-                  {y}
-                </text>
-              </g>
-            {/each}
-          </g>
+              {#each yTicks as y}
+                <g
+                  class="y-tick"
+                  opacity="1"
+                  transform="translate(0,{yScale(y)})">
+                  <line stroke="currentColor" x2="-5" />
+                  <text dy="0.32em" fill="currentColor" x="-{margin.left}">
+                    {y}
+                  </text>
+                </g>
+              {/each}
+            </g>
 
-          <g transform="translate(0, {height - 20})">
-            <path stroke="currentColor" d={xPath} fill="none" />
+            <g transform="translate(0, {height - 20})">
+              <path stroke="currentColor" d={xPath} fill="none" />
 
-            {#each xTicks as x}
-              <g
-                class="x-tick"
-                opacity="1"
-                transform="translate({xScale(x)},0)">
-                <line stroke="currentColor" y2="6" />
-                <text fill="currentColor" y="9" dy="0.71em" x="-13">{x}</text>
-              </g>
-            {/each}
-          </g>
-        {/if}
-      </svg>
+              {#each xTicks as x}
+                <g
+                  class="x-tick"
+                  opacity="1"
+                  transform="translate({xScale(x)},0)">
+                  <line stroke="currentColor" y2="6" />
+                  <text fill="currentColor" y="9" dy="0.71em" x="-13">{x}</text>
+                </g>
+              {/each}
+            </g>
+          {/if}
+        </svg>
+      </div>
     </div>
   </div>
 </div>
