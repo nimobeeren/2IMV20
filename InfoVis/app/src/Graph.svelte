@@ -105,6 +105,7 @@
     position: relative;
     background-color: white;
     color: black;
+		margin: 1rem 0;
   }
 
   .inner {

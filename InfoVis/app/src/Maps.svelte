@@ -2,7 +2,9 @@
   import L from "leaflet";
   import "leaflet.sync";
   import "leaflet/dist/leaflet.css";
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
+
+  const dispatch = createEventDispatcher();
 
   import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
   import {
@@ -60,6 +62,14 @@
 
     temp.map.sync(birds.map);
     birds.map.sync(temp.map);
+
+    temp.map.on('moveend', () => {
+      const bounds = temp.map.getBounds()
+      dispatch('bounds', {
+        lat: [Math.floor(bounds.getSouth()), Math.ceil(bounds.getNorth())],
+        lon: [Math.floor(bounds.getWest()), Math.ceil(bounds.getEast())]
+      })
+    });
 
     const map = await (await fetch("/data/map.json")).json();
 
@@ -137,6 +147,7 @@
     position: relative;
     background-color: white;
     color: black;
+    margin: 1rem 0;
   }
 
   .inner {

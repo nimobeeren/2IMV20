@@ -18,6 +18,7 @@
   let playing = false;
   let yearsPerSecond = 2;
   let loading = true;
+  let latRange = LATITUDE_RANGE, lonRange = LONGITUDE_RANGE;
 
   const gistemp = new Gistemp();
 
@@ -34,6 +35,17 @@
 
   function frequency() {
     return 1000 / yearsPerSecond;
+  }
+
+  function updateBounds (event) {
+    latRange = [
+      Math.max(event.detail.lat[0], LATITUDE_RANGE[0]),
+      Math.min(event.detail.lat[1], LATITUDE_RANGE[1])
+    ]
+    lonRange = [
+      Math.max(event.detail.lon[0], LONGITUDE_RANGE[0]),
+      Math.min(event.detail.lon[1], LONGITUDE_RANGE[1])
+    ]
   }
 
   async function play() {
@@ -82,7 +94,7 @@
   }
 
   .sidebar {
-    padding: 1rem 0;
+    margin: 1rem 0;
   }
   #controls {
     display: grid;
@@ -172,14 +184,14 @@
   </div>
 
   {#if !loading}
-    <Maps {year} {gistemp} {month} />
+    <Maps {year} {gistemp} {month} on:bounds={updateBounds}/>
 
     <Graph
       {startYear}
       {endYear}
       {month}
-      latRange={LATITUDE_RANGE}
-      lonRange={LONGITUDE_RANGE}
+      latRange={latRange}
+      lonRange={lonRange}
       temperature={gistemp} />
   {/if}
 </main>
