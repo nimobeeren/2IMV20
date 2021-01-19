@@ -5,7 +5,10 @@
   import { onMount } from "svelte";
 
   import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
-  import {SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,SCALE_COLORS as TEMPERATURE_SCALE_COLORS} from "./gistemp";
+  import {
+    SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
+    SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
+  } from "./gistemp";
   import Scale from "./Scale.svelte";
 
   export let year, month;
@@ -31,11 +34,6 @@
     maxBounds: BOUNDS,
     attributionControl: false,
     zoomSnap: 0.1,
-    dragging: false,
-    boxZoom: false,
-    scrollWheelZoom: false,
-    touchZoom: false,
-    doubleClickZoom: false,
   };
 
   const GRID_OPTS = {
@@ -55,9 +53,13 @@
   };
 
   onMount(async () => {
-    temp.map = L.map("temperature-map", MAP_OPTS);
+    temp.map = L.map("temperature-map", { ...MAP_OPTS, zoomControl: true });
     birds.map = L.map("birds-map", MAP_OPTS);
+
     fitBounds();
+
+    temp.map.sync(birds.map);
+    birds.map.sync(temp.map);
 
     const map = await (await fetch("/data/map.json")).json();
 

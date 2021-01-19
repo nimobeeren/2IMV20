@@ -1,6 +1,13 @@
 <script>
-  import { MIN_YEAR, MAX_YEAR, MONTHS } from "./utils";
+  import {
+    MIN_YEAR,
+    MAX_YEAR,
+    MONTHS,
+    LATITUDE_RANGE,
+    LONGITUDE_RANGE,
+  } from "./utils";
   import Maps from "./Maps.svelte";
+  import Graph from "./Graph.svelte";
   import { Gistemp } from "./gistemp";
   import { onMount } from "svelte";
 
@@ -17,7 +24,7 @@
   onMount(async () => {
     await gistemp.fetch(MIN_YEAR, MAX_YEAR);
     loading = false;
-  })
+  });
 
   function wait(time) {
     return new Promise((resolve, reject) => {
@@ -165,6 +172,14 @@
   </div>
 
   {#if !loading}
-    <Maps {year} gistemp={gistemp} {month} />
+    <Maps {year} {gistemp} {month} />
+
+    <Graph
+      {startYear}
+      {endYear}
+      {month}
+      latRange={LATITUDE_RANGE}
+      lonRange={LONGITUDE_RANGE}
+      temperature={gistemp} />
   {/if}
 </main>
