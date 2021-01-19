@@ -1,3 +1,7 @@
+### This script filters the complete EBD dataset based on some parameters, such
+### as species, date and location. It produces a subset of the complete EBD
+### without changing the columns or file format.
+
 library(auk)
 
 # load full ebird observation and sampling data
