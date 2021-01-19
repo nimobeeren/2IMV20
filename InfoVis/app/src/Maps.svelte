@@ -60,9 +60,8 @@
     birds.map = L.map("birds-map", MAP_OPTS);
 
     fitBounds();
-
-    temp.map.sync(birds.map);
-    birds.map.sync(temp.map);
+    addGrayLayer(temp.map);
+    addGrayLayer(birds.map);
 
     temp.map.on("moveend", () => {
       const bounds = temp.map.getBounds();
@@ -99,6 +98,20 @@
   function fitBounds() {
     temp.map.fitBounds(BOUNDS);
     birds.map.fitBounds(BOUNDS);
+  }
+
+  function addGrayLayer(map) {
+    L.rectangle(
+      [
+        [-90, -180],
+        [90, 180],
+      ],
+      {
+        color: "lightgray",
+        weight: 0,
+        fillOpacity: 100,
+      }
+    ).addTo(map);
   }
 
   function renderTemperature() {
@@ -144,11 +157,12 @@
 <style>
   .outer {
     width: 100%;
-    padding-top: 95%;
+    padding-top: 90%;
     position: relative;
     background-color: white;
     color: black;
     margin: 1rem 0;
+    border: 1px dashed black;
   }
 
   .inner {
@@ -158,7 +172,7 @@
     bottom: 0;
     right: 0;
     display: grid;
-    grid-template-rows: 3.5rem auto;
+    grid-template-rows: 3.25rem auto;
   }
 
   .maps {

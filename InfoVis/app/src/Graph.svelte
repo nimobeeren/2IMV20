@@ -107,6 +107,7 @@
     background-color: white;
     color: black;
     margin: 1rem 0;
+    border: 1px dashed black;
   }
 
   .inner {
