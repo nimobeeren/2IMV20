@@ -1,15 +1,15 @@
 <script>
+  import Axis from "./Axis.svelte";
+
   export let scale;
   export let unit;
   export let numTicks = 5;
 
-  let ticks;
-  let colors;
-  let background = "transparent";
+  let background = "none";
 
   $: if (scale) {
-    ticks = scale.ticks(numTicks);
-    colors = ticks.map(scale);
+    const ticks = scale.ticks(numTicks);
+    const colors = ticks.map(scale);
     background = `linear-gradient(to right, ${colors.join(", ")})`;
   }
 </script>
@@ -76,9 +76,7 @@
 <div class="scale">
   <div class="top">
     <div class="bar" style="background: {background}" />
-    <div class="domain">
-      {#each ticks as tick}<span>{tick}</span>{/each}
-    </div>
+    <Axis {scale} {numTicks} />
   </div>
   <div class="units">{unit}</div>
 </div>

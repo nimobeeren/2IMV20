@@ -2,8 +2,8 @@
   import { scaleLog } from "d3-scale";
 
   export const scale = scaleLog()
-    .base(10)
     .domain([1, 100])
+    // @ts-ignore
     .range(["white", "blue"])
     .clamp(true);
 </script>
@@ -18,10 +18,10 @@
   $: if (data) {
     grid = data.map((cell) => {
       // Parse data, this depends on the JSON structure
-      const [lat, lon, intensity] = cell;
+      const [lat, lon, frequency] = cell;
 
-      // Map intensity to color scale
-      let percent = intensity * 100;
+      // Map frequency to color scale
+      let percent = frequency * 100;
       return { lat, lon, color: scale(percent) };
     });
   }

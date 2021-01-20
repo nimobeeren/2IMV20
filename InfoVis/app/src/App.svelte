@@ -14,7 +14,7 @@
   let startYear = MIN_YEAR;
   let endYear = MAX_YEAR;
   let year = MIN_YEAR;
-  let month = 8;
+  let month = 3;
   let playing = false;
   let yearsPerSecond = 2;
   let loading = true;
