@@ -6,7 +6,7 @@
   export let startYear, endYear, month;
   export let latRange, lonRange;
   export let temperatureSource;
-
+  
   let width, height;
   let extentX, xScale, extentY, yScale, xTicks, yTicks, xPath, yPath;
   let data = [];
@@ -78,7 +78,7 @@
     const end = Math.ceil(extent[1] * approx) / approx;
 
     let ticks = [];
-    for (var i = start; i < end; i += step) {
+    for (let i = start; i < end; i += step) {
       ticks.push(Math.round(i * approx) / approx);
     }
 
@@ -86,17 +86,15 @@
   }
 
   $: {
-    // console.log to force reaction to those variables
-    console.log(
-      width,
-      height,
-      startYear,
-      endYear,
-      month,
-      latRange,
-      lonRange,
-      temperatureSource
-    );
+    // force reaction to those variables
+    width = width
+    height = height
+    startYear = startYear
+    endYear = endYear
+    month = month
+    latRange = latRange
+    lonRange = lonRange
+    temperatureSource = temperatureSource
     render();
   }
 </script>
