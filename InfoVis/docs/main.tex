@@ -159,7 +159,7 @@ In order to visualize the problem, we need two different datasets: one that incl
 
 For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2020data}. The eBird citizen science project is unmatched in scale, containing over 600 million observations, including nearly every bird species on Earth \cite{strimas2020ebird}. Submissions are individually reviewed to ensure accuracy of information. As people are contributing to this dataset continuously, the information inside is up-to-date, but the record also goes many years back.
 
-For the second, we have chosen the Terraclimate dataset \cite{terraclimatedata} by Climatology Lab, which provides diverse information about climate - precipitation, minimum and maximum temperatures, vapor pressure, etc - over the years, since 1958. For the use case in study, we only use the maximum temperature values. One of the main advantages of this dataset is the use of climatically aided interpolation, combining values from the WorldClim \cite{worldclim} dataset with other datasets such as CRU Ts4.0 \cite{cru} and JRA55 \cite{j55r}.
+For the second, we have chosen the GISTEMP dataset \cite{gistemp} by NASA, which provides the temperature data from 1880 up to 2020 in a regular 2° by 2° grid. The main advantage of this dataset compared to other temperature datasets we found is that this one uses the temperature anomalies. These anomalies are relative to a 30-year period between 1951 and 1980. By using anomalies instead of absolute values \cite{gistempanomalies}, it is easier to see how much colder or warmer a certain place is. 
 
 \subsection{Data Abstraction: What}
 
@@ -179,20 +179,15 @@ We perform a number of transformations on the original dataset for the purpose o
 
 \vspace{2mm}
 
-The Terraclimate dataset \cite{terraclimatedata} consists of a large static muldimensional field containing items where each corresponds to a certain observation in a certain location and point in time. For each observation, a few attributes are provided, though we are only interested in the following subset:
+The GISTEMP dataset \cite{gistemp} consists of a large static multidimensional scalar field, whose dimensions are the latitude, the longitude and the date. For each point in space-time, a temperature anomaly value is available. The description of each dimension and the value:
 
 \paragraph{Latitude} An ordered quantitative cyclic attribute represented as decimal degrees, varying from -90.0 to 90.0.
 
 \paragraph{Longitude} An ordered quantitative cyclic attribute represented as decimal degrees, varying from -180.0 to 180.0.
 
-\paragraph{Maximum temperature} A quantitive attribute represented as decimal degrees, in Celcius degrees.
+\paragraph{Temperature Anomaly} A quantitive attribute represented in degrees Celcius.
 
-\vspace{2mm}
-
-Although other variables are available, such as the minimum temperature and precipitation, we chose to use the maximum temperature. By doing so, we can better visualize how the increasing temperatures have been influencing the dates of bird migrations.
-
-% TODO: mention transformations
-% note that the 2020 file might be released quite soon!
+\paragraph{Date} An ordered, quantitive and diverging attribute in year-month format (yyyy-month).
 
 \section{Task Analysis}
 
@@ -230,4 +225,3 @@ This visualization is designed to be used by a large variety of specialists and 
 \bibliographystyle{abbrv}
 \bibliography{main}
 \end{document}
-
