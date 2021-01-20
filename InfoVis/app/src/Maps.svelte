@@ -7,6 +7,7 @@
   } from "./TemperatureGrid.svelte";
   import BirdGrid, { scale as birdScale } from "./BirdGrid.svelte";
   import { numToMonth } from "./utils";
+  import LeafletSync from "./LeafletSync.svelte";
 
   export let year;
   export let month;
@@ -70,16 +71,18 @@
     <div class="title">{numToMonth(month)} of {year}</div>
 
     <div class="maps">
-      <LeafletMap
-        options={{ zoomControl: true, attributionControl: false }}
-        on:moveend>
-        <TemperatureGrid data={temperatureData} />
-        <MapGeometry data={geometryData} />
-      </LeafletMap>
-      <LeafletMap>
-        <MapGeometry data={geometryData} />
-        <BirdGrid data={birdData} />
-      </LeafletMap>
+      <LeafletSync>
+        <LeafletMap
+          options={{ zoomControl: true, attributionControl: false }}
+          on:moveend>
+          <TemperatureGrid data={temperatureData} />
+          <MapGeometry data={geometryData} />
+        </LeafletMap>
+        <LeafletMap>
+          <MapGeometry data={geometryData} />
+          <BirdGrid data={birdData} />
+        </LeafletMap>
+      </LeafletSync>
 
       <div class="info">
         <strong>Temperature anomaly</strong>

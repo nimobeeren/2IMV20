@@ -32,7 +32,6 @@
         }
       }
     }
-    console.log({ gridCells });
   }
 </script>
 

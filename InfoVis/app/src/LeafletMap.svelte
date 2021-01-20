@@ -4,10 +4,12 @@
     onMount,
     setContext,
     createEventDispatcher,
+    getContext,
   } from "svelte";
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
   import { debounce } from "lodash-es";
+  import { contextKey as syncContext } from "./LeafletSync.svelte";
   import { BOUNDS } from "./utils.js";
 
   export let options = {};
@@ -30,6 +32,8 @@
     getMap: () => mapObject,
   });
 
+  const { sync, unsync } = getContext(syncContext);
+
   function handleMoveEnd(e) {
     dispatch("moveend", e);
   }
@@ -43,13 +47,17 @@
     mapObject = L.map(mapElement, { ...defaultOptions, ...options });
     mapObject.on("moveend", handleMoveEnd);
 
-    debouncedFitBounds();
+    // Need to set bounds before syncing
+    // Don't use debounced function here because it is not "immediate"
+    mapObject.fitBounds(BOUNDS);
+
+    sync(mapObject);
   });
 
   onDestroy(() => {
-    debouncedFitBounds.cancel();
-
     mapObject.off("moveend", handleMoveEnd);
+    debouncedFitBounds.cancel();
+    unsync(mapObject);
   });
 
   $: if (mapObject) {
