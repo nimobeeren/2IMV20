@@ -138,7 +138,7 @@
 
       <label for="end-year">End year</label>
       <select disabled={playing} id="end-year" bind:value={endYear}>
-        {#each { length: MAX_YEAR - startYear + 1 } as _, i}
+        {#each Array(MAX_YEAR - startYear + 1) as _, i}
           <option value={i + startYear}>{i + startYear}</option>
         {/each}
       </select>
