@@ -10,7 +10,7 @@
   let syncedMaps = [];
 
   function syncMaps(mapsToSync) {
-    if (mapsToSync < 2) {
+    if (mapsToSync.length < 2) {
       return;
     }
     for (let i = 0; i < mapsToSync.length; i++) {
@@ -23,7 +23,7 @@
   }
 
   function unsyncMaps(mapsToUnsync) {
-    if (mapsToUnsync < 2) {
+    if (mapsToUnsync.length < 2) {
       return;
     }
     for (let i = 0; i < mapsToUnsync.length; i++) {
