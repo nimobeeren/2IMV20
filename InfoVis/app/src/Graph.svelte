@@ -76,7 +76,7 @@
     const end = Math.ceil(extent[1] * approx) / approx;
 
     let ticks = [];
-    for (var i = start; i < end; i += step) {
+    for (let i = start; i < end; i += step) {
       ticks.push(Math.round(i * approx) / approx);
     }
 
