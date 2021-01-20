@@ -91,7 +91,10 @@
 
       <div class="info">
         <strong>Bird density</strong>
-        <Scale scale={birdScale} unit="%" />
+        <Scale
+          scale={birdScale}
+          ticksOverride={[1, 2, 4, 10, 20, 40, 100]}
+          unit="%" />
       </div>
     </div>
   </div>

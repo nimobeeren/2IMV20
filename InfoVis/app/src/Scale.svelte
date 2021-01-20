@@ -4,6 +4,7 @@
   export let scale;
   export let unit;
   export let numTicks = 5;
+  export let ticksOverride;
 
   let background = "none";
 
@@ -76,7 +77,7 @@
 <div class="scale">
   <div class="top">
     <div class="bar" style="background: {background}" />
-    <Axis {scale} {numTicks} />
+    <Axis {scale} {numTicks} {ticksOverride} />
   </div>
   <div class="units">{unit}</div>
 </div>
