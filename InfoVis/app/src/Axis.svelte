@@ -34,7 +34,7 @@
 </style>
 
 <div bind:clientWidth={width}>
-  {#if ticksWithOffset}
+  {#if ticksWithOffset && width}
     <svg>
       <!-- horizontal line -->
       <path d="M 0 0 H {width}" fill="none" stroke="currentColor" />

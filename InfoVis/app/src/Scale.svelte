@@ -2,7 +2,6 @@
   import Axis from "./Axis.svelte";
 
   export let scale;
-  export let unit;
   export let numTicks = 5;
   export let ticksOverride;
 
@@ -23,54 +22,14 @@
 
   .scale {
     display: flex;
-    padding: 0 1rem;
+    padding: 0 2rem;
     margin: 0.5rem 0px;
     width: 100%;
     box-sizing: border-box;
   }
 
-  .domain {
-    display: flex;
-    justify-content: space-between;
-    border-top: 2px solid black;
-  }
-
   .top {
     flex-grow: 1;
-  }
-
-  .scale span {
-    position: relative;
-    margin-top: 10px;
-  }
-
-  .scale span::after {
-    content: "";
-    width: 2px;
-    height: 10px;
-    background: black;
-    display: block;
-    position: absolute;
-    top: -10px;
-    left: 50%;
-  }
-
-  .scale span:last-of-type::after {
-    left: calc(50% - 2px);
-  }
-
-  .scale span:first-of-type {
-    transform: translate(-50%, 0);
-  }
-
-  .scale span:last-of-type {
-    transform: translate(50%, 0);
-  }
-
-  .units {
-    margin-top: calc(2rem + 12px);
-    margin-left: 18px;
-    font-weight: bold;
   }
 </style>
 
@@ -79,5 +38,4 @@
     <div class="bar" style="background: {background}" />
     <Axis {scale} {numTicks} {ticksOverride} />
   </div>
-  <div class="units">{unit}</div>
 </div>

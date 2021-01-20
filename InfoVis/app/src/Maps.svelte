@@ -85,16 +85,14 @@
       </LeafletSync>
 
       <div class="info">
-        <strong>Temperature anomaly</strong>
-        <Scale scale={temperatureScale} unit="°C" />
+        <strong>Temperature anomaly (°C)</strong>
+        <Scale scale={temperatureScale} />
       </div>
 
       <div class="info">
-        <strong>Bird density</strong>
-        <Scale
-          scale={birdScale}
-          ticksOverride={[1, 2, 4, 10, 20, 40, 100]}
-          unit="%" />
+        <strong>Bird frequency (%)</strong>
+        <!-- override ticks because d3 wants way too many -->
+        <Scale scale={birdScale} ticksOverride={[1, 2, 4, 10, 20, 40, 100]} />
       </div>
     </div>
   </div>
