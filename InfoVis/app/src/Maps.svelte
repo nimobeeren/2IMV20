@@ -1,20 +1,23 @@
 <script>
-  import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
   import L from "leaflet";
   import "leaflet.sync";
   import "leaflet/dist/leaflet.css";
+  import { numToMonth } from "./utils";
+  import { onMount, createEventDispatcher } from "svelte";
 
-  import { onMount } from "svelte";
+  const dispatch = createEventDispatcher();
+
+  import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
   import {
-    Gistemp,
     SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
     SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
   } from "./gistemp";
   import Scale from "./Scale.svelte";
 
-  export let year, minYear, maxYear, month;
+  export let year, month;
+  export let gistemp;
 
-  let prevYear, prevMinYear, prevMaxYear, prevMonth;
+  let prevYear, prevMonth;
   let prevWindowHeight, prevWindowWidth;
   let windowHeight, windowWidth;
   let ready = false;
@@ -34,11 +37,6 @@
     maxBounds: BOUNDS,
     attributionControl: false,
     zoomSnap: 0.1,
-    dragging: false,
-    boxZoom: false,
-    scrollWheelZoom: false,
-    touchZoom: false,
-    doubleClickZoom: false,
   };
 
   const GRID_OPTS = {
@@ -48,7 +46,6 @@
   };
 
   const temp = {
-    source: new Gistemp(),
     map: null,
     grid: {},
   };
@@ -59,9 +56,24 @@
   };
 
   onMount(async () => {
-    temp.map = L.map("temperature-map", MAP_OPTS);
+    temp.map = L.map("temperature-map", { ...MAP_OPTS, zoomControl: true });
     birds.map = L.map("birds-map", MAP_OPTS);
+
     fitBounds();
+
+    temp.map.sync(birds.map);
+    birds.map.sync(temp.map);
+
+    addGrayLayer(temp.map);
+    addGrayLayer(birds.map);
+
+    temp.map.on("moveend", () => {
+      const bounds = temp.map.getBounds();
+      dispatch("bounds", {
+        lat: [Math.floor(bounds.getSouth()), Math.ceil(bounds.getNorth())],
+        lon: [Math.floor(bounds.getWest()), Math.ceil(bounds.getEast())],
+      });
+    });
 
     const map = await (await fetch("/data/map.json")).json();
 
@@ -83,8 +95,6 @@
     L.geoJSON(map, DATA_LAYER_OPTS).addTo(temp.map);
     L.geoJSON(map, DATA_LAYER_OPTS).addTo(birds.map);
 
-    await temp.source.fetch(minYear, maxYear);
-
     ready = true;
     loading = false;
   });
@@ -94,10 +104,24 @@
     birds.map.fitBounds(BOUNDS);
   }
 
-  async function renderTemperature() {
+  function addGrayLayer(map) {
+    L.rectangle(
+      [
+        [-90, -180],
+        [90, 180],
+      ],
+      {
+        color: "lightgray",
+        weight: 0,
+        fillOpacity: 100,
+      }
+    ).addTo(map);
+  }
+
+  function renderTemperature() {
     if (!temp.map) return;
 
-    const yearData = await temp.source.get(year);
+    const yearData = gistemp.get(year);
     const data = yearData[month - 1];
 
     for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
@@ -125,18 +149,10 @@
         fitBounds();
       }
 
-      if (minYear != prevMinYear || maxYear != prevMaxYear) {
-        prevMinYear = minYear;
-        prevMaxYear = maxYear;
-        loading = true;
-        await temp.source.fetch(minYear, maxYear);
-        loading = false;
-      }
-
       if (year != prevYear || month != prevMonth) {
         prevMonth = month;
         prevYear = year;
-        await renderTemperature();
+        renderTemperature();
       }
     })();
   }
@@ -145,10 +161,12 @@
 <style>
   .outer {
     width: 100%;
-    padding-top: 95%;
+    padding-top: 90%;
     position: relative;
     background-color: white;
     color: black;
+    margin: 1rem 0;
+    border: 1px dashed black;
   }
 
   .inner {
@@ -158,20 +176,9 @@
     bottom: 0;
     right: 0;
     display: grid;
-    grid-template-rows: 3.5rem auto;
+    grid-template-rows: 3.25rem auto;
   }
 
-  .loading {
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    position: absolute;
-    z-index: 10000;
-    color: white;
-    justify-content: center;
-    align-items: center;
-    font-size: 6rem;
-  }
   .maps {
     display: grid;
     grid-template-columns: 50% 50%;
@@ -185,12 +192,12 @@
     margin: 1rem auto 0;
   }
 
-  .year {
+  .title {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1;
     margin: 1rem 0;
-    font-weight: bold;
+    font-weight: 400;
   }
 </style>
 
@@ -198,10 +205,7 @@
 
 <div class="outer" id="graph">
   <div class="inner">
-    <div class="loading" style="display: {loading ? 'flex' : 'none'}">
-      Loading...
-    </div>
-    <div class="year">Year {year}</div>
+    <div class="title">{numToMonth(month)} of {year}</div>
 
     <div class="maps">
       <div class="map" id="temperature-map" />

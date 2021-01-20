@@ -1,6 +1,15 @@
 <script>
-  import { MIN_YEAR, MAX_YEAR, MONTHS } from "./utils";
+  import {
+    MIN_YEAR,
+    MAX_YEAR,
+    MONTHS,
+    LATITUDE_RANGE,
+    LONGITUDE_RANGE,
+  } from "./utils";
   import Maps from "./Maps.svelte";
+  import Graph from "./Graph.svelte";
+  import { Gistemp } from "./gistemp";
+  import { onMount } from "svelte";
 
   let startYear = MIN_YEAR;
   let endYear = MAX_YEAR;
@@ -8,6 +17,16 @@
   let month = 3;
   let playing = false;
   let yearsPerSecond = 2;
+  let loading = true;
+  let latRange = LATITUDE_RANGE,
+    lonRange = LONGITUDE_RANGE;
+
+  const gistemp = new Gistemp();
+
+  onMount(async () => {
+    await gistemp.fetch(MIN_YEAR, MAX_YEAR);
+    loading = false;
+  });
 
   function wait(time) {
     return new Promise((resolve, reject) => {
@@ -17,6 +36,17 @@
 
   function frequency() {
     return 1000 / yearsPerSecond;
+  }
+
+  function updateBounds(event) {
+    latRange = [
+      Math.max(event.detail.lat[0], LATITUDE_RANGE[0]),
+      Math.min(event.detail.lat[1], LATITUDE_RANGE[1]),
+    ];
+    lonRange = [
+      Math.max(event.detail.lon[0], LONGITUDE_RANGE[0]),
+      Math.min(event.detail.lon[1], LONGITUDE_RANGE[1]),
+    ];
   }
 
   async function play() {
@@ -41,8 +71,11 @@
 <style>
   main {
     width: 100%;
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
+    display: grid;
+    grid-template-columns: 25rem auto;
+    grid-gap: 2rem;
   }
 
   h1 {
@@ -50,16 +83,24 @@
     margin: 0 0 1rem;
   }
 
-  .sidebar {
-    padding: 1rem 0;
-  }
-  #controls {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 2rem;
+  .loading {
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-size: 6rem;
   }
 
-  #controls > div {
+  .sidebar {
+    margin: 1rem 0;
+  }
+  #controls {
     display: grid;
     grid-template-columns: 6rem auto;
     grid-template-rows: 1rem;
@@ -79,49 +120,49 @@
   <title>Climate Change and Bird Migration</title>
 </svelte:head>
 
+<div class="loading" style="display: {loading ? 'flex' : 'none'}">
+  Loading...
+</div>
+
 <main>
   <div class="sidebar">
     <h1>Climate Change and Bird Migration</h1>
 
     <div id="controls">
-      <div>
-        <label for="start-year">Start Year</label>
-        <select id="start-year" bind:value={startYear} disabled={playing}>
-          {#each { length: MAX_YEAR - MIN_YEAR + 1 } as _, i}
-            <option value={i + MIN_YEAR}>{i + MIN_YEAR}</option>
-          {/each}
-        </select>
+      <label for="start-year">Start Year</label>
+      <select id="start-year" bind:value={startYear} disabled={playing}>
+        {#each Array(MAX_YEAR - MIN_YEAR + 1) as _, i}
+          <option value={i + MIN_YEAR}>{i + MIN_YEAR}</option>
+        {/each}
+      </select>
 
-        <label for="end-year">End year</label>
-        <select disabled={playing} id="end-year" bind:value={endYear}>
-          {#each { length: MAX_YEAR - startYear + 1 } as _, i}
-            <option value={i + startYear}>{i + startYear}</option>
-          {/each}
-        </select>
-      </div>
+      <label for="end-year">End year</label>
+      <select disabled={playing} id="end-year" bind:value={endYear}>
+        {#each Array(MAX_YEAR - startYear + 1) as _, i}
+          <option value={i + startYear}>{i + startYear}</option>
+        {/each}
+      </select>
 
-      <div>
-        <label for="month">Month</label>
-        <select disabled={playing} id="month" bind:value={month}>
-          {#each MONTHS as month, i}
-            <option value={i + 1}>{month}</option>
-          {/each}
-        </select>
+      <label for="month">Month</label>
+      <select disabled={playing} id="month" bind:value={month}>
+        {#each MONTHS as month, i}
+          <option value={i + 1}>{month}</option>
+        {/each}
+      </select>
 
-        <label for="frequency">Years per second ({yearsPerSecond})</label>
-        <input
-          type="range"
-          id="frequency"
-          min="1"
-          max="10"
-          bind:value={yearsPerSecond} />
+      <label for="frequency">Years per second ({yearsPerSecond})</label>
+      <input
+        type="range"
+        id="frequency"
+        min="1"
+        max="10"
+        bind:value={yearsPerSecond} />
 
-        <span><!-- i am important. leave me here --></span>
-        <button
-          on:click={() => {
-            playing = !playing;
-          }}>{#if playing}Stop{:else}Start{/if}</button>
-      </div>
+      <span><!-- i am important. leave me here --></span>
+      <button
+        on:click={() => {
+          playing = !playing;
+        }}>{#if playing}Stop{:else}Start{/if}</button>
     </div>
 
     <div class="slider">
@@ -136,5 +177,17 @@
     </div>
   </div>
 
-  <Maps {year} minYear={MIN_YEAR} maxYear={MAX_YEAR} {month} />
+  <div class="vis">
+    {#if !loading}
+      <Maps {year} {gistemp} {month} on:bounds={updateBounds} />
+
+      <Graph
+        {startYear}
+        {endYear}
+        {month}
+        {latRange}
+        {lonRange}
+        temperature={gistemp} />
+    {/if}
+  </div>
 </main>
