@@ -84,17 +84,15 @@
   }
 
   $: {
-    // console.log to force reaction to those variables
-    console.log(
-      width,
-      height,
-      startYear,
-      endYear,
-      month,
-      latRange,
-      lonRange,
-      temperature
-    );
+    // force reaction to those variables
+    width = width
+    height = height
+    startYear = startYear
+    endYear = endYear
+    month = month
+    latRange = latRange
+    lonRange = lonRange
+    temperature = temperature
     render();
   }
 </script>
