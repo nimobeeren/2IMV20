@@ -47,10 +47,12 @@
 <style>
   .outer {
     width: 100%;
-    padding-top: 95%;
+    padding-top: 90%;
     position: relative;
     background-color: white;
     color: black;
+    margin: 1rem 0;
+    border: 1px dashed black;
   }
 
   .inner {
@@ -60,19 +62,7 @@
     bottom: 0;
     right: 0;
     display: grid;
-    grid-template-rows: 3.5rem auto;
-  }
-
-  .loading {
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    position: absolute;
-    z-index: 10000;
-    color: white;
-    justify-content: center;
-    align-items: center;
-    font-size: 6rem;
+    grid-template-rows: 3.25rem auto;
   }
 
   .maps {
@@ -88,21 +78,18 @@
     margin: 1rem auto 0;
   }
 
-  .year {
+  .title {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     line-height: 1;
     margin: 1rem 0;
-    font-weight: bold;
+    font-weight: 400;
   }
 </style>
 
 <div class="outer" id="graph">
   <div class="inner">
-    <div class="loading" style="display: {loading ? 'flex' : 'none'}">
-      Loading...
-    </div>
-    <div class="year">Year {year}</div>
+    <div class="title">{numToMonth(month)} of {year}</div>
 
     <div class="maps">
       <LeafletMap options={{ attributionControl: false }}>
