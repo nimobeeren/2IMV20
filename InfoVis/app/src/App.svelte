@@ -131,7 +131,7 @@
     <div id="controls">
       <label for="start-year">Start Year</label>
       <select id="start-year" bind:value={startYear} disabled={playing}>
-        {#each { length: MAX_YEAR - MIN_YEAR + 1 } as _, i}
+        {#each Array(MAX_YEAR - MIN_YEAR + 1) as _, i}
           <option value={i + MIN_YEAR}>{i + MIN_YEAR}</option>
         {/each}
       </select>
