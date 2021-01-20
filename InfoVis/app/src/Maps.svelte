@@ -92,7 +92,7 @@
     <div class="title">{numToMonth(month)} of {year}</div>
 
     <div class="maps">
-      <LeafletMap options={{ attributionControl: false }}>
+      <LeafletMap options={{ zoomControl: true, attributionControl: false }}>
         <TemperatureGrid data={temperatureData} />
         <MapGeometry data={geometryData} />
       </LeafletMap>

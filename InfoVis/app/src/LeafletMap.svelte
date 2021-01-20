@@ -11,11 +11,6 @@
     zoomControl: false,
     maxBounds: BOUNDS,
     zoomSnap: 0.1,
-    dragging: false,
-    boxZoom: false,
-    scrollWheelZoom: false,
-    touchZoom: false,
-    doubleClickZoom: false,
   };
 
   let mapObject;
