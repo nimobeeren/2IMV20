@@ -2,15 +2,32 @@
   import Axis from "./Axis.svelte";
 
   export let scale;
+  // An approximate number of ticks to show
   export let numTicks = 5;
-  export let ticksOverride;
+  // An array of values where ticks will be shown
+  // Takes precedence over numTicks
+  export let ticksOverride = undefined;
 
   let background = "none";
 
   $: if (scale) {
-    const ticks = scale.ticks(numTicks);
-    const colors = ticks.map(scale);
-    background = `linear-gradient(to right, ${colors.join(", ")})`;
+    const ticks = ticksOverride ?? scale.ticks(numTicks);
+
+    const domain = scale.domain();
+    const minValue = domain[0];
+    const maxValue = domain[domain.length - 1];
+
+    const ticksWithColor = ticks.map((value) => ({
+      value,
+      percent: (value - minValue) / (maxValue - minValue) * 100,
+      color: scale(value),
+    }));
+
+    const colorStops = ticksWithColor
+      .map((tick) => `${tick.color} ${tick.percent}%`)
+      .join(", ");
+      
+    background = `linear-gradient(to right, ${colorStops})`;
   }
 </script>
 

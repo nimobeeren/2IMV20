@@ -1,10 +1,10 @@
 <script>
   export let scale;
   // An approximate number of ticks to show
-  export let numTicks;
+  export let numTicks = 5;
   // An array of values where ticks will be shown
   // Takes precedence over numTicks
-  export let ticksOverride;
+  export let ticksOverride = undefined;
 
   let width;
   let ticksWithOffset;
