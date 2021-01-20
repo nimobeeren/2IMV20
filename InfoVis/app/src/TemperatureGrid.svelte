@@ -3,6 +3,7 @@
 
   export const scale = scaleLinear()
     .domain([-4, -2, 0, 2, 4])
+    // @ts-ignore
     .range(["#2980b9", "#3498db", "#ecf0f1", "#f1c40f", "#c0392b"]);
 </script>
 
@@ -31,6 +32,7 @@
         }
       }
     }
+    console.log({ gridCells });
   }
 </script>
 

@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   import Scale from "./Scale.svelte";
   import LeafletMap from "./LeafletMap.svelte";
   import MapGeometry from "./MapGeometry.svelte";
@@ -7,38 +6,19 @@
     scale as temperatureScale,
   } from "./TemperatureGrid.svelte";
   import BirdGrid, { scale as birdScale } from "./BirdGrid.svelte";
-  import { Gistemp } from "./gistemp";
-  import { MIN_YEAR, MAX_YEAR } from "./utils";
+  import { numToMonth } from "./utils";
 
   export let year;
   export let month;
 
-  let geometryData;
-  let temperatureData;
-  let allBirdData;
-  let birdData;
-  let loading = true;
+  export let geometryData;
+  export let temperatureData;
+  export let allBirdData;
 
-  const temperatureSource = new Gistemp();
-
-  onMount(async () => {
-    geometryData = await fetch("/data/map.json").then((res) => res.json());
-
-    // Prefetch all the temperature data
-    await temperatureSource.fetch(MIN_YEAR, MAX_YEAR);
-    temperatureData = temperatureSource.get(year, month);
-
-    allBirdData = await fetch("/data/ebird/ebd_grid.json").then((res) =>
-      res.json()
-    );
-
-    loading = false;
-  });
-
-  // Update temperature when year/month change
-  $: temperatureData = temperatureSource.get(year, month);
+  $: console.log({ temperatureData });
 
   // Update bird data when year/month change
+  let birdData;
   $: if (allBirdData) {
     birdData = allBirdData[year]?.[month - 1];
   }

@@ -45,5 +45,7 @@
 </script>
 
 <div bind:this={mapElement} bind:clientWidth={width} bind:clientHeight={height}>
-  <slot />
+  {#if mapObject}
+    <slot />
+  {/if}
 </div>

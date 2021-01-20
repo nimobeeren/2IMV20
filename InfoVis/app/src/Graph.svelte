@@ -5,7 +5,7 @@
 
   export let startYear, endYear, month;
   export let latRange, lonRange;
-  export let temperature;
+  export let temperatureSource;
 
   let width, height;
   let extentX, xScale, extentY, yScale, xTicks, yTicks, xPath, yPath;
@@ -15,7 +15,9 @@
   const margin = { bottom: 20, left: 30 };
 
   const path = line()
+    // @ts-ignore
     .x((d) => xScale(d.x))
+    // @ts-ignore
     .y((d) => yScale(d.y))
     .curve(curveNatural);
 
@@ -51,12 +53,12 @@
     for (let year = startYear; year <= endYear; year++) {
       let sum = 0,
         i = 0;
-      const monthData = temperature.get(year)[month - 1];
+      const monthData = temperatureSource.get(year, month);
 
       for (let lat = latRange[0]; lat <= latRange[1]; lat++) {
         for (let lon = lonRange[0]; lon <= lonRange[1]; lon++) {
-          if (monthData[lat] && monthData[lat][lon]) {
-            sum += monthData[lat][lon].t;
+          if (monthData?.[lat] && monthData?.[lat]?.[lon]) {
+            sum += monthData[lat][lon];
             i++;
           }
         }
@@ -93,7 +95,7 @@
       month,
       latRange,
       lonRange,
-      temperature
+      temperatureSource
     );
     render();
   }
@@ -178,6 +180,7 @@
                   class="y-tick"
                   opacity="1"
                   transform="translate(0,{yScale(y)})">
+                  <!-- svelte-ignore component-name-lowercase -->
                   <line stroke="currentColor" x2="-5" />
                   <text dy="0.32em" fill="currentColor" x="-{margin.left}">
                     {y}
@@ -194,6 +197,7 @@
                   class="x-tick"
                   opacity="1"
                   transform="translate({xScale(x)},0)">
+                  <!-- svelte-ignore component-name-lowercase -->
                   <line stroke="currentColor" y2="6" />
                   <text fill="currentColor" y="9" dy="0.71em" x="-13">{x}</text>
                 </g>

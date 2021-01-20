@@ -21,10 +21,20 @@
   let latRange = LATITUDE_RANGE,
     lonRange = LONGITUDE_RANGE;
 
-  const gistemp = new Gistemp();
+  let geometryData, birdData;
+
+  const temperatureSource = new Gistemp();
 
   onMount(async () => {
-    await gistemp.fetch(MIN_YEAR, MAX_YEAR);
+    geometryData = await fetch("/data/map.json").then((res) => res.json());
+
+    // Prefetch all the temperature data
+    await temperatureSource.fetch(MIN_YEAR, MAX_YEAR);
+
+    birdData = await fetch("/data/ebird/ebd_grid.json").then((res) =>
+      res.json()
+    );
+
     loading = false;
   });
 
@@ -179,7 +189,13 @@
 
   <div class="vis">
     {#if !loading}
-      <Maps {year} {gistemp} {month} on:bounds={updateBounds} />
+      <Maps
+        {year}
+        {month}
+        {geometryData}
+        temperatureData={temperatureSource.get(year, month)}
+        allBirdData={birdData}
+        on:bounds={updateBounds} />
 
       <Graph
         {startYear}
@@ -187,7 +203,7 @@
         {month}
         {latRange}
         {lonRange}
-        temperature={gistemp} />
+        {temperatureSource} />
     {/if}
   </div>
 </main>
