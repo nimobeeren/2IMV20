@@ -49,13 +49,21 @@
   }
 
   function updateBounds(event) {
+    const bounds = event.detail.target.getBounds();
+
+    const newLat = [
+      Math.floor(bounds.getSouth()),
+      Math.ceil(bounds.getNorth()),
+    ];
+    const newLon = [Math.floor(bounds.getWest()), Math.ceil(bounds.getEast())];
+
     latRange = [
-      Math.max(event.detail.lat[0], LATITUDE_RANGE[0]),
-      Math.min(event.detail.lat[1], LATITUDE_RANGE[1]),
+      Math.max(newLat[0], LATITUDE_RANGE[0]),
+      Math.min(newLat[1], LATITUDE_RANGE[1]),
     ];
     lonRange = [
-      Math.max(event.detail.lon[0], LONGITUDE_RANGE[0]),
-      Math.min(event.detail.lon[1], LONGITUDE_RANGE[1]),
+      Math.max(newLon[0], LONGITUDE_RANGE[0]),
+      Math.min(newLon[1], LONGITUDE_RANGE[1]),
     ];
   }
 
@@ -195,7 +203,7 @@
         {geometryData}
         temperatureData={temperatureSource.get(year, month)}
         allBirdData={birdData}
-        on:bounds={updateBounds} />
+        on:moveend={updateBounds} />
 
       <Graph
         {startYear}

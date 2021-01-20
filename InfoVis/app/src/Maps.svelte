@@ -15,8 +15,6 @@
   export let temperatureData;
   export let allBirdData;
 
-  $: console.log({ temperatureData });
-
   // Update bird data when year/month change
   let birdData;
   $: if (allBirdData) {
@@ -72,7 +70,9 @@
     <div class="title">{numToMonth(month)} of {year}</div>
 
     <div class="maps">
-      <LeafletMap options={{ zoomControl: true, attributionControl: false }}>
+      <LeafletMap
+        options={{ zoomControl: true, attributionControl: false }}
+        on:moveend>
         <TemperatureGrid data={temperatureData} />
         <MapGeometry data={geometryData} />
       </LeafletMap>

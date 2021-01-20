@@ -1,5 +1,10 @@
 <script>
-  import { onDestroy, onMount, setContext } from "svelte";
+  import {
+    onDestroy,
+    onMount,
+    setContext,
+    createEventDispatcher,
+  } from "svelte";
   import L from "leaflet";
   import "leaflet/dist/leaflet.css";
   import { debounce } from "lodash-es";
@@ -7,21 +12,27 @@
 
   export let options = {};
 
-  const defaultOptions = {
-    zoomControl: false,
-    maxBounds: BOUNDS,
-    zoomSnap: 0.1,
-  };
-
   let mapObject;
   let mapElement;
   let width;
   let height;
   let debouncedFitBounds;
 
+  const defaultOptions = {
+    zoomControl: false,
+    maxBounds: BOUNDS,
+    zoomSnap: 0.1,
+  };
+
+  const dispatch = createEventDispatcher();
+
   setContext(L, {
     getMap: () => mapObject,
   });
+
+  function handleMoveEnd(e) {
+    dispatch("moveend", e);
+  }
 
   onMount(() => {
     // Debounce this method to prevent running it too often
@@ -30,11 +41,15 @@
     }, 100);
 
     mapObject = L.map(mapElement, { ...defaultOptions, ...options });
+    mapObject.on("moveend", handleMoveEnd);
+
     debouncedFitBounds();
   });
 
   onDestroy(() => {
     debouncedFitBounds.cancel();
+
+    mapObject.off("moveend", handleMoveEnd);
   });
 
   $: if (mapObject) {
