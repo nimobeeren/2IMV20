@@ -10,7 +10,7 @@ library(tidyverse)
 
 # define paths
 f_input <- "../../app/public/data/ebird/ebd_barswa_1950_2020.csv"
-f_output <- "../../app/public/data/ebird/ebd_grid_barswa_1980_2020.json"
+f_output <- "../../app/public/data/ebird/ebd_grid_barswa_1980_2019.json"
 
 # read input CSV
 print("Reading CSV file")
@@ -37,11 +37,12 @@ month_summary <- ebd %>%
     summarize(month_count = sum(count), .groups="drop")
 
 # generate grid of monthly frequencies
+size <- 4 # size of each cell in degrees
 grid <- ebd %>%
     mutate(
         month = floor_date(date, unit="month"),
-        lat_round = floor(lat),
-        lon_round = floor(lon)
+        lat_round = floor(lat / size) * size,
+        lon_round = floor(lon / size) * size
     ) %>%
     # sum counts for all rows with the same month, lat and lon
     group_by(month, lat_round, lon_round) %>%
@@ -60,7 +61,7 @@ grid <- ebd %>%
 # convert grid to JSON
 print("Writing JSON file")
 all_list <- list()
-years <- 1980:2020
+years <- 1980:2019
 months <- 1:12
 for (y in years) {
     year_list <- list()
