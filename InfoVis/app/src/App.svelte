@@ -21,10 +21,20 @@
   let latRange = LATITUDE_RANGE,
     lonRange = LONGITUDE_RANGE;
 
-  const gistemp = new Gistemp();
+  let geometryData, birdData;
+
+  const temperatureSource = new Gistemp();
 
   onMount(async () => {
-    await gistemp.fetch(MIN_YEAR, MAX_YEAR);
+    geometryData = await fetch("/data/map.json").then((res) => res.json());
+
+    // Prefetch all the temperature data
+    await temperatureSource.fetch(MIN_YEAR, MAX_YEAR);
+
+    birdData = await fetch("/data/ebird/ebd_grid_barswa_1980_2019.json").then((res) =>
+      res.json()
+    );
+
     loading = false;
   });
 
@@ -39,13 +49,21 @@
   }
 
   function updateBounds(event) {
+    const bounds = event.detail.target.getBounds();
+
+    const newLat = [
+      Math.floor(bounds.getSouth()),
+      Math.ceil(bounds.getNorth()),
+    ];
+    const newLon = [Math.floor(bounds.getWest()), Math.ceil(bounds.getEast())];
+
     latRange = [
-      Math.max(event.detail.lat[0], LATITUDE_RANGE[0]),
-      Math.min(event.detail.lat[1], LATITUDE_RANGE[1]),
+      Math.max(newLat[0], LATITUDE_RANGE[0]),
+      Math.min(newLat[1], LATITUDE_RANGE[1]),
     ];
     lonRange = [
-      Math.max(event.detail.lon[0], LONGITUDE_RANGE[0]),
-      Math.min(event.detail.lon[1], LONGITUDE_RANGE[1]),
+      Math.max(newLon[0], LONGITUDE_RANGE[0]),
+      Math.min(newLon[1], LONGITUDE_RANGE[1]),
     ];
   }
 
@@ -179,7 +197,13 @@
 
   <div class="vis">
     {#if !loading}
-      <Maps {year} {gistemp} {month} on:bounds={updateBounds} />
+      <Maps
+        {year}
+        {month}
+        {geometryData}
+        temperatureData={temperatureSource.get(year, month)}
+        allBirdData={birdData}
+        on:moveend={updateBounds} />
 
       <Graph
         {startYear}
@@ -187,7 +211,7 @@
         {month}
         {latRange}
         {lonRange}
-        temperature={gistemp} />
+        {temperatureSource} />
     {/if}
   </div>
 </main>

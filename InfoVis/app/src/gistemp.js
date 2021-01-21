@@ -1,27 +1,15 @@
-import { scaleLinear } from "d3";
-
-export const SCALE_DOMAIN = [-4, -2, 0, 2, 4];
-export const SCALE_COLORS = [
-  "#2980b9",
-  "#3498db",
-  "#ecf0f1",
-  "#f1c40f",
-  "#c0392b",
-];
-
-export const SCALE_FUNCTION = scaleLinear()
-  .domain(SCALE_DOMAIN)
-  .range(SCALE_COLORS);
-
 export class Gistemp {
   constructor() {
     this.data = {};
   }
 
   async fetch(from, to) {
+    if (to === undefined) {
+      to = from;
+    }
     for (let year = from; year <= to; year++) {
       if (!this.data[year]) {
-        const response = await fetch(`data/gistemp/${year}.json`);
+        const response = await fetch(`/data/gistemp/${year}.json`);
         const raw = await response.json();
         this.data[year] = this._convert(raw);
         console.info(`Fetched temperature data from ${year}`);
@@ -43,10 +31,7 @@ export class Gistemp {
 
         for (let i = 0, lon = -179; i <= temps.length; i++, lon += 2) {
           if (temps[i]) {
-            parsed[lat][lon] = {
-              t: temps[i],
-              c: SCALE_FUNCTION(temps[i]),
-            };
+            parsed[lat][lon] = temps[i];
           }
         }
       }
@@ -55,7 +40,11 @@ export class Gistemp {
     });
   }
 
-  get(year) {
-    return this.data[year];
+  get(year, month) {
+    if (month) {
+      return this.data[year]?.[month - 1];
+    } else {
+      return this.data[year];
+    }
   }
 }
