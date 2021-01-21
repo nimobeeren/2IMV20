@@ -29,6 +29,6 @@
 
 {#if grid}
   {#each grid as cell}
-    <GridCell lat={cell.lat} lon={cell.lon} color={cell.color} />
+    <GridCell lat={cell.lat} lon={cell.lon} color={cell.color} size={4} />
   {/each}
 {/if}

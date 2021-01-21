@@ -31,7 +31,7 @@
     // Prefetch all the temperature data
     await temperatureSource.fetch(MIN_YEAR, MAX_YEAR);
 
-    birdData = await fetch("/data/ebird/ebd_grid.json").then((res) =>
+    birdData = await fetch("/data/ebird/ebd_grid_barswa_1980_2019.json").then((res) =>
       res.json()
     );
 
