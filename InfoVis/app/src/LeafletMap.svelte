@@ -25,7 +25,7 @@
     maxBounds: BOUNDS,
     minZoom: 1.6,
     zoomSnap: 0.1,
-    crs: L.CRS.EPSG4326,
+    crs: L.CRS.EPSG4326, // equirectangular projection
     maxBoundsViscosity: 1.0, // prevent panning outside bounds
   };
 
