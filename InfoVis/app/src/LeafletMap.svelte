@@ -25,6 +25,7 @@
     maxBounds: BOUNDS,
     zoomSnap: 0.1,
     crs: L.CRS.EPSG4326,
+    maxBoundsViscosity: 1.0, // prevent panning outside bounds
   };
 
   const dispatch = createEventDispatcher();
