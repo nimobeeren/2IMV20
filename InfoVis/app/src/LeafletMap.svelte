@@ -24,6 +24,7 @@
     zoomControl: false,
     maxBounds: BOUNDS,
     zoomSnap: 0.1,
+    crs: L.CRS.EPSG4326,
   };
 
   const dispatch = createEventDispatcher();
