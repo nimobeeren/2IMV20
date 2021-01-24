@@ -215,6 +215,21 @@ This visualization is designed to be used by a large variety of specialists and 
 
 % Describe and motivate your choices for the visual encodings and interaction design (\emph{How}). You should not think about implementation yet, but rather what visual encodings fit best to address the task/data results presented earlier. You must justify your choices based on the design principles described in the course. Here is where you explicitly link your tasks, questions and data to the design, and argue why the chosen design will enable users to perform the tasks and answer their questions. Explain the main interactions provided in your solution.
 
+% - Map
+%   - Alternative: single map for temp+bird
+% - Line chart
+%   - Alternative: ?
+% - Animation
+% - Interaction
+%   - Time manipulation
+%   - Area manipulation
+
+All identified visualization tasks revolve around the analysis of patterns over time in geospatial data. It is therefore critical that our visualization encodes the spatial as well as the temporal dimension in an effective way.
+
+One of the most common encodings for geospatial data is the map. Maps are unique in their ability to provide an overview of an area, while preserving attributes such as distance, area, and distribution \cite{kraak2020cartography}. Another powerful communicative aspect of maps is that they are recognizable. Given a map of the world, most people are able to pick out the place where they live, and thereby select data that is most relevant to them.
+
+% bit about map projections? preserve North/South direction or preserve area (or both?)
+
 \section{Realization}
 
 % After you have a visualization design, you should elaborate on what you have implemented and what compromises were made. For instance, your ideal solution may consider edge bundling \cite{holten2006hierarchical} but you could not implement it in your final solution. In this section, you should also mention what framework/technology you used for your implementation and justify why you chose it.
