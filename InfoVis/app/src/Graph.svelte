@@ -1,14 +1,5 @@
 <script>
-  import {
-    line,
-    curveNatural,
-    curveLinear,
-    curveMonotoneX,
-    curveBasis,
-    scaleLinear,
-    extent,
-    scaleTime,
-  } from "d3";
+  import { line, curveMonotoneX, scaleLinear, extent, scaleTime } from "d3";
   import { onMount } from "svelte";
   import { numToMonth } from "./utils";
 
