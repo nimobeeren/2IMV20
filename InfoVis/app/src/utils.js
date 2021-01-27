@@ -1,6 +1,6 @@
 import L from "leaflet";
 
-export const LATITUDE_RANGE = [-45, 75];
+export const LATITUDE_RANGE = [1, 75];
 export const LONGITUDE_RANGE = [-29, 60];
 
 export const BOUNDS = L.latLngBounds(

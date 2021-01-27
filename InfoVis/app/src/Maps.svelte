@@ -26,7 +26,7 @@
 <style>
   .outer {
     width: 100%;
-    padding-top: 90%;
+    padding-top: 65%;
     position: relative;
     background-color: white;
     color: black;
