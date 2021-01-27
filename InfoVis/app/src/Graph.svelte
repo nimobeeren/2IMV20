@@ -1,25 +1,48 @@
 <script>
-  import { line, curveNatural, scaleLinear, extent, scaleTime } from "d3";
+  import {
+    line,
+    curveNatural,
+    curveLinear,
+    curveMonotoneX,
+    curveBasis,
+    scaleLinear,
+    extent,
+    scaleTime,
+  } from "d3";
   import { onMount } from "svelte";
   import { numToMonth } from "./utils";
 
   export let startYear, endYear, month;
   export let latRange, lonRange;
-  export let temperatureSource;
-  
+  export let temperatureSource, birdData;
+
   let width, height;
-  let extentX, xScale, extentY, yScale, xTicks, yTicks, xPath, yPath;
-  let data = [];
+  let extentX, xScale, xTicks, xPath, yPath;
+  let extentTempY, yTempScale, yTempTicks;
+  let extentLatY, yLatScale, yLatTicks;
+
+  let tempData = [],
+    latData = [];
   let ready = false;
 
-  const margin = { bottom: 20, left: 30 };
+  const LAT_COLOR = "green";
+  const TEMP_COLOR = "blue";
 
-  const path = line()
+  const margin = { bottom: 20, left: 35, right: 40, top: 20 };
+
+  const tempPath = line()
     // @ts-ignore
     .x((d) => xScale(d.x))
     // @ts-ignore
-    .y((d) => yScale(d.y))
-    .curve(curveNatural);
+    .y((d) => yTempScale(d.y))
+    .curve(curveMonotoneX);
+
+  const latPath = line()
+    // @ts-ignore
+    .x((d) => xScale(d.x))
+    // @ts-ignore
+    .y((d) => yLatScale(d.y))
+    .curve(curveMonotoneX);
 
   onMount(() => {
     render();
@@ -27,27 +50,39 @@
   });
 
   function render() {
-    data = parseData();
+    tempData = parseTempData();
+    latData = parseLatData();
 
-    extentX = extent(data, (d) => d.x);
-    extentY = extent(data, (d) => d.y);
-    extentY[0] -= 0.2;
-    extentY[1] += 0.2;
+    extentX = [startYear, endYear];
+    extentTempY = extent(tempData, (d) => d.y);
+    extentTempY[0] -= 0.5;
+    extentTempY[1] += 0.5;
 
-    xScale = scaleTime().domain(extentX).range([margin.left, width]);
+    extentLatY = extent(latData, (d) => d.y);
+    extentLatY[0] -= 1;
+    extentLatY[1] += 1;
 
-    yScale = scaleLinear()
-      .domain(extentY)
-      .range([height - margin.bottom, 0]);
+    xScale = scaleTime()
+      .domain(extentX)
+      .range([margin.left, width - margin.right]);
+
+    yTempScale = scaleLinear()
+      .domain(extentTempY)
+      .range([height - margin.bottom - margin.top, 0]);
+
+    yLatScale = scaleLinear()
+      .domain(extentLatY)
+      .range([height - margin.bottom - margin.top, 0]);
 
     xTicks = getTicks(extentX, Math.ceil((extentX[1] - extentX[0]) / 20), 1);
-    yTicks = getTicks(extentY, 0.2, 10);
+    yTempTicks = getTicks(extentTempY, 0.2, 10);
+    yLatTicks = getTicks(extentLatY, 1, 1);
 
-    xPath = `M${margin.left + 0.5},0V0H${width + 1}V0`;
-    yPath = `M0,${height - margin.bottom}H0.5V0.5`;
+    xPath = `M${margin.left + 0.5},0V0H${width + 1 - margin.right}V0`;
+    yPath = `M0,${height - margin.bottom - margin.top}H0.5V0.5`;
   }
 
-  function parseData() {
+  function parseTempData() {
     let data = [];
 
     for (let year = startYear; year <= endYear; year++) {
@@ -73,6 +108,45 @@
     return data;
   }
 
+  function parseLatData() {
+    let data = [];
+
+    for (let year = startYear; year <= endYear; year++) {
+      const frac = birdData[year]?.[month - 1]
+        ?.filter((cell) => {
+          const [lat, lon] = cell;
+
+          return (
+            lat >= latRange[0] &&
+            lat <= latRange[1] &&
+            lon >= lonRange[0] &&
+            lon <= lonRange[1]
+          );
+        })
+        .reduce(
+          (acc, cell) => {
+            const [lat, lon, freq] = cell;
+
+            acc[0] += lat * freq;
+            acc[1] += freq;
+            return acc;
+          },
+          [0, 0]
+        );
+
+      const weigthedAverage = frac[0] / frac[1];
+
+      if (!Number.isNaN(weigthedAverage)) {
+        data.push({
+          x: year,
+          y: weigthedAverage,
+        });
+      }
+    }
+
+    return data;
+  }
+
   function getTicks(extent, step, approx) {
     const start = Math.floor(extent[0] * approx) / approx;
     const end = Math.ceil(extent[1] * approx) / approx;
@@ -87,14 +161,14 @@
 
   $: {
     // force reaction to those variables
-    width = width
-    height = height
-    startYear = startYear
-    endYear = endYear
-    month = month
-    latRange = latRange
-    lonRange = lonRange
-    temperatureSource = temperatureSource
+    width = width;
+    height = height;
+    startYear = startYear;
+    endYear = endYear;
+    month = month;
+    latRange = latRange;
+    lonRange = lonRange;
+    temperatureSource = temperatureSource;
     render();
   }
 </script>
@@ -102,7 +176,7 @@
 <style>
   .outer {
     width: 100%;
-    padding-top: 55%;
+    padding-top: 60%;
     position: relative;
     background-color: white;
     color: black;
@@ -129,12 +203,9 @@
   .container {
     padding: 1rem;
   }
-
+  .legend,
+  .x-tick text,
   .y-tick text {
-    font-size: 0.6rem;
-  }
-
-  .x-tick text {
     font-size: 0.6rem;
   }
 
@@ -155,7 +226,7 @@
 <div class="outer">
   <div class="inner">
     <div class="title">
-      Regional average anomaly for the month of
+      Regional average anomaly and latitude for the month of
       {numToMonth(month)}
       from
       {startYear}
@@ -166,18 +237,25 @@
       <div bind:clientWidth={width} bind:clientHeight={height}>
         <svg>
           {#if ready}
-            <g>
-              <path d={path(data)} fill="none" stroke="#c0392b" />
+            <g transform="translate(0, {margin.top})">
+              <path d={tempPath(tempData)} fill="none" stroke={TEMP_COLOR} />
             </g>
 
-            <g transform="translate({margin.left}, 0)">
+            <g transform="translate(0, {margin.top})">
+              <path d={latPath(latData)} fill="none" stroke={LAT_COLOR} />
+            </g>
+
+            <g transform="translate({margin.left}, {margin.top})">
+              <text fill={TEMP_COLOR} class="legend" y="-10" x={-margin.left}>
+                Anomaly
+              </text>
               <path stroke="currentColor" d={yPath} fill="none" />
 
-              {#each yTicks as y}
+              {#each yTempTicks as y}
                 <g
                   class="y-tick"
                   opacity="1"
-                  transform="translate(0,{yScale(y)})">
+                  transform="translate(0,{yTempScale(y)})">
                   <!-- svelte-ignore component-name-lowercase -->
                   <line stroke="currentColor" x2="-5" />
                   <text dy="0.32em" fill="currentColor" x="-{margin.left}">
@@ -198,6 +276,22 @@
                   <!-- svelte-ignore component-name-lowercase -->
                   <line stroke="currentColor" y2="6" />
                   <text fill="currentColor" y="9" dy="0.71em" x="-13">{x}</text>
+                </g>
+              {/each}
+            </g>
+
+            <g transform="translate({width - margin.right + 1}, {margin.top})">
+              <text fill={LAT_COLOR} class="legend" y="-10">Latitude</text>
+              <path stroke="currentColor" d={yPath} fill="none" />
+
+              {#each yLatTicks as y}
+                <g
+                  class="y-tick"
+                  opacity="1"
+                  transform="translate(5,{yLatScale(y)})">
+                  <!-- svelte-ignore component-name-lowercase -->
+                  <line stroke="currentColor" x2="-5" />
+                  <text dy="0.32em" fill="currentColor" x="5">{y}</text>
                 </g>
               {/each}
             </g>
