@@ -18,7 +18,7 @@
   let ready = false;
 
   const LAT_COLOR = "#2ecc71";
-  const TEMP_COLOR = "#3498db";
+  const TEMP_COLOR = "#e74c3c";
 
   const margin = { bottom: 20, left: 35, right: 40, top: 20 };
 
