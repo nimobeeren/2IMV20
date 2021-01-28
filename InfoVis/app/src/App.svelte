@@ -82,7 +82,7 @@
       month = 1;
       await wait(frequency());
 
-      while (month < 11 && playing) {
+      while (month < 12 && playing) {
         month++;
         await wait(frequency());
       }
