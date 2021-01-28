@@ -25,6 +25,7 @@
   let latRange = LATITUDE_RANGE,
     lonRange = LONGITUDE_RANGE;
   let view = "year";
+  let loop = false;
 
   let geometryData,
     birdData,
@@ -82,16 +83,26 @@
       month = 1;
       await wait(frequency());
 
-      while (month < 12 && playing) {
-        month++;
+      while (month <= 12 && playing) {
+        if (month == 12) {
+          if (loop) month = 1;
+          else break;
+        } else {
+          month++;
+        }
         await wait(frequency());
       }
     } else {
       year = startYear;
       await wait(frequency());
 
-      while (year < endYear && playing) {
-        year++;
+      while (year <= endYear && playing) {
+        if (year == endYear) {
+          if (loop) year = startYear;
+          else break;
+        } else {
+          year++;
+        }
         await wait(frequency());
       }
     }
@@ -162,6 +173,11 @@
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 1rem;
   }
+
+  .loop-control {
+    display: grid;
+    grid-template-columns: 1.5rem auto;
+  }
 </style>
 
 <svelte:head>
@@ -231,8 +247,12 @@
 
       <span><!-- i am important. leave me here --></span>
       <div class="fifty-buttons">
-        <button disabled={month == 1 || playing} on:click={() => month--}>Previous</button>
-        <button disabled={month == 12 || playing} on:click={() => month++}>Next</button>
+        <button
+          disabled={month == 1 || playing}
+          on:click={() => month--}>Previous</button>
+        <button
+          disabled={month == 12 || playing}
+          on:click={() => month++}>Next</button>
       </div>
 
       <label for="period">{#if view == 'month'}Months{:else}Years{/if}
@@ -255,6 +275,12 @@
         <button
           disabled={year == MAX_YEAR || playing}
           on:click={() => year++}>Next</button>
+      </div>
+
+      <span><!-- i am important. leave me here --></span>
+      <div class="loop-control">
+        <input type="checkbox" id="loop" bind:checked={loop} />
+        <label for="loop">Loop</label>
       </div>
 
       <span><!-- i am important. leave me here --></span>

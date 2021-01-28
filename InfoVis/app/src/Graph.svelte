@@ -252,8 +252,16 @@
         <svg>
           {#if ready}
             <g transform="translate(0, {margin.top})">
-              <path d={tempPath(tempData)} fill="none" stroke={TEMP_COLOR} stroke-width="2" />
-              <path d={latPath(latData)} fill="none" stroke={LAT_COLOR} stroke-width="2" />
+              <path
+                d={tempPath(tempData)}
+                fill="none"
+                stroke={TEMP_COLOR}
+                stroke-width="2" />
+              <path
+                d={latPath(latData)}
+                fill="none"
+                stroke={LAT_COLOR}
+                stroke-width="2" />
             </g>
 
             <g transform="translate({margin.left}, {margin.top})">
@@ -300,7 +308,9 @@
             </g>
 
             <g transform="translate({width - margin.right + 1}, {margin.top})">
-              <text fill={LAT_COLOR} class="legend" y="-10" x="-21">Latitude (°N)</text>
+              <text fill={LAT_COLOR} class="legend" y="-10" x="-21">
+                Latitude (°N)
+              </text>
               <path stroke="currentColor" d={yPath} fill="none" />
 
               {#each yLatTicks as y}
