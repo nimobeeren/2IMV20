@@ -25,6 +25,27 @@ export const MONTHS = [
   "December",
 ];
 
+export const BIRDS = [
+  {
+    name: "Barn Swallow",
+    code: "barswa",
+  },
+  {
+    name: "Eurasian Blackbird",
+    code: "eurbla",
+  },
+  {
+    name: "White Stork",
+    code: "whisto1",
+  },
+];
+
+export function birdCodeToName(c) {
+  for (const { name, code } of BIRDS) {
+    if (code == c) return name;
+  }
+}
+
 export function numToMonth(num) {
   if (num <= 0 || num > 12) {
     throw new Error("month number must be between 1 and 12");

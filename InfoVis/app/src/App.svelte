@@ -5,12 +5,15 @@
     MONTHS,
     LATITUDE_RANGE,
     LONGITUDE_RANGE,
+    BIRDS,
   } from "./utils";
   import Maps from "./Maps.svelte";
   import Graph from "./Graph.svelte";
   import { Gistemp } from "./gistemp";
   import { onMount } from "svelte";
 
+  let species = BIRDS[0].code;
+  let prevSpecies = species;
   let startYear = MIN_YEAR;
   let endYear = MAX_YEAR;
   let year = MIN_YEAR;
@@ -21,22 +24,33 @@
   let latRange = LATITUDE_RANGE,
     lonRange = LONGITUDE_RANGE;
 
-  let geometryData, birdData;
+  let geometryData,
+    birdData,
+    birdDataCache = {};
 
   const temperatureSource = new Gistemp();
 
   onMount(async () => {
     geometryData = await fetch("/data/map.json").then((res) => res.json());
-
     // Prefetch all the temperature data
     await temperatureSource.fetch(MIN_YEAR, MAX_YEAR);
-
-    birdData = await fetch(
-      "/data/ebird/ebd_grid_barswa_1980_2019.json"
-    ).then((res) => res.json());
-
-    loading = false;
+    await fetchBirdData();
   });
+
+  async function fetchBirdData() {
+    loading = true;
+    if (birdDataCache[species]) {
+      birdData = birdDataCache[species];
+    } else {
+      const data = await fetch(
+        `/data/ebird/ebd_grid_${species}_1980_2019.json`
+      ).then((res) => res.json());
+
+      birdDataCache[species] = data;
+      birdData = data;
+    }
+    loading = false;
+  }
 
   function wait(time) {
     return new Promise((resolve, reject) => {
@@ -82,6 +96,11 @@
   $: {
     if (playing) {
       play();
+    }
+
+    if (species != prevSpecies) {
+      prevSpecies = species;
+      fetchBirdData();
     }
   }
 </script>
@@ -147,6 +166,13 @@
     <h1>Climate Change and Bird Migration</h1>
 
     <div id="controls">
+      <label for="species">Species</label>
+      <select id="species" bind:value={species} disabled={playing}>
+        {#each BIRDS as bird}
+          <option value={bird.code}>{bird.name}</option>
+        {/each}
+      </select>
+
       <label for="start-year">Start Year</label>
       <select id="start-year" bind:value={startYear} disabled={playing}>
         {#each Array(MAX_YEAR - MIN_YEAR + 1) as _, i}
