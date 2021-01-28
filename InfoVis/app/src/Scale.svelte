@@ -19,14 +19,14 @@
 
     const ticksWithColor = ticks.map((value) => ({
       value,
-      percent: (value - minValue) / (maxValue - minValue) * 100,
+      percent: ((value - minValue) / (maxValue - minValue)) * 100,
       color: scale(value),
     }));
 
     const colorStops = ticksWithColor
       .map((tick) => `${tick.color} ${tick.percent}%`)
       .join(", ");
-      
+
     background = `linear-gradient(to right, ${colorStops})`;
   }
 </script>
