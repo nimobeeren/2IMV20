@@ -237,7 +237,7 @@
 <div class="outer">
   <div class="inner">
     <div class="title">
-      Regional average anomaly and latitude
+      Regional average temperature anomaly and latitude
       {#if view == 'year'}
         on
         {numToMonth(month)}
