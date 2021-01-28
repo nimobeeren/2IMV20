@@ -160,6 +160,7 @@
     latRange = latRange;
     lonRange = lonRange;
     temperatureSource = temperatureSource;
+    birdData = birdData;
     render();
   }
 </script>
