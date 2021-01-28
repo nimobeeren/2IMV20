@@ -237,14 +237,15 @@
 <div class="outer">
   <div class="inner">
     <div class="title">
-      Regional average anomaly and latitude on
+      Regional average anomaly and latitude
       {#if view == 'year'}
+        on
         {numToMonth(month)}
         from
         {startYear}
         to
         {endYear}
-      {:else}{year}{/if}
+      {:else}during {year}{/if}
     </div>
     <div class="container">
       <div bind:clientWidth={width} bind:clientHeight={height}>
