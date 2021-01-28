@@ -17,8 +17,8 @@
     latData = [];
   let ready = false;
 
-  const LAT_COLOR = "green";
-  const TEMP_COLOR = "blue";
+  const LAT_COLOR = "#2ecc71";
+  const TEMP_COLOR = "#3498db";
 
   const margin = { bottom: 20, left: 35, right: 40, top: 20 };
 
@@ -252,8 +252,8 @@
         <svg>
           {#if ready}
             <g transform="translate(0, {margin.top})">
-              <path d={tempPath(tempData)} fill="none" stroke={TEMP_COLOR} />
-              <path d={latPath(latData)} fill="none" stroke={LAT_COLOR} stroke-dasharray="4" stroke-width="2" />
+              <path d={tempPath(tempData)} fill="none" stroke={TEMP_COLOR} stroke-width="2" />
+              <path d={latPath(latData)} fill="none" stroke={LAT_COLOR} stroke-width="2" />
             </g>
 
             <g transform="translate({margin.left}, {margin.top})">
