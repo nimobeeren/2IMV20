@@ -3,9 +3,10 @@
   import { onMount } from "svelte";
   import { numToMonth } from "./utils";
 
-  export let startYear, endYear, month;
+  export let startYear, endYear, year, month;
   export let latRange, lonRange;
   export let temperatureSource, birdData;
+  export let view;
 
   let width, height;
   let extentX, xScale, xTicks, xPath, yPath;
@@ -44,7 +45,7 @@
     tempData = parseTempData();
     latData = parseLatData();
 
-    extentX = [startYear, endYear];
+    extentX = view == "year" ? [startYear, endYear] : [1, 12];
     extentTempY = extent(tempData, (d) => d.y);
     extentTempY[0] -= 0.5;
     extentTempY[1] += 0.5;
@@ -67,7 +68,11 @@
 
     xTicks = getTicks(extentX, Math.ceil((extentX[1] - extentX[0]) / 20), 1);
     yTempTicks = getTicks(extentTempY, 0.2, 10);
-    yLatTicks = getTicks(extentLatY, 1, 1);
+    yLatTicks = getTicks(
+      extentLatY,
+      Math.ceil((extentLatY[1] - extentLatY[0]) / 20),
+      1
+    );
 
     xPath = `M${margin.left + 0.5},0V0H${width + 1 - margin.right}V0`;
     yPath = `M0,${height - margin.bottom - margin.top}H0.5V0.5`;
@@ -76,10 +81,16 @@
   function parseTempData() {
     let data = [];
 
-    for (let year = startYear; year <= endYear; year++) {
+    let start = view == "year" ? startYear : 1;
+    let end = view == "year" ? endYear : 12;
+
+    for (let it = start; it <= end; it++) {
       let sum = 0,
         i = 0;
-      const monthData = temperatureSource.get(year, month);
+      const monthData =
+        view == "year"
+          ? temperatureSource.get(it, month)
+          : temperatureSource.get(year, it);
 
       for (let lat = latRange[0]; lat <= latRange[1]; lat++) {
         for (let lon = lonRange[0]; lon <= lonRange[1]; lon++) {
@@ -91,7 +102,7 @@
       }
 
       data.push({
-        x: year,
+        x: it,
         y: sum / i,
       });
     }
@@ -102,8 +113,14 @@
   function parseLatData() {
     let data = [];
 
-    for (let year = startYear; year <= endYear; year++) {
-      const frac = birdData[year]?.[month - 1]
+    let start = view == "year" ? startYear : 1;
+    let end = view == "year" ? endYear : 12;
+
+    for (let it = start; it <= end; it++) {
+      const itData =
+        view == "year" ? birdData[it]?.[month - 1] : birdData[year]?.[it - 1];
+
+      const frac = itData
         ?.filter((cell) => {
           const [lat, lon] = cell;
 
@@ -129,7 +146,7 @@
 
       if (!Number.isNaN(weigthedAverage)) {
         data.push({
-          x: year,
+          x: it,
           y: weigthedAverage,
         });
       }
@@ -152,11 +169,13 @@
 
   $: {
     // force reaction to those variables
+    view = view;
     width = width;
     height = height;
     startYear = startYear;
     endYear = endYear;
     month = month;
+    year = year;
     latRange = latRange;
     lonRange = lonRange;
     temperatureSource = temperatureSource;
@@ -218,12 +237,14 @@
 <div class="outer">
   <div class="inner">
     <div class="title">
-      Regional average anomaly and latitude for the month of
-      {numToMonth(month)}
-      from
-      {startYear}
-      to
-      {endYear}
+      Regional average anomaly and latitude on
+      {#if view == 'year'}
+        {numToMonth(month)}
+        from
+        {startYear}
+        to
+        {endYear}
+      {:else}{year}{/if}
     </div>
     <div class="container">
       <div bind:clientWidth={width} bind:clientHeight={height}>
@@ -267,7 +288,15 @@
                   transform="translate({xScale(x)},0)">
                   <!-- svelte-ignore component-name-lowercase -->
                   <line stroke="currentColor" y2="6" />
-                  <text fill="currentColor" y="9" dy="0.71em" x="-13">{x}</text>
+                  {#if view == 'year'}
+                    <text fill="currentColor" y="9" dy="0.71em" x="-13">
+                      {x}
+                    </text>
+                  {:else}
+                    <text fill="currentColor" y="9" dy="0.71em" x="-9">
+                      {numToMonth(x).substring(0, 3)}
+                    </text>
+                  {/if}
                 </g>
               {/each}
             </g>

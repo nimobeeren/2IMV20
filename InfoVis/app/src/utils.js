@@ -60,3 +60,9 @@ export function monthToNum(month) {
   }
   return i + 1;
 }
+
+export function wait(time) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(), time);
+  });
+}
