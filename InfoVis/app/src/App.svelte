@@ -231,8 +231,8 @@
 
       <span><!-- i am important. leave me here --></span>
       <div class="fifty-buttons">
-        <button disabled={month == 1} on:click={() => month--}>Previous</button>
-        <button disabled={month == 12} on:click={() => month++}>Next</button>
+        <button disabled={month == 1 || playing} on:click={() => month--}>Previous</button>
+        <button disabled={month == 12 || playing} on:click={() => month++}>Next</button>
       </div>
 
       <label for="period">{#if view == 'month'}Months{:else}Years{/if}
@@ -250,10 +250,10 @@
       <span><!-- i am important. leave me here --></span>
       <div class="fifty-buttons">
         <button
-          disabled={year == MIN_YEAR}
+          disabled={year == MIN_YEAR || playing}
           on:click={() => year--}>Previous</button>
         <button
-          disabled={year == MAX_YEAR}
+          disabled={year == MAX_YEAR || playing}
           on:click={() => year++}>Next</button>
       </div>
 
