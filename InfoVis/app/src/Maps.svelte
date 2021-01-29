@@ -1,167 +1,32 @@
 <script>
-  import L from "leaflet";
-  import "leaflet.sync";
-  import "leaflet/dist/leaflet.css";
-  import { numToMonth } from "./utils";
-  import { onMount, createEventDispatcher } from "svelte";
-
-  const dispatch = createEventDispatcher();
-
-  import { LATITUDE_RANGE, LONGITUDE_RANGE, BOUNDS } from "./utils";
-  import {
-    SCALE_DOMAIN as TEMPERATURE_SCALE_DOMAIN,
-    SCALE_COLORS as TEMPERATURE_SCALE_COLORS,
-  } from "./gistemp";
   import Scale from "./Scale.svelte";
+  import LeafletMap from "./LeafletMap.svelte";
+  import MapGeometry from "./MapGeometry.svelte";
+  import TemperatureGrid, {
+    scale as temperatureScale,
+  } from "./TemperatureGrid.svelte";
+  import BirdGrid, { scale as birdScale } from "./BirdGrid.svelte";
+  import { numToMonth } from "./utils";
+  import LeafletSync from "./LeafletSync.svelte";
 
-  export let year, month;
-  export let gistemp;
+  export let year;
+  export let month;
 
-  let prevYear, prevMonth;
-  let prevWindowHeight, prevWindowWidth;
-  let windowHeight, windowWidth;
-  let ready = false;
-  let loading = true;
+  export let geometryData;
+  export let temperatureData;
+  export let allBirdData;
 
-  const DATA_LAYER_OPTS = {
-    style: {
-      color: "#333333",
-      weight: 1,
-      opacity: 1,
-      fillOpacity: 0,
-    },
-  };
-
-  const MAP_OPTS = {
-    zoomControl: false,
-    maxBounds: BOUNDS,
-    attributionControl: false,
-    zoomSnap: 0.1,
-  };
-
-  const GRID_OPTS = {
-    color: "transparent",
-    weight: 0,
-    fillOpacity: 100,
-  };
-
-  const temp = {
-    map: null,
-    grid: {},
-  };
-
-  const birds = {
-    map: null,
-    grid: {},
-  };
-
-  onMount(async () => {
-    temp.map = L.map("temperature-map", { ...MAP_OPTS, zoomControl: true });
-    birds.map = L.map("birds-map", MAP_OPTS);
-
-    fitBounds();
-
-    temp.map.sync(birds.map);
-    birds.map.sync(temp.map);
-
-    addGrayLayer(temp.map);
-    addGrayLayer(birds.map);
-
-    temp.map.on("moveend", () => {
-      const bounds = temp.map.getBounds();
-      dispatch("bounds", {
-        lat: [Math.floor(bounds.getSouth()), Math.ceil(bounds.getNorth())],
-        lon: [Math.floor(bounds.getWest()), Math.ceil(bounds.getEast())],
-      });
-    });
-
-    const map = await (await fetch("/data/map.json")).json();
-
-    for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
-      temp.grid[lat] = {};
-      birds.grid[lat] = {};
-
-      for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
-        const coord = [
-          [lat, lon],
-          [lat + 2, lon + 2],
-        ];
-
-        temp.grid[lat][lon] = L.rectangle(coord, GRID_OPTS).addTo(temp.map);
-        birds.grid[lat][lon] = L.rectangle(coord, GRID_OPTS).addTo(birds.map);
-      }
-    }
-
-    L.geoJSON(map, DATA_LAYER_OPTS).addTo(temp.map);
-    L.geoJSON(map, DATA_LAYER_OPTS).addTo(birds.map);
-
-    ready = true;
-    loading = false;
-  });
-
-  function fitBounds() {
-    temp.map.fitBounds(BOUNDS);
-    birds.map.fitBounds(BOUNDS);
-  }
-
-  function addGrayLayer(map) {
-    L.rectangle(
-      [
-        [-90, -180],
-        [90, 180],
-      ],
-      {
-        color: "lightgray",
-        weight: 0,
-        fillOpacity: 100,
-      }
-    ).addTo(map);
-  }
-
-  function renderTemperature() {
-    if (!temp.map) return;
-
-    const yearData = gistemp.get(year);
-    const data = yearData[month - 1];
-
-    for (let lat = LATITUDE_RANGE[0]; lat <= LATITUDE_RANGE[1]; lat += 2) {
-      for (let lon = LONGITUDE_RANGE[0]; lon <= LONGITUDE_RANGE[1]; lon += 2) {
-        if (data[lat] && data[lat][lon]) {
-          temp.grid[lat][lon].setStyle({
-            color: data[lat][lon].c,
-          });
-        } else {
-          temp.grid[lat][lon].setStyle({ color: "transparent" });
-        }
-      }
-    }
-  }
-
-  $: {
-    (async () => {
-      if (!ready || loading) {
-        return;
-      }
-
-      if (windowHeight != prevWindowHeight || windowWidth != prevWindowWidth) {
-        prevWindowHeight = windowHeight;
-        prevWindowWidth = windowWidth;
-        fitBounds();
-      }
-
-      if (year != prevYear || month != prevMonth) {
-        prevMonth = month;
-        prevYear = year;
-        renderTemperature();
-      }
-    })();
+  // Update bird data when year/month change
+  let birdData;
+  $: if (allBirdData) {
+    birdData = allBirdData[year]?.[month - 1];
   }
 </script>
 
 <style>
   .outer {
     width: 100%;
-    padding-top: 90%;
+    padding-top: 65%;
     position: relative;
     background-color: white;
     color: black;
@@ -201,27 +66,33 @@
   }
 </style>
 
-<svelte:window bind:innerHeight={windowHeight} bind:innerWidth={windowWidth} />
-
 <div class="outer" id="graph">
   <div class="inner">
     <div class="title">{numToMonth(month)} of {year}</div>
 
     <div class="maps">
-      <div class="map" id="temperature-map" />
-      <div class="map" id="birds-map" />
+      <LeafletSync>
+        <LeafletMap
+          options={{ zoomControl: true, attributionControl: false }}
+          on:moveend>
+          <TemperatureGrid data={temperatureData} />
+          <MapGeometry data={geometryData} />
+        </LeafletMap>
+        <LeafletMap>
+          <MapGeometry data={geometryData} />
+          <BirdGrid data={birdData} />
+        </LeafletMap>
+      </LeafletSync>
 
       <div class="info">
-        <strong>Temperature Anomaly</strong>
-        <Scale
-          colors={TEMPERATURE_SCALE_COLORS}
-          domain={TEMPERATURE_SCALE_DOMAIN}
-          unit="°C" />
+        <strong>Temperature anomaly (°C)</strong>
+        <Scale scale={temperatureScale} />
       </div>
 
       <div class="info">
-        <strong>Birds Density</strong>
-        <Scale colors={['#bdc3c7', '#2980b9']} domain={[1, 2, 3, 4]} unit="k" />
+        <strong>Bird frequency (%)</strong>
+        <!-- override ticks because d3 wants way too many -->
+        <Scale scale={birdScale} ticksOverride={[1, 2, 4, 10, 20, 40, 100]} />
       </div>
     </div>
   </div>

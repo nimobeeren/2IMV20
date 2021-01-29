@@ -1,12 +1,33 @@
 <script>
-  export let domain;
-  export let colors;
-  export let unit;
+  import Axis from "./Axis.svelte";
 
-  let background = "white";
+  export let scale;
+  // An approximate number of ticks to show
+  export let numTicks = 5;
+  // An array of values where ticks will be shown
+  // Takes precedence over numTicks
+  export let ticksOverride = undefined;
 
-  $: {
-    background = `linear-gradient(0.25turn, ${colors.join(", ")})`;
+  let background = "none";
+
+  $: if (scale) {
+    const ticks = ticksOverride ?? scale.ticks(numTicks);
+
+    const domain = scale.domain();
+    const minValue = domain[0];
+    const maxValue = domain[domain.length - 1];
+
+    const ticksWithColor = ticks.map((value) => ({
+      value,
+      percent: ((value - minValue) / (maxValue - minValue)) * 100,
+      color: scale(value),
+    }));
+
+    const colorStops = ticksWithColor
+      .map((tick) => `${tick.color} ${tick.percent}%`)
+      .join(", ");
+
+    background = `linear-gradient(to right, ${colorStops})`;
   }
 </script>
 
@@ -18,63 +39,20 @@
 
   .scale {
     display: flex;
-    padding: 0 1rem;
+    padding: 0 2rem;
     margin: 0.5rem 0px;
     width: 100%;
     box-sizing: border-box;
   }
 
-  .domain {
-    display: flex;
-    justify-content: space-between;
-    border-top: 2px solid black;
-  }
-
   .top {
     flex-grow: 1;
-  }
-
-  .scale span {
-    position: relative;
-    margin-top: 10px;
-  }
-
-  .scale span::after {
-    content: "";
-    width: 2px;
-    height: 10px;
-    background: black;
-    display: block;
-    position: absolute;
-    top: -10px;
-    left: 50%;
-  }
-
-  .scale span:last-of-type::after {
-    left: calc(50% - 2px);
-  }
-
-  .scale span:first-of-type {
-    transform: translate(-50%, 0);
-  }
-
-  .scale span:last-of-type {
-    transform: translate(50%, 0);
-  }
-
-  .units {
-    margin-top: calc(2rem + 12px);
-    margin-left: 18px;
-    font-weight: bold;
   }
 </style>
 
 <div class="scale">
   <div class="top">
     <div class="bar" style="background: {background}" />
-    <div class="domain">
-      {#each domain as val}<span>{val}</span>{/each}
-    </div>
+    <Axis {scale} {numTicks} {ticksOverride} />
   </div>
-  <div class="units">{unit}</div>
 </div>

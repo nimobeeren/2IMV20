@@ -1,6 +1,6 @@
 import L from "leaflet";
 
-export const LATITUDE_RANGE = [-45, 75];
+export const LATITUDE_RANGE = [1, 75];
 export const LONGITUDE_RANGE = [-29, 60];
 
 export const BOUNDS = L.latLngBounds(
@@ -25,6 +25,27 @@ export const MONTHS = [
   "December",
 ];
 
+export const BIRDS = [
+  {
+    name: "Barn Swallow",
+    code: "barswa",
+  },
+  {
+    name: "Eurasian Blackbird",
+    code: "eurbla",
+  },
+  {
+    name: "White Stork",
+    code: "whisto1",
+  },
+];
+
+export function birdCodeToName(c) {
+  for (const { name, code } of BIRDS) {
+    if (code == c) return name;
+  }
+}
+
 export function numToMonth(num) {
   if (num <= 0 || num > 12) {
     throw new Error("month number must be between 1 and 12");
@@ -38,4 +59,10 @@ export function monthToNum(month) {
     throw new Error("invalid month");
   }
   return i + 1;
+}
+
+export function wait(time) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(), time);
+  });
 }

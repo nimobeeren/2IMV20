@@ -66,5 +66,5 @@ button:focus {
 }
 
 .leaflet-container {
-  background: transparent !important;
+  background: lightgray !important;
 }

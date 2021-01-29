@@ -1,18 +1,23 @@
+### This script exports an EBD text file to a CSV-like format (without column
+### headers). These CSV files are much faster to load than the original EBD format,
+### because they contain only a subset of the available columns.
+###
+### It should not be run on the full 300GB dataset, but instead on a
+### smaller subset which can be created with the filter.r script.
+
 library(auk)
 library(lubridate)
-library(sf)
-library(gridExtra)
 library(tidyverse)
-# resolve namespace conflicts
-select <- dplyr::select
 
 # define paths
-f_ebd <- "../data/ebird/output/ebd_barswa_1950_2020.txt"
-f_export <- "../data/ebird/output/ebd_export.csv"
+f_ebd <- "../../app/public/data/ebird/ebd_barswa_1950_2020.txt"
+f_export <- "../../app/public/data/ebird/ebd_barswa_1950_2020.csv"
 
 # read the ebd file (can take a while, don't run on full 300GB dataset)
+print("Reading EBD file")
 ebd <- read_ebd(f_ebd)
 
+print("Transforming data")
 ebd_export <- ebd %>%
     transmute(
         # get number of days since 1970-01-01 (can be negative)
@@ -30,8 +35,6 @@ ebd_export <- ebd %>%
     ) %>%
     # filter out observations outside europe/africa
     filter(-30 < lon & lon < 60) %>%
-    # filter out observations with unknown count
-    filter(!is.na(count)) %>%
     # sort by ascending date
     arrange(date)
 
@@ -39,4 +42,7 @@ ebd_export <- ebd %>%
 glimpse(ebd_export)
 
 # write to file
+print("Writing CSV file")
 write.table(ebd_export, f_export, sep=",", row.names = FALSE, col.names = FALSE)
+
+print("Done!")
