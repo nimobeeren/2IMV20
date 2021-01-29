@@ -190,9 +190,10 @@ The GISTEMP dataset \cite{gistemp} consists of a large static multidimensional s
 \paragraph{Date} An ordered, quantitive and diverging attribute in year-month format (yyyy-month).
 
 \section{Task Analysis}
+\label{tasks}
 
 \subsection{Domain Specific Tasks}
-% In this section, you must analyze the possible visualization tasks that an expert in the chosen domain would be interested in. Ideally, you would present a set of tasks and questions that are intimately related to the chosen domain.
+
 This visualization is designed to be used by a large variety of specialists and non-specialists alike. An ornithologist could study the migration of the Barn Swallow using the provided visualization. It is also suitable for the needs of climate  change activists who wants to prove a point about a real prolem or a curious person without specific domain knowledge who wants to see the effects of climate change on the nature. The tasks that  these people could undertake are described below.
 
 \paragraph{Task 1: Analyze correlation between temperature change and the timing of bird migration} One of the observations that can be achieved with this visualization is showing the migration of birds in relation to the change in temperature over time. This can be done by choosing a bird species and comparing timing of their migration with respect to the temperatures for the specific time and the same migration in a different time span before or after the chosen one.  The question that would be answered by this task is: how are temperature and the timing of bird migration correlated?
@@ -202,8 +203,6 @@ This visualization is designed to be used by a large variety of specialists and 
 \paragraph{Task 3: Identify species that respond most to temperature change} Different types of birds respond differently to a change in temperature. The tool can help visualize which types of birds are affected by the rising temperatures more than others. This can be done by comparing the migration behavior in relation to the temperature over time, for a set of species. The question that would be answered by this task is: which bird species respond to temperature change the most?
 
 \subsection{Task Abstraction: Why}
-
-% Once you have defined a set of domain specific tasks, you must generalize them to be domain independent to be able to use the principles from visualization. In this sense, we propose you follow the principles described in Munzner's book \cite{munzner2014visualization} and described in the lectures.
 
 \paragraph{Task 1: Analyze correlation between temperature change and the timing of bird migration} The high-level analyze action that this task performs is consume and more precisely discover. This is because discover is related to the act of verifying or disproving of a hypothesis which is exactly the intention behind this task. The mid-level search action is explore as the user doesn't know the location of the target or what the target itself is. The low-level query action is compare as the user will compare different data. The target of this task is a correlation.
 
@@ -221,7 +220,60 @@ This visualization is designed to be used by a large variety of specialists and 
 
 \section{Use Cases}
 
-% Describe the analysis of the data and how your application was used to perform the analysis. Here you demonstrate how to use your application to perform the tasks and answer the questions as an evaluation of your design and implementation.
+In this section, we demonstrate how the application can be used to perform the tasks and answer the questions described in Section \ref{tasks}.
+
+\paragraph{How are temperature and the timing of bird migration correlated?}
+
+One of the things that a user can do with the application is to find the correlation between the changes in temperature and the timing of bird migrations. For this task the best approach the user can take is to choose the yearly view. The user can choose a specific bird species with which to visualize the correlation, but the default one - Barn Swallow - is the one that shows the correlation most clearly.  An important choice that the user has to make is which month they want to look at as some months are better for showcasing the movement of birds because it is dependant on the time of the year. For example March is associated with the migrations of most birds to the North. After a month has been chosen the user can go through different years where for each year only the chosen month will be displayed  in both the temperature and the bird migration maps. In this way the user can see how the bird movement has changed over the span of several years while being able to see the changes in temperatures for the same amount of time. An example visualization can be seen on Fig. \ref{fig:swallow-map-86} and Fig. \ref{fig:swallow-map-16}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=70mm]{march86-map}
+  \caption{Visualization of maps of temperature anomaly and Barn Swallow latitude porsition for March 1986.}
+  \label{fig:swallow-map-86}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=70mm]{march16-map}
+  \caption{Visualization of maps of temperature anomaly and Barn Swallow latitude porsition for March 2016.}
+  \label{fig:swallow-map-16}
+\end{figure}
+
+Instead of manually going over the years, a user can choose a start and end year together with the month of interest and press the start button. This will start an animation showing the chosen month for each year between the start and the end year inclusively. The speed of the animation can also be customized. There is also a choice of looping the animation, so the user can watch it continuously and spot even the smallest differences.
+
+In some cases the map does not showcase clearly enough the correlation the user is looking for. For these cases there is a line graph that shows the changes of the temperature anomaly and the overall position of the birds on the latitude for a given month and year. The specifications of the graph can be changed by choosing a start, end year and month. On Fig. \ref{fig:march86-16-graph} is shown an example for a line graph generated for the month of March between the years 1986 and 2016.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=70mm]{march86-16-graph}
+  \caption{Visualization of line grarh showing of temperature anomaly and Barn Swallow latitude porsition for March 1986 to 2016.}
+  \label{fig:march86-16-graph}
+\end{figure}
+
+\paragraph{What is the general migration behavior pattern for a particular bird species?}
+
+The migration of birds typically have a repeated pattern of annual cycles. In order for a user to observe the general migration behavior of a bird species they have to follow its movement over the course of a year and note any specifics. For this task the monthly view is the more convenient choice.  A user can choose the specific bird species that they are interested in from the drop-down menu. After this they can choose a specific year for which they would like to see the migration and click on the start button. This will start an animation showing the general bird species position on the map from January to December of the chosen year consecutively. This animation also has the option to be looped.
+
+Together with the map view there is a line graph showing the general latitude position of the species for each month of the chosen year. Looking at the graph can be used to easily spot patterns in different parts of the annual migration cycle. In Fig. \ref{fig:montly-graph16} a line graph from the monthly view for the year 2016 for the bern swallow is shown. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=70mm]{montly-graph16}
+  \caption{Visualization of line grarh showing of temperature anomaly and Barn Swallow latitude porsition for January to December 2016.}
+  \label{fig:montly-graph16}
+\end{figure}
+
+\paragraph{Which bird species respond to temperature change the most?}
+
+Comparing different bird species by their response to change in temperature values can be done best in the yearly view by first choosing the parameters of interest such as year(s), month and bird species. After the user has observed the behavior of the species with respect to the temperatures they can choose a different one and the application will visualize the new species' behavior with the same parameters as the previous one. This makes comparison easy as the user can quick move from one bird species to another. This is applicable for both the maps and the line graph. For example we can use Fig. \ref{fig:swallow-map-16}  and Fig. \ref{fig:march16-map-blackbird} to compare the behavior of the Barn Swallow and the Eurasian Blackbird during March 2016.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=70mm]{march16-map-blackbird}
+  \caption{Visualization of maps of temperature anomaly and Eurasian Blackbird latitude porsition for March 2016.}
+  \label{fig:march16-map-blackbird}
+\end{figure}
 
 \section{Discussion and Conclusion}
 
