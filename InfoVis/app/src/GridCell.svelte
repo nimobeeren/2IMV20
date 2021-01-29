@@ -1,5 +1,4 @@
 <script>
-  import { getContext, onDestroy } from "svelte";
   import L from "leaflet";
   import LeafletLayer from "./LeafletLayer.svelte";
 
