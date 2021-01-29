@@ -175,7 +175,7 @@ The eBird Basic Dataset \cite{ebird2020data} consists of a large static table co
 
 \vspace{2mm}
 
-We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a single species, since different species exhibit significantly different migratory behavior. We chose the Barn Swallow (\textit{Hirundo rustica}) because it is a relatively common migratory bird, and it typically migrates over a large distance \cite{turner1989swallow}. Next, we restrict the dataset geographically to Europe and Africa. These transformations allow us to focus on a general population of birds. Finally, we exclude observations outside the years 1950-2020, since that matches the domain of the temperature dataset we use.
+We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a single species, since different species exhibit significantly different migratory behavior. We chose the Barn Swallow (\emph{Hirundo rustica}) because it is a relatively common migratory bird, and it typically migrates over a large distance \cite{turner1989swallow}. Next, we restrict the dataset geographically to Europe and Africa. These transformations allow us to focus on a general population of birds. Finally, we exclude observations outside the years 1950-2020, since that matches the domain of the temperature dataset we use.
 
 \vspace{2mm}
 
@@ -227,6 +227,12 @@ This visualization is designed to be used by a large variety of specialists and 
 All identified visualization tasks revolve around the analysis of patterns over time in geospatial data. It is therefore critical that our visualization encodes the spatial as well as the temporal dimension in an effective way.
 
 One of the most common encodings for geospatial data is the map. Maps are unique in their ability to provide an overview of an area, while preserving attributes such as distance, area, and distribution \cite{kraak2020cartography}. Another powerful communicative aspect of maps is that they are recognizable. Given a map of the world, most people are able to pick out the place where they live, and thereby select data that is most relevant to them.
+
+Bird observations and temperature data have a shared spatial attribute. This makes the map a suitable visual encoding. However, the two datasets are different in that bird observations are a table of discrete values, while temperature is a continuous field. 
+
+We chose to visually encode the bird observations as a heatmap \cite{munzner2014visualization}, where the color of each cell corresponds to the total count of all observations within the bounds of that cell. An alternative encoding for bird observations is the scatterplot: where represent individual observations are represented by a \emph{glyph}. However, a common problem with scatterplots is \emph{overplotting} \cite{micallef2017scatter}, making it difficult to distinguish observations from eachother, especially in dense areas. Another issue with this approach is that it suggests high spatial precision of observations, while this may not always be the case.
+
+Considering that the \emph{count} attribute of the bird data is quantitative and sequentual, we chose a sequential color map, using only the luminance channel. We use a fixed green hue, since the human eye can most easily distinguish shades of green \cite{robinson1984fluorescent}. The saturation channel is used to indicate missing data, by means of a gray color.
 
 % bit about map projections? preserve North/South direction or preserve area (or both?)
 
