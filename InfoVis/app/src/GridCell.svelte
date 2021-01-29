@@ -6,6 +6,7 @@
   export let lon;
   export let size = 1;
   export let color;
+  export let tooltipText;
 
   let layer;
 
@@ -21,6 +22,9 @@
     };
     // @ts-ignore
     layer = L.rectangle(bounds, options);
+    if (tooltipText) {
+      layer.bindTooltip(tooltipText);
+    }
   }
 
   // Update layer color without re-rendering

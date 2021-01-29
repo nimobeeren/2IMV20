@@ -24,11 +24,14 @@
           lon += 2
         ) {
           const temperature = data[lat]?.[lon];
-          gridCells.push({
-            lat,
-            lon,
-            color: temperature != null ? scale(temperature) : "transparent",
-          });
+          if (temperature != null) {
+            gridCells.push({
+              lat,
+              lon,
+              temperature,
+              color: scale(temperature),
+            });
+          }
         }
       }
     }
@@ -36,5 +39,10 @@
 </script>
 
 {#each gridCells as cell}
-  <GridCell lat={cell.lat} lon={cell.lon} color={cell.color} size={2} />
+  <GridCell
+    lat={cell.lat}
+    lon={cell.lon}
+    color={cell.color}
+    size={2}
+    tooltipText={`${cell.temperature.toFixed(2)}°C`} />
 {/each}
