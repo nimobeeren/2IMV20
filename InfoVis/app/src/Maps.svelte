@@ -8,7 +8,7 @@
   import BirdGrid, { scale as birdScale } from "./BirdGrid.svelte";
   import { numToMonth } from "./utils";
   import LeafletSync from "./LeafletSync.svelte";
-  import CoordinateLabel from "./CoordinateLabel.svelte";
+  import LatitudeLabels from "./LatitudeLabels.svelte";
 
   export let year;
   export let month;
@@ -76,11 +76,12 @@
         <LeafletMap
           options={{ zoomControl: true, attributionControl: false }}
           on:moveend>
-          <CoordinateLabel lat={30} />
+          <LatitudeLabels />
           <TemperatureGrid data={temperatureData} />
           <MapGeometry data={geometryData} />
         </LeafletMap>
         <LeafletMap>
+          <LatitudeLabels />
           <MapGeometry data={geometryData} />
           <BirdGrid data={birdData} />
         </LeafletMap>
