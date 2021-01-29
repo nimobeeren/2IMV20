@@ -7,8 +7,7 @@
 
   let map;
 
-  const { getMap } = getContext(L);
-  $: map = getMap();
+  $: map = getContext(L)?.getMap();
 
   $: if (map) {
     if (currentLayer) {

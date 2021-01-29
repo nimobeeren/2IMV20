@@ -8,8 +8,7 @@
   let lon;
   let scale;
 
-  const { getMap } = getContext(L);
-  $: map = getMap();
+  $: map = getContext(L)?.getMap();
 
   $: if (latRange) {
     // Scale is only used to generate ticks, no mapping is done
