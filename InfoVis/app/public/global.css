@@ -68,3 +68,8 @@ button:focus {
 .leaflet-container {
   background: lightgray !important;
 }
+
+.map-coordinate-label-content {
+  position: relative;
+  right: 15px;
+}
