@@ -1,12 +1,13 @@
 <script>
   import { getContext, onDestroy, onMount } from "svelte";
   import L from "leaflet";
+  import LeafletLayer from "./LeafletLayer.svelte";
 
   export let lat;
 
   let map;
-  let layer;
   let lon;
+  let options;
 
   const { getMap } = getContext(L);
   $: map = getMap();
@@ -28,19 +29,14 @@
     }
   });
 
-  $: if (lat && lon && map) {
-    // Remove the old layer if there is one
-    if (layer) {
-      layer.remove();
-    }
-
-    // Add a new layer
-    const options = {
-      icon: L.divIcon({
-        html: `<div class="map-coordinate-label-content">${lat}&deg;</div>`,
-        className: "map-coordinate-label",
-      }),
-    };
-    layer = L.marker([lat, lon], options).addTo(map);
-  }
+  $: options = {
+    icon: L.divIcon({
+      html: `<div class="map-coordinate-label-content">${lat}&deg;</div>`,
+      className: "map-coordinate-label",
+    }),
+  };
 </script>
+
+{#if lat !== undefined && lon !== undefined}
+  <LeafletLayer layer={L.marker([lat, lon], options)} />
+{/if}
