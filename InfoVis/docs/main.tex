@@ -237,7 +237,7 @@ Considering that the \emph{count} attribute of the bird data is quantitative and
 
 For the temperature data, we apply a similar heatmap approach as for the birds. The key difference is that, conceptually, temperature is a continuous field. Hence, there is no need to discretize the spatial attributes to form a grid. We effectively draw a heatmap with infinitely small cells. Now, we use the temperature anomaly value to determine the color of each point.
 
-To choose a color map for temperature, it is important to see that the temperature anomaly is a relative measurement and therefore is ordered in diverging directions. The scale ranges from cold to warm, and there is a natural midpoint of 0 °C. As blue is often associated with cold and red with warm, we use these two hues for the respective endpoints of the scale. Again, gray is used to indicate areas of missing data.
+To choose a color map for temperature, it is important to see that the temperature anomaly is a relative measurement and therefore is ordered in diverging directions. The scale ranges from cold to warm, and there is a natural midpoint of 0 °C. As blue is often associated with cold and red with warm, we use these two hues for the respective endpoints of the scale. Again, gray is used to indicate areas of missing data. Another commonly used color map for temperature is the rainbow map. The main problems for us is that this color map does not have a natural midpoint, and that it produces \emph{bands} that do not exist in the data \cite{borland2007rainbow}.
 
 % bit about map projections? preserve North/South direction or preserve area (or both?)
 
