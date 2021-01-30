@@ -1,47 +1,36 @@
 <script>
-  import { getContext, onDestroy } from "svelte";
   import L from "leaflet";
+  import LeafletLayer from "./LeafletLayer.svelte";
 
   export let lat;
   export let lon;
   export let size = 1;
   export let color;
+  export let tooltipText;
 
   let layer;
 
-  const { getMap } = getContext(L);
-
   $: {
-    const map = getMap();
-    if (lat && lon && map) {
-      // Remove the old layer if there is one
-      if (layer) {
-        layer.remove();
-      }
-
-      // Add a new layer
-      const coord = [
-        [lat, lon],
-        [lat + size, lon + size],
-      ];
-      const options = {
-        weight: 0,
-        fillOpacity: 100,
-        pane: "tilePane", // hack: moves the layer behind map geometry
-      };
-      // @ts-ignore
-      layer = L.rectangle(coord, options).addTo(map);
+    const bounds = [
+      [lat, lon],
+      [lat + size, lon + size],
+    ];
+    const options = {
+      weight: 0,
+      fillOpacity: 100,
+      pane: "tilePane",
+    };
+    // @ts-ignore
+    layer = L.rectangle(bounds, options);
+    if (tooltipText) {
+      layer.bindTooltip(tooltipText);
     }
   }
 
-  // Update layer color when color prop changes
+  // Update layer color without re-rendering
   $: if (layer) {
     layer.setStyle({ color });
   }
-
-  onDestroy(() => {
-    if (layer) {
-      layer.remove();
-    }
-  });
 </script>
+
+<LeafletLayer {layer} />
