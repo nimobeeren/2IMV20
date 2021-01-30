@@ -22,13 +22,18 @@
 
       // Map frequency to color scale
       let percent = frequency * 100;
-      return { lat, lon, color: scale(percent) };
+      return { lat, lon, percent, color: scale(percent) };
     });
   }
 </script>
 
 {#if grid}
   {#each grid as cell}
-    <GridCell lat={cell.lat} lon={cell.lon} color={cell.color} size={4} />
+    <GridCell
+      lat={cell.lat}
+      lon={cell.lon}
+      color={cell.color}
+      size={4}
+      tooltipText={`${cell.percent.toFixed(2)}%`} />
   {/each}
 {/if}
