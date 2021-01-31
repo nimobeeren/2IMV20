@@ -239,11 +239,11 @@ The maps provide a detailed view of the distribution of birds and temperature at
 
 The phenomenon of bird migration can be summarized as a population of birds that move from their southern wintering areas to the northern breeding grounds and back again. The dimension of longitude is less important, because most birds move less along the east-west axis \cite{alerstam1993bird}. In addition, we are less interested in the distribution of the entire population, but rather in their average position. This reduces the number of dimensions to just two: mean latitude and time. To get a general idea of the change in temperature over time, we take the mean anomaly of the entire area under investigation. We are left with the dimensions of mean temperature anomaly and time.
 
-Because we have just two dimensions for each attribute, we have a multitude of options for our visual encoding. We found the line chart to be the most suitable for our use case. In particular, we choose to draw both attributes in a single chart, using a double y-axis. While this makes it more difficult to read individual values from the chart, we can more easily analyze the similarity of the two lines, which is our main goal. If we were to drop the temporal dimension as well, we could have used a scatterplot. This encoding is particularly suited to analyzing the correlation between two variables such as temperature and bird position. However, by ignoring time, we lose sight of any trends in the data, and limits our ability to predict the future. Considering our goal is to show where the path of climate change leads, the scatterplot seems less than ideal.
+Because we have just two dimensions for each attribute, we have a multitude of options for our visual encoding. We found the line chart to be the most suitable for our use case. In particular, we choose to draw both attributes in a single chart, using a double y-axis. While this makes it more difficult to read individual values from the chart, we can more easily analyze the similarity of the two lines, which is our main goal. If we were to drop the temporal dimension as well, we could have used a scatterplot. This encoding is particularly suited to analyzing the correlation between two variables such as temperature and bird position. However, by ignoring time, we lose sight of any trends in the data, and limits our ability to predict the future. Considering that our goal is to show where the our current path of climate change may lead to, the scatterplot seems less than ideal.
+
+By default, the visualization shows data from Europe and most of Africa. At this scale, we can analyze the general movement patterns of migratory birds that breed in Europe and winter in Africa. Some birds do not migrate over such large distances, however. When studying those species, it may be more relevant to focus on a smaller area. To achieve this, we allow for geometric zooming as well as panning on either of the two maps. Typically, when we are interested in the frequency of birds a particular region, we consider the temperatures of that same region. Therefore, when the view of one of the maps is manipulated, the view is mirrored in the other map. In addition, the line chart is adjusted to only take into account the data from the visible area.
 
 % write about how percentage is derived from absolute bird count
-% write about interaction between maps and line chart
-% idea for discussion: investigate temperature at mean bird location rather than overall mean
 
 \section{Realization}
 
@@ -256,6 +256,8 @@ Because we have just two dimensions for each attribute, we have a multitude of o
 \section{Discussion and Conclusion}
 
 % Finally, you will reflect on what you have achieved. For instance, this section should discuss whether you managed to do what you initially planned, whether your initial choices worked well or not, things that you discovered that were not correct, etc. Conclusions about your whole work would be provided.
+
+% possible future work: investigate temperature at mean bird location rather than overall mean
 
 \bibliographystyle{abbrv}
 \bibliography{main}
