@@ -1,11 +1,9 @@
 <script>
-  import { getContext, onDestroy } from "svelte";
   import L from "leaflet";
+  import LeafletLayer from "./LeafletLayer.svelte";
 
   export let data;
   export let options = {};
-
-  let layer;
 
   const defaultOptions = {
     style: {
@@ -15,22 +13,6 @@
       fillOpacity: 0,
     },
   };
-
-  const { getMap } = getContext(L);
-
-  $: {
-    const map = getMap();
-    if (data && map) {
-      if (layer) {
-        layer.remove();
-      }
-      layer = L.geoJSON(data, { ...defaultOptions, ...options }).addTo(map);
-    }
-  }
-
-  onDestroy(() => {
-    if (layer) {
-      layer.remove();
-    }
-  });
 </script>
+
+<LeafletLayer layer={L.geoJSON(data, { ...defaultOptions, ...options })} />
