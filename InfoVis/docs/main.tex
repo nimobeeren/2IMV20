@@ -244,6 +244,8 @@ The implementation of the maps resorts to Leaflet \cite{leaflet}, an open-source
 
 By hovering the cursor over a certain point in the temperature anomalies map, the user is able to see the precise temperature anomaly in that point. The same applies for the bird frequency map.
 
+Both maps are synchronized such that they always show the same area at the same time. Thus, if the user zooms in/out or moves one map, the other one is zoomed in automatically.
+
 Below each map, there is also a scale. This scale, as well as the conversion between absolute volues and a color in the map, were partially implemented by the library D3 \cite{d3js}.
 
 An example of the mentioned features can be seen in Figure \ref{fig:map-example}.
@@ -263,7 +265,7 @@ In addition, the graph view is regional, meaning that the data on the graph is i
 
 \subsection{Others}
 
-During the development of the application, we had to apply some transformations to the initial data as mentioned in subsection \ref{subsec:data-abs-what}. To do so, we used the programming languages Python and R, as they provide many known libraries for data processing.
+During the development of the application, we had to apply some transformations to the initial data as mentioned in subsection \ref{subsec:data-abs-what}. To do so, we used the programming languages Python and R, as they are both languages tailored for data processing and analytics.
 
 \section{Use Cases}
 
