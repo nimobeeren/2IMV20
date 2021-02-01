@@ -162,6 +162,7 @@ For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2
 For the second, we have chosen the GISTEMP dataset \cite{gistemp} by NASA, which provides the temperature data from 1880 up to 2020 in a regular 2° by 2° grid. The main advantage of this dataset compared to other temperature datasets we found is that this one uses the temperature anomalies. These anomalies are relative to a 30-year period between 1951 and 1980. By using anomalies instead of absolute values \cite{gistempanomalies}, it is easier to see how much colder or warmer a certain place is. 
 
 \subsection{Data Abstraction: What}
+\label{subsec:data-abs-what}
 
 The eBird Basic Dataset \cite{ebird2020data} consists of a large static table containing items that each correspond to a particular observation of a bird or a group of birds. For each observation, a number of attributes are provided, though we are only interested in the following subset:
 
@@ -216,7 +217,55 @@ This visualization is designed to be used by a large variety of specialists and 
 
 \section{Realization}
 
-% After you have a visualization design, you should elaborate on what you have implemented and what compromises were made. For instance, your ideal solution may consider edge bundling \cite{holten2006hierarchical} but you could not implement it in your final solution. In this section, you should also mention what framework/technology you used for your implementation and justify why you chose it.
+All of the idealized visualizations were implemented. With that being said, we implemented the temperature anomaly map, the bird frequency map, as well as a line graph showing the average temperature anomaly and latitude.
+
+We implemented a web application. Thus, the main technologies in use are HTML, CSS and JavaScript. For the interface, we decided to use Svetle\cite{svetle}, a relatively young framework designed to build web apps easily. Despite the existence of more mature frameworks, such as React, Vue.js and Angular, we decided to use Svetle as it is simple to use and enables us to do the implemetation in a short amount of time leaving more time for designing the application.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{app-example.png}
+  \caption{``Climate Change and Bird Migration" visualization application overview.}
+  \label{fig:app-example}
+\end{figure}
+
+\subsection{Controls}
+
+The main point of interaction of the user with the application is the controls. The controls section is a set of dropdown menus, buttons and other types of input. These allow the user to change between different species and view types. According to the selected view type, different options become available.
+
+For the yearly view, the user can select the start and end years, the month, as well as the number of years per second - also known as the speed of the animation. These options affect: (1) the animation over the years, which can be started by pressing ``Start"; and (2) the base data used in the graph. In addition, while the animation is stopped, the user can choose a specific year to show in the maps.
+
+For the monthly view, the user can choose the month, the number of months per second and the year to view. Similarly to what happens with the yearly view, these options will affect the map animation, as well as the data used in the graph.
+
+Disregarding both views, there is also an option to choose to infinitely repeat the animation by checking the box ``Loop".
+
+\subsection{Maps}
+
+The implementation of the maps resorts to Leaflet \cite{leaflet}, an open-source JavaScript library for interactive maps. With this library, we were able to show two maps side by side, which can be zoomed in and panned. In addition, we also show the latitude on the right side of the maps.
+
+By hovering the cursor over a certain point in the temperature anomalies map, the user is able to see the precise temperature anomaly in that point. The same applies for the bird frequency map.
+
+Both maps are synchronized such that they always show the same area at the same time. Thus, if the user zooms in/out or moves one map, the other one is zoomed in automatically.
+
+Below each map, there is also a scale. This scale, as well as the conversion between absolute volues and a color in the map, were partially implemented by the library D3 \cite{d3js}.
+
+An example of the mentioned features can be seen in Figure \ref{fig:map-example}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{map-example}
+  \caption{Map example for March 2015, showcasing the latitudes, scales and tooltip functionality.}
+  \label{fig:map-example}
+\end{figure}
+
+\subsection{Line Graph}
+
+The line graph implemention mainly relies on D3 \cite{d3js}, a JavaScript library that allows for data manipulation and its visualization using Scalable Vector Graphics images (SVGs). The graph can show two views: either month by month, or year by year. The visualization depends on the choosen options. You can see an example of a monthly graph on Figure \ref{fig:montly-graph16} and a yearly graph on \ref{fig:march86-16-graph}.
+
+In addition, the graph view is regional, meaning that the data on the graph is intrisincally related to the map view. The graph only shows the data from the visible area of the map. Thus, if the user zooms in or out in the map, the graph will change to show the information regarding a different map area.
+
+\subsection{Others}
+
+During the development of the application, we had to apply some transformations to the initial data as mentioned in subsection \ref{subsec:data-abs-what}. To do so, we used the programming languages Python and R, as they are both languages tailored for data processing and analytics.
 
 \section{Use Cases}
 
