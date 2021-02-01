@@ -162,6 +162,7 @@ For the first needed dataset we have chosen the eBird Basic Dataset \cite{ebird2
 For the second, we have chosen the GISTEMP dataset \cite{gistemp} by NASA, which provides the temperature data from 1880 up to 2020 in a regular 2° by 2° grid. The main advantage of this dataset compared to other temperature datasets we found is that this one uses the temperature anomalies. These anomalies are relative to a 30-year period between 1951 and 1980. By using anomalies instead of absolute values \cite{gistempanomalies}, it is easier to see how much colder or warmer a certain place is. 
 
 \subsection{Data Abstraction: What}
+\label{subsec:data-abs-what}
 
 The eBird Basic Dataset \cite{ebird2020data} consists of a large static table containing items that each correspond to a particular observation of a bird or a group of birds. For each observation, a number of attributes are provided, though we are only interested in the following subset:
 
@@ -190,9 +191,10 @@ The GISTEMP dataset \cite{gistemp} consists of a large static multidimensional s
 \paragraph{Date} An ordered, quantitive and diverging attribute in year-month format (yyyy-month).
 
 \section{Task Analysis}
+\label{tasks}
 
 \subsection{Domain Specific Tasks}
-% In this section, you must analyze the possible visualization tasks that an expert in the chosen domain would be interested in. Ideally, you would present a set of tasks and questions that are intimately related to the chosen domain.
+
 This visualization is designed to be used by a large variety of specialists and non-specialists alike. An ornithologist could study the migration of the Barn Swallow using the provided visualization. It is also suitable for the needs of climate  change activists who wants to prove a point about a real prolem or a curious person without specific domain knowledge who wants to see the effects of climate change on the nature. The tasks that  these people could undertake are described below.
 
 \paragraph{Task 1: Analyze correlation between temperature change and the timing of bird migration} One of the observations that can be achieved with this visualization is showing the migration of birds in relation to the change in temperature over time. This can be done by choosing a bird species and comparing timing of their migration with respect to the temperatures for the specific time and the same migration in a different time span before or after the chosen one.  The question that would be answered by this task is: how are temperature and the timing of bird migration correlated?
@@ -202,8 +204,6 @@ This visualization is designed to be used by a large variety of specialists and 
 \paragraph{Task 3: Identify species that respond most to temperature change} Different types of birds respond differently to a change in temperature. The tool can help visualize which types of birds are affected by the rising temperatures more than others. This can be done by comparing the migration behavior in relation to the temperature over time, for a set of species. The question that would be answered by this task is: which bird species respond to temperature change the most?
 
 \subsection{Task Abstraction: Why}
-
-% Once you have defined a set of domain specific tasks, you must generalize them to be domain independent to be able to use the principles from visualization. In this sense, we propose you follow the principles described in Munzner's book \cite{munzner2014visualization} and described in the lectures.
 
 \paragraph{Task 1: Analyze correlation between temperature change and the timing of bird migration} The high-level analyze action that this task performs is consume and more precisely discover. This is because discover is related to the act of verifying or disproving of a hypothesis which is exactly the intention behind this task. The mid-level search action is explore as the user doesn't know the location of the target or what the target itself is. The low-level query action is compare as the user will compare different data. The target of this task is a correlation.
 
@@ -217,11 +217,116 @@ This visualization is designed to be used by a large variety of specialists and 
 
 \section{Realization}
 
-% After you have a visualization design, you should elaborate on what you have implemented and what compromises were made. For instance, your ideal solution may consider edge bundling \cite{holten2006hierarchical} but you could not implement it in your final solution. In this section, you should also mention what framework/technology you used for your implementation and justify why you chose it.
+All of the idealized visualizations were implemented. With that being said, we implemented the temperature anomaly map, the bird frequency map, as well as a line chart showing the average temperature anomaly and bird latitude.
+
+We implemented a web application. Thus, the main technologies in use are HTML, CSS and JavaScript. To manage the application state, we decided to use Svetle\cite{svetle}, a relatively young framework designed to build web apps easily. Despite the existence of more mature frameworks, such as React, Vue.js and Angular, we decided to use Svetle as it is simple to use and enables us to do the implemetation in a short amount of time leaving more time for designing the application.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{app-example.png}
+  \caption{``Climate Change and Bird Migration" visualization application overview.}
+  \label{fig:app-example}
+\end{figure}
+
+\subsection{Controls}
+
+The main point of interaction of the user with the application is the controls. The controls section is a set of dropdown menus, buttons and other types of input. These allow the user to change between different species and view types. According to the selected view type, different options become available.
+
+For the yearly view, the user can select the start and end years, the month, as well as the number of years per second - also known as the speed of the animation. These options affect: (1) the animation over the years, which can be started by pressing ``Start"; and (2) the base data used in the visualization. In addition, while the animation is stopped, the user can choose a specific year to show in the maps.
+
+For the monthly view, the user can choose the month, the number of months per second and the year to view. Similarly to what happens with the yearly view, these options will affect the map animation, as well as the data used in the graph.
+
+Disregarding both views, there is also an option to choose to infinitely repeat the animation by checking the box ``Loop".
+
+\subsection{Maps}
+
+The implementation of the maps resorts to Leaflet \cite{leaflet}, an open-source JavaScript library for interactive maps. With this library, we were able to show two maps side by side, which can be zoomed in and panned. In addition, we also show the latitude on the right side of the maps.
+
+By hovering the cursor over a certain point in the temperature anomalies map, the user is able to see the precise temperature anomaly in that point. The same applies for the bird frequency map.
+
+Both maps are synchronized such that they always show the same area at the same time. Thus, if the user zooms in/out or moves one map, the other one is zoomed in automatically.
+
+Below each map, there is also a scale. This scale, as well as the mapping between a numeric value and a color in the map, were partially implemented by the library D3 \cite{d3js}.
+
+An example of the mentioned features can be seen in Figure \ref{fig:map-example}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{map-example}
+  \caption{Map example for March 2015, showcasing the latitudes, scales and tooltip functionality.}
+  \label{fig:map-example}
+\end{figure}
+
+\subsection{Line Chart}
+
+The line chart implemention mainly relies on D3 \cite{d3js}, a JavaScript library that allows for data manipulation and its visualization using Scalable Vector Graphics images (SVGs). The graph can show two views: either month by month, or year by year. The visualization depends on the choosen options. You can see an example of a monthly graph on Figure \ref{fig:montly-graph16} and a yearly graph on \ref{fig:march86-16-graph}.
+
+In addition, the graph view is regional, meaning that the data on the graph is intrisincally related to the map view. The graph only shows the data from the visible area of the map. Thus, if the user zooms in or out in the map, the graph will change to show the information regarding a different map area.
+
+\subsection{Data Processing}
+
+During the development of the application, we had to apply some transformations to the initial data as mentioned in subsection \ref{subsec:data-abs-what}. To do so, we used the programming languages Python and R, as they are both languages tailored for data processing and analytics.
 
 \section{Use Cases}
 
-% Describe the analysis of the data and how your application was used to perform the analysis. Here you demonstrate how to use your application to perform the tasks and answer the questions as an evaluation of your design and implementation.
+In this section, we demonstrate how the application can be used to perform the tasks and answer the questions described in Section \ref{tasks}.
+
+\paragraph{How are temperature changes and the timing of bird migration correlated?}
+
+One of the main goals of the application is to analyze possible correlations between the temperature changes and the timing of bird migration. To do so, it is recommended to use the yearly view. The user can select a specific bird species to visualize. However, the default one - Barn Swallow - provides the most clear correlation.
+
+An important choice the user has to make is to pick which month they want to visualize. Some of the months of the year are better to showcase the movement of birds because their migration depends on certain weather conditions and other natural factors. For instance, March is associated with the migrations of most birds to the northern hemisphere.
+
+After choosing a specific month, the user can navigate through the years. This allows the user to compare how the bird movement has changed over the span of several years, while being able to see the changes in temperatures for the same span of time. An example visualization can be seen on Fig. \ref{fig:swallow-map-86} and Fig. \ref{fig:swallow-map-16}.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{march86-map-barnswallow}
+  \caption{Maps of temperature anomaly and Barn Swallow latitude position for March 1986.}
+  \label{fig:swallow-map-86}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{march16-map-barnswallow}
+  \caption{Maps of temperature anomaly and Barn Swallow latitude position for March 2016.}
+  \label{fig:swallow-map-16}
+\end{figure}
+
+Instead of manually navigating through the years, a user can select a month, a start and an end year, and press the ``Start" button. This will start an animation showing the chosen month for each year between the start and the end year, inclusively. The speed of the animation can also be customized. There is also a choice of looping the animation, so the user can watch it continuously and spot even the smallest differences.
+
+In some cases the map does not showcase clearly enough the correlation the user is looking for. For these cases there is a line chart that shows the changes of the temperature anomaly and the overall position of the birds on the latitude for a given month and year. The specifications of the graph can be changed by choosing a start year, end year and month. Figure \ref{fig:march86-16-graph} shows an example for a line chart generated for the month of March between the years 1986 and 2016.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{march86-16-graph-barnswallow}
+  \caption{Line graph showing the variation of the temperature anomalies and Barn Swallow's latitude position for March 1986 to 2016.}
+  \label{fig:march86-16-graph}
+\end{figure}
+
+\paragraph{What is the general migration behavior pattern for a particular bird species?}
+
+Typically, the migration of birds has a repeated pattern of annual cycles. In order for a user to observe the general migration behavior of a bird species, they have to follow its movement over the course of a year and note the overall pattern. In this case, the monthly view is the most convenient choice. With it, a user can choose the specific bird species that they are interested in, as well as choosing a specific year. Then, by pressing ``Start", the user can visualize an animation, from January to December in the selected year, that shows the position changes over the year. Similarly to the yearly view, there is also an option to change the speed and to infinitely repeat the animation until the user decides to stop.
+
+In conjunction to the map view, there is a line chart showing the general latitude position of the species for each month of the selected year. The line graph can be used to easily spot patterns in different parts of the annual migration cycle. Figure \ref{fig:montly-graph16} shows a monthly line graph for the year of 2016 for the Barn Swallow.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{montly-graph16-barnswallow}
+    \caption{Line graph showing the variation of the temperature anomalies and Barn Swallow's latitude position in 2016.}
+  \label{fig:montly-graph16}
+\end{figure}
+
+\paragraph{Which bird species respond to temperature change the most?}
+
+To compare the response to temperature changes of different bird species, we recommend the yearly view. Firstly, the user should choose the parameters of interest such as year(s), month and bird species. Then, the user should observe each species, one by one. At any time, the user can change to a different bird species, thus allowing to view the different species' behavior. This is applicable to both the maps and the line chart. For example we can use Figure \ref{fig:swallow-map-16} and Figure \ref{fig:march16-map-blackbird} to compare the behavior of the Barn Swallow and the Eurasian Blackbird during March 2016.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{march16-map-blackbird}
+  \caption{Visualization of maps of temperature anomaly and Eurasian Blackbird latitude porsition for March 2016.}
+  \label{fig:march16-map-blackbird}
+\end{figure}
 
 \section{Discussion and Conclusion}
 
