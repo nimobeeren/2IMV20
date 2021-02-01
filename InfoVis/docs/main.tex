@@ -263,7 +263,7 @@ The line chart implemention mainly relies on D3 \cite{d3js}, a JavaScript librar
 
 In addition, the graph view is regional, meaning that the data on the graph is intrisincally related to the map view. The graph only shows the data from the visible area of the map. Thus, if the user zooms in or out in the map, the graph will change to show the information regarding a different map area.
 
-\subsection{Others}
+\subsection{Data Processing}
 
 During the development of the application, we had to apply some transformations to the initial data as mentioned in subsection \ref{subsec:data-abs-what}. To do so, we used the programming languages Python and R, as they are both languages tailored for data processing and analytics.
 
@@ -275,7 +275,7 @@ In this section, we demonstrate how the application can be used to perform the t
 
 One of the main goals of the application is to analyze possible correlations between the temperature changes and the timing of bird migration. To do so, it is recommended to use the yearly view. The user can select a specific bird species to visualize. However, the default one - Barn Swallow - provides the most clear correlation.
 
-An important choice the user has to make is to pick which month they want to visualize. Some of the months of the year are better to showcase the movement of birds because their migration depend on certain weather conditions and other natural factors. For instance, March is associated with the migrations of most birds to the North hemisphere.
+An important choice the user has to make is to pick which month they want to visualize. Some of the months of the year are better to showcase the movement of birds because their migration depends on certain weather conditions and other natural factors. For instance, March is associated with the migrations of most birds to the northern hemisphere.
 
 After choosing a specific month, the user can navigate through the years. This allows the user to compare how the bird movement has changed over the span of several years, while being able to see the changes in temperatures for the same span of time. An example visualization can be seen on Fig. \ref{fig:swallow-map-86} and Fig. \ref{fig:swallow-map-16}.
 
@@ -295,7 +295,7 @@ After choosing a specific month, the user can navigate through the years. This a
 
 Instead of manually navigating through the years, a user can select a month, a start and an end year, and press the ``Start" button. This will start an animation showing the chosen month for each year between the start and the end year, inclusively. The speed of the animation can also be customized. There is also a choice of looping the animation, so the user can watch it continuously and spot even the smallest differences.
 
-In some cases the map does not showcase clearly enough the correlation the user is looking for. For these cases there is a line graph that shows the changes of the temperature anomaly and the overall position of the birds on the latitude for a given month and year. The specifications of the graph can be changed by choosing a start year, end year and month. Figure \ref{fig:march86-16-graph} shows an example for a line graph generated for the month of March between the years 1986 and 2016.
+In some cases the map does not showcase clearly enough the correlation the user is looking for. For these cases there is a line chart that shows the changes of the temperature anomaly and the overall position of the birds on the latitude for a given month and year. The specifications of the graph can be changed by choosing a start year, end year and month. Figure \ref{fig:march86-16-graph} shows an example for a line chart generated for the month of March between the years 1986 and 2016.
 
 \begin{figure}[h]
   \centering
@@ -308,7 +308,7 @@ In some cases the map does not showcase clearly enough the correlation the user 
 
 Typically, the migration of birds has a repeated pattern of annual cycles. In order for a user to observe the general migration behavior of a bird species, they have to follow its movement over the course of a year and note the overall pattern. In this case, the monthly view is the most convenient choice. With it, a user can choose the specific bird species that they are interested in, as well as choosing a specific year. Then, by pressing ``Start", the user can visualize an animation, from January to December in the selected year, that shows the position changes over the year. Similarly to the yearly view, there is also an option to change the speed and to infinitely repeat the animation until the user decides to stop.
 
-In conjunction to the map view, there is a line graph showing the general latitude position of the species for each month of the selected year. The line graph can be used to easily spot patterns in different parts of the annual migration cycle. Figure \ref{fig:montly-graph16} shows a monthly line graph for the year of 2016 for the Barn Swallow.
+In conjunction to the map view, there is a line chart showing the general latitude position of the species for each month of the selected year. The line graph can be used to easily spot patterns in different parts of the annual migration cycle. Figure \ref{fig:montly-graph16} shows a monthly line graph for the year of 2016 for the Barn Swallow.
 
 \begin{figure}[h]
   \centering
@@ -319,7 +319,7 @@ In conjunction to the map view, there is a line graph showing the general latitu
 
 \paragraph{Which bird species respond to temperature change the most?}
 
-To compare the response to temperature changes of different bird species, we recommend the yearly view. Firstly, the user should choose the parameters of interest such as year(s), month and bird species. Then, the user should observe each species, one by one. At any time, the user can change to a different bird species, thus allowing to view the different species' behavior. This is applicable to both the maps and the line graph. For example we can use Figure \ref{fig:swallow-map-16} and Figure \ref{fig:march16-map-blackbird} to compare the behavior of the Barn Swallow and the Eurasian Blackbird during March 2016.
+To compare the response to temperature changes of different bird species, we recommend the yearly view. Firstly, the user should choose the parameters of interest such as year(s), month and bird species. Then, the user should observe each species, one by one. At any time, the user can change to a different bird species, thus allowing to view the different species' behavior. This is applicable to both the maps and the line chart. For example we can use Figure \ref{fig:swallow-map-16} and Figure \ref{fig:march16-map-blackbird} to compare the behavior of the Barn Swallow and the Eurasian Blackbird during March 2016.
 
 \begin{figure}[h]
   \centering
