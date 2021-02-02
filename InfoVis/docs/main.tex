@@ -310,14 +310,14 @@ After choosing a specific month, the user can navigate through the years. This a
 \begin{figure}[h]
   \centering
   \includegraphics[width=85mm]{march86-map-barnswallow}
-  \caption{Maps of temperature anomaly and Barn Swallow latitude position for March 1986.}
+  \caption{Maps of temperature anomaly and mean latitude of the Barn Swallow for March 1986.}
   \label{fig:swallow-map-86}
 \end{figure}
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=85mm]{march16-map-barnswallow}
-  \caption{Maps of temperature anomaly and Barn Swallow latitude position for March 2016.}
+  \caption{Maps of temperature anomaly and mean latitude of the Barn Swallow for March 2016.}
   \label{fig:swallow-map-16}
 \end{figure}
 
@@ -328,7 +328,7 @@ In some cases the map does not showcase clearly enough the correlation the user 
 \begin{figure}[h]
   \centering
   \includegraphics[width=85mm]{march86-16-graph-barnswallow}
-  \caption{Line graph showing the variation of the temperature anomalies and Barn Swallow's latitude position for March 1986 to 2016.}
+  \caption{Line chart showing the temperature anomaliy and mean latitude of the Barn Swallow for March 1986 to 2016.}
   \label{fig:march86-16-graph}
 \end{figure}
 
@@ -341,7 +341,7 @@ In conjunction to the map view, there is a line chart showing the general latitu
 \begin{figure}[h]
   \centering
   \includegraphics[width=85mm]{montly-graph16-barnswallow}
-    \caption{Line graph showing the variation of the temperature anomalies and Barn Swallow's latitude position in 2016.}
+    \caption{Line chart showing the temperature anomaly and mean latitude of the Barn Swallow in 2016.}
   \label{fig:montly-graph16}
 \end{figure}
 
@@ -352,7 +352,7 @@ To compare the response to temperature changes of different bird species, we rec
 \begin{figure}[h]
   \centering
   \includegraphics[width=85mm]{march16-map-blackbird}
-  \caption{Visualization of maps of temperature anomaly and Eurasian Blackbird latitude porsition for March 2016.}
+  \caption{Maps of temperature anomaly and mean latitude of the Eurasian Blackbird for March 2016.}
   \label{fig:march16-map-blackbird}
 \end{figure}
 
@@ -364,9 +364,39 @@ After implementing the designed visualization and using it to perform the define
 
 As we have seen in \autoref{fig:march86-16-graph}, there seems to be some correlation between temperature anomaly and mean latitude for the Barn Swallow in March. However, this is not the case for all studied species. For example, (FIGURE) shows the development of the White Stork, which exhibits a downward trend in mean latitude during the same period. Whether this is due to a real effect, a violation of our assumptions, or an artefact of our data is hard to judge by our visualization. Indeed, our visual approach can be used to discover areas of potential future research, but it should not be relied upon to prove or disprove a hypothesis.
 
-A significant challenge that came with the eBird dataset is the change in observation effort over time. Over the years, the number of observations has grown exponentially, as can be seen in (FIGURE). Although we attempted to control for this change by using a relative measure of bird frequency, the comparison in (FIGURE) shows that in recent years, birds were observed in a much wider area than before, particularly in Europe. While the observed bird frequency in most places is small (the color is close to white), the increase in size of the colored area may be misinterpreted as a change in bird distribution. In addition, it is not clear whether this growth in observation effort is equally distributed over the Earth. This could introduce another form of bias in our measurements. Other studies have combatted these issues by means of complex mathematical models, including machine learning approaches \cite{johnston2019best,johnston2020analytical}. However, they studied a smaller area and timespan, which might make it more practical to fit such a model.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{march86-16-graph-eurbla}
+  \caption{Line chart showing the variation of the temperature anomalies and mean latitude of the Eurasian Blackbird for March 1986 to 2016.}
+  \label{fig:march86-16-graph-eurbla}
+\end{figure}
 
-When analyzing the migration behavior of the Barn Swallow, we did find an increased mean latitude during spring and summer months, compared to late autumn and winter, as seen in \autoref{fig:montly-graph16}. However, such a clear pattern was not found for all species, for example (FIGURE) shows a much more erratic pattern for the Eurasian Blackbird. A limitation of our visualization is that we can only see this annual pattern for one year at a time, and the view must be manipulated manually to compare multiple years. Furthermore, it may have been useful to plot the absolute temperature rather than temperature anomaly when looking at a single year, as that would more clearly show the seasonal changes.
+A significant challenge that came with the eBird dataset is the change in observation effort over time. Over the years, the number of observations has grown exponentially, as can be seen in \autoref{fig:observations-over-time}. Although we attempted to control for this change by using a relative measure of bird frequency, the comparison in \autoref{fig:birds-comparison} shows that in recent years, birds were observed in a much wider area than before, particularly in Europe. While the observed bird frequency in most places is small (the color is close to white), the increase in size of the colored area may be misinterpreted as a change in bird distribution. In addition, it is not clear whether this growth in observation effort is equally distributed over the Earth. This could introduce another form of bias in our measurements. Other studies have combatted these issues by means of complex mathematical models, including machine learning approaches \cite{johnston2019best,johnston2020analytical}. However, they studied a smaller area and timespan, which might make it more practical to fit such a model.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{observations-over-time}
+  \caption{Cumulative number of observations of Barn Swallows over time (log scale).}
+  \label{fig:observations-over-time}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+    \includegraphics[width=43mm]{bird-map-barswa-1984-03.png}
+    \hfill
+    \includegraphics[width=43mm]{bird-map-barswa-2019-03.png}
+    \caption{Frequency of Barn Swallow in 1984 (left) and 2019 (right).}
+    \label{fig:birds-comparison}
+\end{figure}
+
+When analyzing the migration behavior of the Barn Swallow, we did find an increased mean latitude during spring and summer months, compared to late autumn and winter, as seen in \autoref{fig:montly-graph16}. However, such a clear pattern was not found for all species, for example \autoref{fig:montly-graph16-eurbla} shows a much more erratic pattern for the Eurasian Blackbird. A limitation of our visualization is that we can only see this annual pattern for one year at a time, and the view must be manipulated manually to compare multiple years. Furthermore, it may have been useful to plot the absolute temperature rather than temperature anomaly when looking at a single year, as that would more clearly show the seasonal changes.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=85mm]{montly-graph16-eurbla.png}
+  \caption{Line chart showing  the temperature anomaly and mean latitude of the Eurasian Blackbird in 2019.}
+  \label{fig:montly-graph16-eurbla}
+\end{figure}
 
 While manipulating time is essential to explore the full potential of the visualization, the manipulation of the map view has a less prominent role in a typical use case. For some species, the default map area is larger than the typical habitat, so the zoom functionality may be used to get a more detailed view. However, the shape of the map windows cannot be changed, and as such it may not be possible to adjust the bounds very precisely. In future work, a freeform drawing tool could be implemented to allow for more control.
 
