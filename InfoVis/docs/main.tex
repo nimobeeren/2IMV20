@@ -168,11 +168,13 @@ The eBird Basic Dataset \cite{ebird2020data} consists of a static table containi
 
 \paragraph{Latitude} An ordered, quantitative cyclic attribute represented as decimal degrees, varying from -90° (south) to 90° (north).
 
-\paragraph{Longitude} An ordered, quantitative cyclic attribute represented as decimal degrees, varying from -180° (west) to 180° (east). The precision of latitude and longitude varies between observations, but is typically 0.001 degrees or more precise (which is less than 1 km on Earth's surface)
+\paragraph{Longitude} An ordered, quantitative cyclic attribute represented as decimal degrees, varying from -180° (west) to 180° (east).
 
 \paragraph{Count} An ordered, quantitative and diverging attribute represented as an integer. Since participants are allowed to group multiple birds in a single observation, the value can be 1 or greater.
 
 \vspace{2mm}
+
+The precision of latitude and longitude varies between observations, but is typically 0.001 degrees or more precise (which is less than 1 km on Earth's surface)
 
 We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a subset of species, since the dataset is too large to practically work with. We selected a set of common migratory birds that breed in Europe, but differ in migration distance, wintering area, and time of migration \cite{turner1989swallow,jenni2003timing}. Our selection consists of the Barn Swallow (\emph{Hirundo rustica}), the Eurasian Blackbird (\emph{Turdus merula}), and the White Stork (\emph{Ciconia ciconia}). Next, we restrict the dataset geographically to Europe and Africa. We exclude observations outside the years 1980--2019, since observations before 1980 are scarce and irregular. In addition, we exclude any single observation with a bird count of 1000 or greater, since these outliers make the data more difficult to work with, and excluding them should not change the distribution of birds.
 
@@ -188,7 +190,7 @@ We then represent the count of each observation as a fraction of the total month
   f(O) = O_c \;/\; T(O_m)
 \end{equation}
 
-By using this relative frequency rather than the absolute count, we control for the change in observation effort over time. We do assume that the total population size for each species remains approximately constant.
+By using this relative frequency rather than the absolute count, we control for the change in observation effort over time. We do assume that the total population size for each species is approximately constant.
 
 \begin{figure}[t]
   \centering
