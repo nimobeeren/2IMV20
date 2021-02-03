@@ -51,6 +51,7 @@
 \usepackage{cite}                      % needed to automatically sort the references
 \usepackage{tabu}                      % only used for the table example
 \usepackage{booktabs}                  % only used for the table example
+\usepackage{amsmath}
 %% We encourage the use of mathptmx for consistent usage of times font
 %% throughout the proceedings. However, if you encounter conflicts
 %% with other math-related packages, you may want to disable it.
@@ -174,7 +175,28 @@ The eBird Basic Dataset \cite{ebird2020data} consists of a static table containi
 
 \vspace{2mm}
 
-We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a subset of species, since the dataset is too large to practically work with. We selected a set of common migratory birds that breed in Europe, but differ in migration distance, wintering area, and time of migration \cite{turner1989swallow,jenni2003timing}. Our selection consists of the Barn Swallow (\emph{Hirundo rustica}), the Eurasian Blackbird (\emph{Turdus merula}), and the White Stork (\emph{Ciconia ciconia}). Next, we restrict the dataset geographically to Europe and Africa. We exclude observations outside the years 1980--2019, since observations before 1980 are scarce and irregular. Finally, we exclude any single observation with a bird count of 1000 or greater, since these outliers make the data more difficult to work with, and excluding them should not change the distribution of birds.
+We perform a number of transformations on the original dataset for the purpose of our visualization. First, we limit ourselves to a subset of species, since the dataset is too large to practically work with. We selected a set of common migratory birds that breed in Europe, but differ in migration distance, wintering area, and time of migration \cite{turner1989swallow,jenni2003timing}. Our selection consists of the Barn Swallow (\emph{Hirundo rustica}), the Eurasian Blackbird (\emph{Turdus merula}), and the White Stork (\emph{Ciconia ciconia}). Next, we restrict the dataset geographically to Europe and Africa. We exclude observations outside the years 1980--2019, since observations before 1980 are scarce and irregular. In addition, we exclude any single observation with a bird count of 1000 or greater, since these outliers make the data more difficult to work with, and excluding them should not change the distribution of birds.
+
+The number of bird observations does not remain constant over time. In fact, we found an exponential growth in the cumulative observation counts, as can be observed in \autoref{fig:observations-over-time}. Since we are most interested in the spatial distribution of birds at a given point in time, we transform the absolute counts to a relative measure. First, we sum the counts $c$ of all observations $O$ in a particular month $m$ to obtain a monthly total:
+
+\begin{equation}
+  T(m) = \sum_{O_m = m} O_c
+\end{equation}
+
+We then represent the count of each observation as a fraction of the total monthly count, which we call the \emph{frequency}:
+
+\begin{equation}
+  f(O) = O_c \;/\; T(O_m)
+\end{equation}
+
+By using this relative frequency rather than the absolute count, we control for the change in observation effort over time. We do assume that the total population size for each species remains approximately constant.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{observations-over-time}
+  \caption{Observation count of the Barn Swallow over time (cumulative, log scale).}
+  \label{fig:observations-over-time}
+\end{figure}
 
 \vspace{2mm}
 
@@ -217,7 +239,7 @@ All identified visualization tasks revolve around the analysis of patterns over 
 
 One of the most common encodings of geospatial data is the map. Maps are unique in their ability to provide an overview of an area, while preserving attributes such as distance, area, and distribution \cite{kraak2020cartography}. Another powerful communicative aspect of maps is that they are recognizable. Given a map of the world, most people are able to pick out the place where they live, and thereby select data that is most relevant to them.
 
-We chose to visually encode the bird observations as a heatmap \cite{munzner2014visualization} made up of a grid of equal-sized cells, where the color of each cell corresponds to the total count of all observations within the bounds of that cell. An alternative encoding for bird observations is the scatterplot, where individual observations are represented by a \emph{glyph}. However, a common problem with scatterplots is \emph{overplotting} \cite{micallef2017scatter}, making it difficult to distinguish observations from eachother in dense areas. Another issue with this approach is that it suggests high spatial precision of observations, while this may not always be the case.
+We chose to visually encode the bird observations as a heatmap \cite{munzner2014visualization} made up of a grid of equal-sized cells, where the color of each cell corresponds to sum of bird frequencies within the bounds of that cell. An alternative encoding for bird observations is the scatterplot, where individual observations are represented by a \emph{glyph}. However, a common problem with scatterplots is \emph{overplotting} \cite{micallef2017scatter}, making it difficult to distinguish observations from eachother in dense areas. Another issue with this approach is that it suggests high spatial precision of observations, while this may not always be the case.
 
 Considering that the \emph{count} attribute of the bird data is quantitative and sequential, we chose a sequential color map, using only the luminance channel. We use a fixed green hue, since the human eye can most easily distinguish shades of green \cite{robinson1984fluorescent}. The saturation channel is used to indicate missing data, by means of a gray color.
 
@@ -357,14 +379,7 @@ As we have seen in \autoref{fig:march86-16-graph}, there seems to be some correl
   \label{fig:march86-16-graph-eurbla}
 \end{figure}
 
-A significant challenge that came with the eBird dataset is the change in observation effort over time. Over the years, the number of observations has grown exponentially, as can be seen in \autoref{fig:observations-over-time}. Although we attempted to control for this change by using a relative measure of bird frequency, the comparison in \autoref{fig:birds-comparison} shows that in recent years, birds were observed in a much wider area than before, particularly in Europe. While the observed bird frequency in most places is small (the color is close to white), the increase in size of the colored area may be misinterpreted as a change in bird distribution. In addition, it is not clear whether this growth in observation effort is equally distributed over the Earth. This could introduce another form of bias in our measurements. Other studies have combatted these issues by means of complex mathematical models, including machine learning techniques \cite{johnston2019best,johnston2020analytical}. However, they studied a smaller area and timespan, which might make it more practical to fit such a model.
-
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{observations-over-time}
-  \caption{Cumulative number of observations of Barn Swallows over time (log scale).}
-  \label{fig:observations-over-time}
-\end{figure}
+A significant challenge that came with the eBird dataset is the change in observation effort over time. Over the years, the number of observations has grown exponentially, which we have seen in \autoref{fig:observations-over-time}. Although we attempted to control for this change by using a relative measure of bird frequency, the comparison in \autoref{fig:birds-comparison} shows that in recent years, birds were observed in a much wider area than before, particularly in Europe. While the observed bird frequency in most places is small (the color is close to white), the increase in size of the colored area may be misinterpreted as a change in bird distribution. In addition, it is not clear whether this growth in observation effort is equally distributed over the Earth. This could introduce another form of bias in our measurements. Other studies have combatted these issues by means of complex mathematical models, including machine learning techniques \cite{johnston2019best,johnston2020analytical}. However, they studied a smaller area and timespan, which might make it more practical to fit such a model.
 
 \begin{figure}[t]
   \centering
