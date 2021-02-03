@@ -243,14 +243,14 @@ By default, the visualization shows data from Europe and most of Africa. At this
 
 \section{Realization}
 
-All of the idealized visualizations were implemented. With that being said, we implemented the temperature anomaly map, the bird frequency map, as well as a line chart showing the average temperature anomaly and bird latitude.
+All of the idealized visualizations were implemented. With that being said, we implemented the temperature anomaly map, the bird frequency map, as well as a line chart showing the average temperature anomaly and bird latitude. A complete view of the application is shown in \autoref{fig:app-example}.
 
 We implemented a web application. Thus, the main technologies in use are HTML, CSS and JavaScript. To manage the application state, we decided to use Svetle\cite{svetle}, a relatively young framework designed to build web apps easily. Despite the existence of more mature frameworks, such as React, Vue.js and Angular, we decided to use Svetle as it is simple to use and enables us to do the implemetation in a short amount of time leaving more time for designing the application.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=85mm]{app-example.png}
-  \caption{``Climate Change and Bird Migration" visualization application overview.}
+  \includegraphics[width=\linewidth]{app-example.png}
+  \caption{An overview of the \emph{BirdVis} application.}
   \label{fig:app-example}
 \end{figure}
 
@@ -276,16 +276,16 @@ Below each map, there is also a scale. This scale, as well as the mapping betwee
 
 An example of the mentioned features can be seen in \autoref{fig:map-example}.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=85mm]{map-example}
-  \caption{Map example for March 2015, showcasing the latitudes, scales and tooltip functionality.}
+  \includegraphics[width=\linewidth]{map-example}
+  \caption{Maps of temperature anomaly and mean latitude of the Barn Swallow for March 2015. The tooltip feature is also visible.}
   \label{fig:map-example}
 \end{figure}
 
 \subsection{Line Chart}
 
-The line chart implemention mainly relies on D3 \cite{d3js}, a JavaScript library that allows for data manipulation and its visualization using Scalable Vector Graphics images (SVGs). The graph can show two views: either month by month, or year by year. The visualization depends on the choosen options. You can see an example of a monthly graph on \autoref{fig:montly-graph16} and a yearly graph on \autoref{fig:march86-16-graph}.
+The line chart implemention mainly relies on D3 \cite{d3js}, a JavaScript library that allows for data manipulation and its visualization using Scalable Vector Graphics images (SVGs). The graph can show two views: either month by month, or year by year. The visualization depends on the choosen options. You can see an example of a monthly graph on \autoref{fig:monthly-graph16} and a yearly graph on \autoref{fig:march86-16-graph}.
 
 In addition, the graph view is regional, meaning that the data on the graph is intrisincally related to the map view. The graph only shows the data from the visible area of the map. Thus, if the user zooms in or out in the map, the graph will change to show the information regarding a different map area.
 
@@ -305,30 +305,16 @@ One of the main goals of the application is to analyze possible correlations bet
 
 An important choice the user has to make is to pick which month they want to visualize. Some of the months of the year are better to showcase the movement of birds because their migration depends on certain weather conditions and other natural factors. For instance, March is associated with the migrations of most birds to the northern hemisphere.
 
-After choosing a specific month, the user can navigate through the years. This allows the user to compare how the bird movement has changed over the span of several years, while being able to see the changes in temperatures for the same span of time. An example visualization can be seen on \autoref{fig:swallow-map-86} and \autoref{fig:swallow-map-16}.
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=85mm]{march86-map-barnswallow}
-  \caption{Maps of temperature anomaly and mean latitude of the Barn Swallow for March 1986.}
-  \label{fig:swallow-map-86}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=85mm]{march16-map-barnswallow}
-  \caption{Maps of temperature anomaly and mean latitude of the Barn Swallow for March 2016.}
-  \label{fig:swallow-map-16}
-\end{figure}
+After choosing a specific month, the user can navigate through the years. This allows the user to compare how the bird movement has changed over the span of several years, while being able to see the changes in temperatures for the same span of time.
 
 Instead of manually navigating through the years, a user can select a month, a start and an end year, and press the ``Start" button. This will start an animation showing the chosen month for each year between the start and the end year, inclusively. The speed of the animation can also be customized. There is also a choice of looping the animation, so the user can watch it continuously and spot even the smallest differences.
 
 In some cases the map does not showcase clearly enough the correlation the user is looking for. For these cases there is a line chart that shows the changes of the temperature anomaly and the overall position of the birds on the latitude for a given month and year. The specifications of the graph can be changed by choosing a start year, end year and month. \autoref{fig:march86-16-graph} shows an example for a line chart generated for the month of March between the years 1986 and 2016.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=85mm]{march86-16-graph-barnswallow}
-  \caption{Line chart showing the temperature anomaliy and mean latitude of the Barn Swallow for March 1986 to 2016.}
+  \includegraphics[width=\linewidth]{march86-16-graph-barnswallow}
+  \caption{Line chart showing the temperature anomaly and mean latitude of the Barn Swallow for March 1986 to 2016.}
   \label{fig:march86-16-graph}
 \end{figure}
 
@@ -336,22 +322,22 @@ In some cases the map does not showcase clearly enough the correlation the user 
 
 Typically, the migration of birds has a repeated pattern of annual cycles. In order for a user to observe the general migration behavior of a bird species, they have to follow its movement over the course of a year and note the overall pattern. In this case, the monthly view is the most convenient choice. With it, a user can choose the specific bird species that they are interested in, as well as choosing a specific year. Then, by pressing ``Start", the user can visualize an animation, from January to December in the selected year, that shows the position changes over the year. Similarly to the yearly view, there is also an option to change the speed and to infinitely repeat the animation until the user decides to stop.
 
-In conjunction to the map view, there is a line chart showing the general latitude position of the species for each month of the selected year. The line graph can be used to easily spot patterns in different parts of the annual migration cycle. \autoref{fig:montly-graph16} shows a monthly line graph for the year of 2016 for the Barn Swallow.
+In conjunction to the map view, there is a line chart showing the general latitude position of the species for each month of the selected year. The line graph can be used to easily spot patterns in different parts of the annual migration cycle. \autoref{fig:monthly-graph16} shows a monthly line graph for the year of 2016 for the Barn Swallow.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=85mm]{montly-graph16-barnswallow}
+  \includegraphics[width=\linewidth]{monthly-graph16-barnswallow}
     \caption{Line chart showing the temperature anomaly and mean latitude of the Barn Swallow in 2016.}
-  \label{fig:montly-graph16}
+  \label{fig:monthly-graph16}
 \end{figure}
 
 \paragraph{Which bird species respond to temperature change the most?}
 
-To compare the response to temperature changes of different bird species, we recommend the yearly view. Firstly, the user should choose the parameters of interest such as year(s), month and bird species. Then, the user should observe each species, one by one. At any time, the user can change to a different bird species, thus allowing to view the different species' behavior. This is applicable to both the maps and the line chart. For example we can use \autoref{fig:swallow-map-16} and \autoref{fig:march16-map-blackbird} to compare the behavior of the Barn Swallow and the Eurasian Blackbird during March 2016.
+To compare the response to temperature changes of different bird species, we recommend the yearly view. Firstly, the user should choose the parameters of interest such as year(s), month and bird species. Then, the user should observe each species, one by one. At any time, the user can change to a different bird species, thus allowing to view the different species' behavior. This is applicable to both the maps and the line chart. For example we can use \autoref{fig:map-example} and \autoref{fig:march16-map-blackbird} to compare the behavior of the Barn Swallow and the Eurasian Blackbird during March 2016.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=85mm]{march16-map-blackbird}
+  \includegraphics[width=\linewidth]{march16-map-blackbird}
   \caption{Maps of temperature anomaly and mean latitude of the Eurasian Blackbird for March 2016.}
   \label{fig:march16-map-blackbird}
 \end{figure}
@@ -360,42 +346,42 @@ To compare the response to temperature changes of different bird species, we rec
 
 % Finally, you will reflect on what you have achieved. For instance, this section should discuss whether you managed to do what you initially planned, whether your initial choices worked well or not, things that you discovered that were not correct, etc. Conclusions about your whole work would be provided.
 
-After implementing the designed visualization and using it to perform the defined tasks, we can assess how well our chosen visual encoding was suited to the problem, and whether the patterns found in our dataset fit with the results from literature. Considering that most studies found a shift in bird migration times of no more than a few days per decade \cite{marra2005influence,huppop2003north,cotton2003avian}, it was not immediately clear that this shift would be observable using a visual method. We made the assumption that even small changes would be visible when inspecting montly averages.
+After implementing the designed visualization and using it to perform the defined tasks, we can assess how well our chosen visual encoding was suited to the problem, and whether the patterns found in our dataset fit with the results from literature. Considering that most studies found a shift in bird migration times of no more than a few days per decade \cite{marra2005influence,huppop2003north,cotton2003avian}, it was not immediately clear that this shift would be observable using a visual method. We made the assumption that even small changes would be visible when inspecting monthly averages.
 
 As we have seen in \autoref{fig:march86-16-graph}, there seems to be some correlation between temperature anomaly and mean latitude for the Barn Swallow in March. However, this is not the case for all studied species. For example, (FIGURE) shows the development of the White Stork, which exhibits a downward trend in mean latitude during the same period. Whether this is due to a real effect, a violation of our assumptions, or an artefact of our data is hard to judge by our visualization. Indeed, our visual approach can be used to discover areas of potential future research, but it should not be relied upon to prove or disprove a hypothesis.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=85mm]{march86-16-graph-eurbla}
+  \includegraphics[width=\linewidth]{march86-16-graph-eurbla}
   \caption{Line chart showing the variation of the temperature anomalies and mean latitude of the Eurasian Blackbird for March 1986 to 2016.}
   \label{fig:march86-16-graph-eurbla}
 \end{figure}
 
 A significant challenge that came with the eBird dataset is the change in observation effort over time. Over the years, the number of observations has grown exponentially, as can be seen in \autoref{fig:observations-over-time}. Although we attempted to control for this change by using a relative measure of bird frequency, the comparison in \autoref{fig:birds-comparison} shows that in recent years, birds were observed in a much wider area than before, particularly in Europe. While the observed bird frequency in most places is small (the color is close to white), the increase in size of the colored area may be misinterpreted as a change in bird distribution. In addition, it is not clear whether this growth in observation effort is equally distributed over the Earth. This could introduce another form of bias in our measurements. Other studies have combatted these issues by means of complex mathematical models, including machine learning approaches \cite{johnston2019best,johnston2020analytical}. However, they studied a smaller area and timespan, which might make it more practical to fit such a model.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=85mm]{observations-over-time}
+  \includegraphics[width=\linewidth]{observations-over-time}
   \caption{Cumulative number of observations of Barn Swallows over time (log scale).}
   \label{fig:observations-over-time}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-    \includegraphics[width=43mm]{bird-map-barswa-1984-03.png}
+    \includegraphics[width=0.48\linewidth]{bird-map-barswa-1984-03.png}
     \hfill
-    \includegraphics[width=43mm]{bird-map-barswa-2019-03.png}
+    \includegraphics[width=0.48\linewidth]{bird-map-barswa-2019-03.png}
     \caption{Frequency of Barn Swallow in 1984 (left) and 2019 (right).}
     \label{fig:birds-comparison}
 \end{figure}
 
-When analyzing the migration behavior of the Barn Swallow, we did find an increased mean latitude during spring and summer months, compared to late autumn and winter, as seen in \autoref{fig:montly-graph16}. However, such a clear pattern was not found for all species, for example \autoref{fig:montly-graph16-eurbla} shows a much more erratic pattern for the Eurasian Blackbird. A limitation of our visualization is that we can only see this annual pattern for one year at a time, and the view must be manipulated manually to compare multiple years. Furthermore, it may have been useful to plot the absolute temperature rather than temperature anomaly when looking at a single year, as that would more clearly show the seasonal changes.
+When analyzing the migration behavior of the Barn Swallow, we did find an increased mean latitude during spring and summer months, compared to late autumn and winter, as seen in \autoref{fig:monthly-graph16}. However, such a clear pattern was not found for all species, for example \autoref{fig:monthly-graph16-eurbla} shows a much more erratic pattern for the Eurasian Blackbird. A limitation of our visualization is that we can only see this annual pattern for one year at a time, and the view must be manipulated manually to compare multiple years. Furthermore, it may have been useful to plot the absolute temperature rather than temperature anomaly when looking at a single year, as that would more clearly show the seasonal changes.
 
-\begin{figure}[h]
+\begin{figure}[t]
   \centering
-  \includegraphics[width=85mm]{montly-graph16-eurbla.png}
+  \includegraphics[width=\linewidth]{monthly-graph16-eurbla.png}
   \caption{Line chart showing  the temperature anomaly and mean latitude of the Eurasian Blackbird in 2019.}
-  \label{fig:montly-graph16-eurbla}
+  \label{fig:monthly-graph16-eurbla}
 \end{figure}
 
 While manipulating time is essential to explore the full potential of the visualization, the manipulation of the map view has a less prominent role in a typical use case. For some species, the default map area is larger than the typical habitat, so the zoom functionality may be used to get a more detailed view. However, the shape of the map windows cannot be changed, and as such it may not be possible to adjust the bounds very precisely. In future work, a freeform drawing tool could be implemented to allow for more control.
