@@ -245,7 +245,7 @@ By default, the visualization shows data from Europe and most of Africa. At this
 
 All of the idealized visualizations were implemented. With that being said, we implemented the temperature anomaly map, the bird frequency map, as well as a line chart showing the average temperature anomaly and bird latitude. A complete view of the application is shown in \autoref{fig:app-example}.
 
-We implemented a web application. Thus, the main technologies in use are HTML, CSS and JavaScript. To manage the application state, we decided to use Svetle\cite{svetle}, a relatively young framework designed to build web apps easily. Despite the existence of more mature frameworks, such as React, Vue.js and Angular, we decided to use Svetle as it is simple to use and enables us to do the implemetation in a short amount of time leaving more time for designing the application.
+We implemented a web application. Thus, the main technologies in use are HTML, CSS and JavaScript. To manage the application state, we decided to use Svelte\cite{svelte}, a relatively young framework designed to build web apps easily. Despite the existence of more mature frameworks, such as React, Vue.js and Angular, we decided to use Svelte as it is simple to use and enables us to do the implemetation in a short amount of time leaving more time for designing the application.
 
 \begin{figure}[t]
   \centering
@@ -272,7 +272,7 @@ By hovering the cursor over a certain point in the temperature anomalies map, th
 
 Both maps are synchronized such that they always show the same area at the same time. Thus, if the user zooms in/out or moves one map, the other one is zoomed in automatically.
 
-Below each map, there is also a scale. This scale, as well as the mapping between a numeric value and a color in the map, were partially implemented by the library D3 \cite{d3js}.
+Below each map, there is also a scale. This scale, as well as the mapping between a numeric value and a color in the map, were partially implemented by the library D3 \cite{bostock2011d3}.
 
 An example of the mentioned features can be seen in \autoref{fig:map-example}.
 
@@ -285,13 +285,13 @@ An example of the mentioned features can be seen in \autoref{fig:map-example}.
 
 \subsection{Line Chart}
 
-The line chart implemention mainly relies on D3 \cite{d3js}, a JavaScript library that allows for data manipulation and its visualization using Scalable Vector Graphics images (SVGs). The graph can show two views: either month by month, or year by year. The visualization depends on the choosen options. You can see an example of a monthly graph on \autoref{fig:monthly-graph16} and a yearly graph on \autoref{fig:march86-16-graph}.
+The line chart implemention mainly relies on D3 \cite{bostock2011d3}, a JavaScript library that allows for data manipulation and its visualization using Scalable Vector Graphics images (SVGs). The graph can show two views: either month by month, or year by year. The visualization depends on the choosen options. You can see an example of a monthly graph on \autoref{fig:monthly-graph16} and a yearly graph on \autoref{fig:march86-16-graph}.
 
 In addition, the graph view is regional, meaning that the data on the graph is intrisincally related to the map view. The graph only shows the data from the visible area of the map. Thus, if the user zooms in or out in the map, the graph will change to show the information regarding a different map area.
 
 \subsection{Data Processing}
 
-During the development of the application, we had to apply some transformations to the initial data as mentioned in \autoref{subsec:data-abs-what}. To do so, we used the programming languages Python and R, as they are both languages tailored for data processing and analytics.
+During the development of the application, we had to apply some transformations to the initial data as mentioned in \autoref{subsec:data-abs-what}. To do so, we used the programming languages Python \cite{rossum1995python} and R \cite{rproject}, as they are both languages suitable for data processing and analytics.
 
 % write about how (and why) percentage is derived from absolute bird count
 
