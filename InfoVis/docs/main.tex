@@ -137,7 +137,7 @@ Technology. E-mail: \{g.slavova, h.a.coelho.dias, n.beeren\}@student.tue.nl.
 
 \maketitle
 
-In recent times, it has become increasingly clear to most people that climate change is affecting life on Earth. As temperatures rise globally, many animals are forced to adapt to their environment \cite{parmesan2007pheno,root2003fingerprints}. Among the best-documented instances of such adaptation are changes in bird migration \cite{miller2008bird,cotton2003avian,jenni2003timing}. This paper presents \emph{BirdVis}: an interactive visualization with the goal to analyze and communicate how the migratory behavior of birds is related to temperature.
+In recent times, it has become increasingly clear to most people that climate change is affecting life on Earth. As temperatures rise globally, many animals are forced to adapt to their environment \cite{parmesan2007pheno,root2003fingerprints}. Among the best-documented instances of such adaptation are changes in bird migration \cite{miller2008bird,cotton2003avian,jenni2003timing}. This paper presents \emph{BirdVis}: an interactive visualization with the goal to analyze and communicate how the migratory behavior of birds is related to temperature over the years.
 
 \subsection{Problem Description}
 
@@ -272,7 +272,7 @@ By hovering the cursor over a certain point in the temperature anomalies map, th
 
 Both maps are synchronized such that they always show the same area at the same time. Thus, if the user zooms in/out or moves one map, the other one is zoomed in automatically.
 
-Below each map, there is also a scale. This scale, as well as the mapping between a numeric value and a color in the map, were partially implemented by the library D3 \cite{bostock2011d3}.
+Below each map, there is also a scale. This scale, as well as the mapping between a numeric value and a color in the map, were partially implemented by the library D3 \cite{bostock2011d3}. Because the majority of bird observations often came from a few small areas, we used a logarithmic scale for bird frequency.
 
 An example of the mentioned features can be seen in \autoref{fig:map-example}.
 
