@@ -207,16 +207,16 @@ The GISTEMP dataset \cite{gistemp} consists of a multidimensional scalar field, 
 
 \paragraph{Longitude} An ordered, quantitative cyclic attribute represented as decimal degrees, varying from -180° (west) to 180° (east).
 
-\paragraph{Temperature anomaly} An ordered, quantitive attribute represented in degrees Celcius.
+\paragraph{Temperature anomaly} An ordered, quantitative attribute represented in degrees Celcius.
 
-\paragraph{Date} An ordered, quantitive and diverging attribute in year-month format (yyyy-mm).
+\paragraph{Date} An ordered, quantitative and diverging attribute in year-month format (yyyy-mm).
 
 \section{Task Analysis}
 \label{tasks}
 
 \subsection{Domain Specific Tasks}
 
-This visualization is designed to be used by a large variety of specialists and non-specialists alike. An ornithologist could study the migration of the Barn Swallow using the provided visualization. It is also suitable for the needs of climate  change activists who wants to prove a point about a real prolem or a curious person without specific domain knowledge who wants to see the effects of climate change on the nature. The tasks that  these people could undertake are described below.
+This visualization is designed to be used by a large variety of specialists and non-specialists alike. An ornithologist could study the migration of the Barn Swallow using the provided visualization. It is also suitable for the needs of climate  change activists who wants to prove a point about a real problem or a curious person without specific domain knowledge who wants to see the effects of climate change on the nature. The tasks that  these people could undertake are described below.
 
 \paragraph{Task 1: Analyze correlation between temperature change and the timing of bird migration} One of the observations that can be achieved with this visualization is showing the migration of birds in relation to the change in temperature over time. This can be done by choosing a bird species and comparing timing of their migration with respect to the temperatures for the specific time and the same migration in a different time span before or after the chosen one.  The question that would be answered by this task is: how are temperature and the timing of bird migration correlated?
 
@@ -240,7 +240,7 @@ All identified visualization tasks revolve around the analysis of patterns over 
 
 One of the most common encodings of geospatial data is the map. Maps are unique in their ability to provide an overview of an area, while preserving attributes such as distance, area, and distribution \cite{kraak2020cartography}. Another powerful communicative aspect of maps is that they are recognizable. Given a map of the world, most people are able to pick out the place where they live, and thereby select data that is most relevant to them.
 
-We chose to visually encode the bird observations as a heatmap \cite{munzner2014visualization} made up of a grid of equal-sized cells, where the color of each cell corresponds to sum of bird frequencies within the bounds of that cell. An alternative encoding for bird observations is the scatterplot, where individual observations are represented by a \emph{glyph}. However, a common problem with scatterplots is \emph{overplotting} \cite{micallef2017scatter}, making it difficult to distinguish observations from eachother in dense areas. Another issue with this approach is that it suggests high spatial precision of observations, while this may not always be the case.
+We chose to visually encode the bird observations as a heatmap \cite{munzner2014visualization} made up of a grid of equal-sized cells, where the color of each cell corresponds to sum of bird frequencies within the bounds of that cell. An alternative encoding for bird observations is the scatterplot, where individual observations are represented by a \emph{glyph}. However, a common problem with scatterplots is \emph{overplotting} \cite{micallef2017scatter}, making it difficult to distinguish observations from each other in dense areas. Another issue with this approach is that it suggests high spatial precision of observations, while this may not always be the case.
 
 Considering that the \emph{count} attribute of the bird data is quantitative and sequential, we chose a sequential color map, using only the luminance channel. We use a fixed green hue, since the human eye can most easily distinguish shades of green \cite{robinson1984fluorescent}. The saturation channel is used to indicate missing data, by means of a gray color.
 
@@ -268,7 +268,7 @@ By default, the visualization shows data from Europe and most of Africa. At this
 
 All of the idealized visualizations were implemented. With that being said, we implemented the temperature anomaly map, the bird frequency map, as well as a line chart showing the average temperature anomaly and bird latitude. A complete view of the application is shown in \autoref{fig:app-example}.
 
-We implemented a web application. Thus, the main technologies in use are HTML, CSS and JavaScript. To manage the application state, we decided to use Svelte\cite{svelte}, a relatively young framework designed to build web apps easily. Despite the existence of more mature frameworks, such as React, Vue.js and Angular, we decided to use Svelte as it is simple to use and enables us to do the implemetation in a short amount of time leaving more time for designing the application.
+We implemented a web application. Thus, the main technologies in use are HTML, CSS and JavaScript. To manage the application state, we decided to use Svelte\cite{svelte}, a relatively young framework designed to build web apps easily. Despite the existence of more mature frameworks, such as React, Vue.js and Angular, we decided to use Svelte as it is simple to use and enables us to do the implementation in a short amount of time leaving more time for designing the application.
 
 \begin{figure}[t]
   \centering
@@ -308,9 +308,9 @@ An example of the mentioned features can be seen in \autoref{fig:map-example}.
 
 \subsection{Line Chart}
 
-The line chart implemention mainly relies on D3 \cite{bostock2011d3}, a JavaScript library that allows for data manipulation and its visualization using Scalable Vector Graphics images (SVGs). The graph can show two views: either month by month, or year by year. The visualization depends on the choosen options. You can see an example of a monthly graph on \autoref{fig:monthly-graph16} and a yearly graph on \autoref{fig:march86-16-graph}.
+The line chart implementation mainly relies on D3 \cite{bostock2011d3}, a JavaScript library that allows for data manipulation and its visualization using Scalable Vector Graphics images (SVGs). The graph can show two views: either month by month, or year by year. The visualization depends on the chosen options. You can see an example of a monthly graph on \autoref{fig:monthly-graph16} and a yearly graph on \autoref{fig:march86-16-graph}.
 
-In addition, the graph view is regional, meaning that the data on the graph is intrisincally related to the map view. The graph only shows the data from the visible area of the map. Thus, if the user zooms in or out in the map, the graph will change to show the information regarding a different map area.
+In addition, the graph view is regional, meaning that the data on the graph is intrinsically related to the map view. The graph only shows the data from the visible area of the map. Thus, if the user zooms in or out in the map, the graph will change to show the information regarding a different map area.
 
 \subsection{Data Processing}
 
