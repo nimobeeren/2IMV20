@@ -181,7 +181,7 @@
 </style>
 
 <svelte:head>
-  <title>Climate Change and Bird Migration</title>
+  <title>BirdVis</title>
 </svelte:head>
 
 <div class="loading" style="display: {loading ? 'flex' : 'none'}">
@@ -190,7 +190,7 @@
 
 <main>
   <div class="sidebar">
-    <h1>Climate Change and Bird Migration</h1>
+    <h1>BirdVis</h1>
 
     <div id="controls">
       <label for="species">Species</label>
