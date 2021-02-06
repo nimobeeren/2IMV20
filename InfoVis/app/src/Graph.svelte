@@ -237,15 +237,8 @@
 <div class="outer">
   <div class="inner">
     <div class="title">
-      Regional average temperature anomaly and latitude
-      {#if view == 'year'}
-        on
-        {numToMonth(month)}
-        from
-        {startYear}
-        to
-        {endYear}
-      {:else}during {year}{/if}
+      Mean temperature anomaly and bird latitude
+      {#if view === 'year'}in {numToMonth(month)}{:else}during {year}{/if}
     </div>
     <div class="container">
       <div bind:clientWidth={width} bind:clientHeight={height}>
