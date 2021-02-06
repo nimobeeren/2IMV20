@@ -184,10 +184,16 @@ The number of bird observations does not remain constant over time. In fact, we 
   T(m) = \sum_{O_m = m} O_c
 \end{equation}
 
-We then represent the count of each observation as a fraction of the total monthly count, which we call the \emph{frequency}:
+We then represent the count of each observation as a fraction of the total monthly count:
 
 \begin{equation}
-  f(O) = O_c \;/\; T(O_m)
+  p(O) = O_c \;/\; T(O_m)
+\end{equation}
+
+Finally, this fraction is scaled to a $[0, 1]$ range for each month, which we call \emph{frequency}:
+
+\begin{equation}
+  f(O) = p(O) \;/ \max_{O'_m = O_m} p(O')
 \end{equation}
 
 By using this relative frequency rather than the absolute count, we control for the change in observation effort over time. We do assume that the total population size for each species is approximately constant.
