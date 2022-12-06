@@ -1,4 +1,8 @@
-# 🐦 InfoVis
+# 🐦 BirdVis
+
+![Screenshot of BirdVis](screenshot.png)
+
+[**View the screencast**](https://youtu.be/61UDH47zNUM)
 
 ## Installation
 
